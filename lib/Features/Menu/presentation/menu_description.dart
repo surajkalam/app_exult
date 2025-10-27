@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coffee_shop/Authentication/provider/current_user.dart';
+
 import 'package:coffee_shop/core/core.dart';
 import 'package:coffee_shop/DATABASE_HELPER/cart_data.dart';
 import 'package:coffee_shop/Features/Cart/provider/cart_provider.dart';
