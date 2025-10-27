@@ -29,8 +29,9 @@ void main() async {
   log("NotificationService.initialize finished");
   // await FirebaseAppCheck.instance.activate(
   //   androidProvider: AndroidProvider.debug,
-  //   webProvider: ReCaptchaV3Provider('6LdxOMErAAAAAH6WkDCHztkWBmB0DocRPoZX3E1G'),
-  //   appleProvider: AppleProvider.appAttest,
+    // ignore: deprecated_member_use
+    // webProvider: ReCaptchaV3Provider('6LdxOMErAAAAAH6WkDCHztkWBmB0DocRPoZX3E1G'),
+    // appleProvider: AppleProvider.appAttest,
   // );
   debugPrint = (String? message, {int? wrapWidth}) {};
   runApp(ProviderScope(child: MainApp()));

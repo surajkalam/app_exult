@@ -1,5 +1,5 @@
 // providers/firebase_menu_provider.dart
-import 'package:coffee_shop/Features/Menu/Provider/firebase_menu_service.dart';
+import 'package:coffee_exult_app/Features/Menu/Provider/firebase_menu_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final firebaseMenuServiceProvider = Provider<FirebaseMenuService>((ref) {

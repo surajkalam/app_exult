@@ -69,11 +69,11 @@
 //   }
 // }
 // ignore: file_names
-import 'package:coffee_shop/Features/Cart/presentation/cart_screen.dart';
-import 'package:coffee_shop/Features/Event/presentation/event_book.dart';
-import 'package:coffee_shop/Features/Home/presentation/home_screen.dart';
-import 'package:coffee_shop/Features/Menu/presentation/menu_screen.dart';
-import 'package:coffee_shop/Features/Profile/presentation/profile_screen.dart';
+import 'package:coffee_exult_app/Features/Cart/presentation/cart_screen.dart';
+import 'package:coffee_exult_app/Features/Event/presentation/event_book.dart';
+import 'package:coffee_exult_app/Features/Home/presentation/home_screen.dart';
+import 'package:coffee_exult_app/Features/Menu/presentation/menu_screen.dart';
+import 'package:coffee_exult_app/Features/Profile/presentation/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';

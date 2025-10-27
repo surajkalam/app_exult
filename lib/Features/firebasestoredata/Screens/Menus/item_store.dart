@@ -1,9 +1,9 @@
 // screens/items_store_screen.dart
 import 'dart:developer';
 
-import 'package:coffee_shop/Features/Home/models/items_model.dart';
-import 'package:coffee_shop/Features/firebasestoredata/Screens/Menus/edit_items.dart';
-import 'package:coffee_shop/Features/firebasestoredata/provider/admin_provider.dart';
+import 'package:coffee_exult_app/Features/Home/models/items_model.dart';
+import 'package:coffee_exult_app/Features/firebasestoredata/Screens/Menus/edit_items.dart';
+import 'package:coffee_exult_app/Features/firebasestoredata/provider/admin_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

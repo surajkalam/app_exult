@@ -1,5 +1,5 @@
 // screens/admin_dashboard.dart
-import 'package:coffee_shop/Features/firebasestoredata/provider/admin_provider.dart';
+import 'package:coffee_exult_app/Features/firebasestoredata/provider/admin_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

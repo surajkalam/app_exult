@@ -4,5 +4,4 @@ export 'favorite_screen.dart';
 export 'profile_screen.dart';
 export 'level_screen.dart';
 export 'rewards_screen.dart';
-export 'scratchcard_screen.dart';
 export 'twakto_screen.dart';

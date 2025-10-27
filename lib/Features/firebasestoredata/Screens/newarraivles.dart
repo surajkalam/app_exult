@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coffee_shop/Features/Home/models/items_model.dart';
+import 'package:coffee_exult_app/Features/Home/models/items_model.dart';
 
 class NewArrivals extends StatefulWidget {
   const NewArrivals({super.key});

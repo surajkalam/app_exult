@@ -1,5 +1,5 @@
-import 'package:coffee_shop/DATABASE_HELPER/topseller_database.dart';
-import 'package:coffee_shop/Features/Home/models/user_salesmodel.dart';
+import 'package:coffee_exult_app/DATABASE_HELPER/topseller_database.dart';
+import 'package:coffee_exult_app/Features/Home/models/user_salesmodel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Firebase Sales Service Provider

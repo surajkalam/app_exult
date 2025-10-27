@@ -1,5 +1,5 @@
-import 'package:coffee_shop/Features/Profile/Provider/fetchpaymentdata.dart';
-import 'package:coffee_shop/Features/Profile/Provider/levelprovider.dart';
+import 'package:coffee_exult_app/Features/Profile/Provider/fetchpaymentdata.dart';
+import 'package:coffee_exult_app/Features/Profile/Provider/levelprovider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProfileState {

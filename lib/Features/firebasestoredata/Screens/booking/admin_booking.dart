@@ -1,6 +1,6 @@
 // features/Admin/presentation/admin_bookings_screen.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coffee_shop/Features/firebasestoredata/Screens/booking/booking_firestore.dart';
+import 'package:coffee_exult_app/Features/firebasestoredata/Screens/booking/booking_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

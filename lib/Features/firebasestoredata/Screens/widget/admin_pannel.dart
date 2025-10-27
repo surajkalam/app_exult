@@ -1,10 +1,10 @@
 // screens/admin_panel.dart
-import 'package:coffee_shop/Features/firebasestoredata/Screens/Menus/item_store.dart';
-import 'package:coffee_shop/Features/firebasestoredata/Screens/booking/admin_booking.dart';
-import 'package:coffee_shop/Features/firebasestoredata/Screens/offer_data.dart';
-import 'package:coffee_shop/Features/firebasestoredata/Screens/voucher/voucher_storescreen.dart';
-import 'package:coffee_shop/Features/firebasestoredata/Screens/widget/admin_dashboard.dart';
-import 'package:coffee_shop/Features/firebasestoredata/provider/admin_provider.dart';
+import 'package:coffee_exult_app/Features/firebasestoredata/Screens/Menus/item_store.dart';
+import 'package:coffee_exult_app/Features/firebasestoredata/Screens/booking/admin_booking.dart';
+import 'package:coffee_exult_app/Features/firebasestoredata/Screens/offer_data.dart';
+import 'package:coffee_exult_app/Features/firebasestoredata/Screens/voucher/voucher_storescreen.dart';
+import 'package:coffee_exult_app/Features/firebasestoredata/Screens/widget/admin_dashboard.dart';
+import 'package:coffee_exult_app/Features/firebasestoredata/provider/admin_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

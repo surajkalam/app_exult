@@ -1,4 +1,4 @@
-import 'package:coffee_shop/Features/Profile/data/levelmodel.dart';
+import 'package:coffee_exult_app/Features/Profile/data/levelmodel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 final levelProvider = StateNotifierProvider<LevelNotifier, List<Level>>((ref) {
   return LevelNotifier();

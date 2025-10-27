@@ -1,6 +1,6 @@
 
-import 'package:coffee_shop/Features/Login_Screen/authenticationService.dart';
-import 'package:coffee_shop/core/utils/utils.dart';
+import 'package:coffee_exult_app/Features/Login_Screen/authenticationService.dart';
+import 'package:coffee_exult_app/core/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

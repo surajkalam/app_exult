@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:coffee_shop/features/home/provider/sales_provider.dart';
+import 'package:coffee_exult_app/features/home/provider/sales_provider.dart';
 
 class TopBestsellersScreen extends ConsumerWidget {
   const TopBestsellersScreen({super.key});

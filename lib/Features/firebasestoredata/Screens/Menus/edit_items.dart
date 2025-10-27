@@ -1,8 +1,8 @@
 // screens/add_edit_item_screen.dart
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coffee_shop/Features/Home/models/models.dart';
-import 'package:coffee_shop/Features/firebasestoredata/provider/admin_provider.dart';
+import 'package:coffee_exult_app/Features/Home/models/models.dart';
+import 'package:coffee_exult_app/Features/firebasestoredata/provider/admin_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';

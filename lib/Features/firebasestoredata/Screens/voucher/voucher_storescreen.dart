@@ -1,7 +1,7 @@
 // screens/voucher_store_screen.dart
 import 'dart:io';
-import 'package:coffee_shop/Features/firebasestoredata/Screens/voucher/editvoucher_bottomsheet.dart';
-import 'package:coffee_shop/Features/firebasestoredata/provider/voucher_provider.dart';
+import 'package:coffee_exult_app/Features/firebasestoredata/Screens/voucher/editvoucher_bottomsheet.dart';
+import 'package:coffee_exult_app/Features/firebasestoredata/provider/voucher_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';

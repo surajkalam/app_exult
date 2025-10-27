@@ -1,5 +1,5 @@
 // provider/admin_bookings_provider.dart
-import 'package:coffee_shop/Features/firebasestoredata/Screens/booking/booking_provider.dart';
+import 'package:coffee_exult_app/Features/firebasestoredata/Screens/booking/booking_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final adminFirestoreServiceProvider = Provider<AdminFirestoreService>((ref) {
