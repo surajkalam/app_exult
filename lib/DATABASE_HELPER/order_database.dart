@@ -44,8 +44,19 @@ class DatabaseHelper {
 
   Future<List<PaymentData>> getPayments() async {
     final db = await database;
-    final maps = await db.query('payments');
-    return List.generate(maps.length, (i) => PaymentData.fromMap(maps[i]));
+    final List<Map<String, dynamic>> maps = await db.query(
+      'payments',
+      orderBy: 'completedAt DESC', // Order by completion date, newest first
+    );
+
+    return List.generate(maps.length, (i) {
+      return PaymentData.fromMap(maps[i]);
+    });
+  }
+
+  Future<void> clearAllPayments() async {
+    final db = await database;
+    await db.delete('payments');
   }
 
   Future<void> close() async {

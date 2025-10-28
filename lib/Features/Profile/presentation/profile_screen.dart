@@ -7,7 +7,10 @@ import 'package:iconsax/iconsax.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../../Authentication/Authentication.dart';
+import '../../../Authentication/provider/current_user.dart';
 import '../Profile.dart';
+import 'widgets/coffee_glass_widget.dart';
+import '../Provider/coffee_loyalty_provider.dart';
 
 // List of available asset images
 final List<String> assetImages = [
@@ -551,11 +554,25 @@ class ProfileScreen extends ConsumerWidget {
     ColorScheme colorscheme,
     TextTheme texttheme,
   ) {
+    // Load loyalty data
+    ref.watch(loyaltyDataLoader);
+    final loyaltyState = ref.watch(coffeeLoyaltyProvider);
+
     final options = [
       {
         'title': 'Favorite Items',
         'icon': Iconsax.heart,
         'onTap': () => context.push('/favorite'),
+      },
+      {
+        'title': 'Vouchers',
+        'icon': Iconsax.ticket,
+        'onTap': () => context.push('/voucher-screen'),
+      },
+      {
+        'title': 'Recent Orders',
+        'icon': Iconsax.receipt,
+        'onTap': () => context.push('/recent-order'),
       },
       {
         'title': 'Rewards',
@@ -567,11 +584,6 @@ class ProfileScreen extends ConsumerWidget {
         'icon': Iconsax.card,
         'onTap': () => context.push('/billing-info'),
       },
-      // {
-      //   'title': 'Recent Orders',
-      //   'icon': Iconsax.receipt,
-      //   'onTap': () => context.push('/recent-order'),
-      // },
       {
         'title': 'Help & Support',
         'icon': Iconsax.message_question,
@@ -584,62 +596,92 @@ class ProfileScreen extends ConsumerWidget {
       },
     ];
 
-    return Container(
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: colorscheme.onPrimary,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: colorscheme.shadow,
-            offset: Offset(4, 4),
-            blurRadius: 6,
-            spreadRadius: 1,
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Account",
-            style: texttheme.titleMedium?.copyWith(
-              color: colorscheme.primaryContainer,
-            ),
-          ),
-          SizedBox(height: 16),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: options.length,
-            separatorBuilder: (context, index) =>
-                Divider(height: 1, color: colorscheme.shadow),
-            itemBuilder: (context, index) {
-              final option = options[index];
-              return ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: Icon(
-                  option['icon'] as IconData,
-                  size: 24,
-                  color: colorscheme.secondaryFixed,
-                ),
-                title: Text(
-                  option['title'] as String,
-                  style: texttheme.labelMedium?.copyWith(
-                    color: colorscheme.primaryContainer,
+    return Column(
+      children: [
+        // Coffee Loyalty Glass
+        CoffeeGlassWidget(
+          filledLayers: loyaltyState.filledLayers,
+          height: height,
+          width: width,
+          onFreeCoffeeEarned: () async {
+            final user = ref.read(currentUserProvider);
+            await ref.read(coffeeLoyaltyProvider.notifier).claimFreeCoffee(user?.phoneNumber);
+            
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('🎉 Free coffee claimed! Enjoy your reward!'),
+                  backgroundColor: Colors.green,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                trailing: Icon(
-                  Iconsax.arrow_right_3,
-                  size: 20,
-                  color: colorscheme.secondary,
-                ),
-                onTap: option['onTap'] as VoidCallback?,
               );
-            },
+            }
+          },
+        ),
+        SizedBox(height: 24),
+        
+        // Existing account options container
+        Container(
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: colorscheme.onPrimary,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: colorscheme.shadow,
+                offset: Offset(4, 4),
+                blurRadius: 6,
+                spreadRadius: 1,
+              ),
+            ],
           ),
-        ],
-      ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Account",
+                style: texttheme.titleMedium?.copyWith(
+                  color: colorscheme.primaryContainer,
+                ),
+              ),
+              SizedBox(height: 16),
+              ListView.separated(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: options.length,
+                separatorBuilder: (context, index) =>
+                    Divider(height: 1, color: colorscheme.shadow),
+                itemBuilder: (context, index) {
+                  final option = options[index];
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Icon(
+                      option['icon'] as IconData,
+                      size: 24,
+                      color: colorscheme.secondaryFixed,
+                    ),
+                    title: Text(
+                      option['title'] as String,
+                      style: texttheme.labelMedium?.copyWith(
+                        color: colorscheme.primaryContainer,
+                      ),
+                    ),
+                    trailing: Icon(
+                      Iconsax.arrow_right_3,
+                      size: 20,
+                      color: colorscheme.secondary,
+                    ),
+                    onTap: option['onTap'] as VoidCallback?,
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

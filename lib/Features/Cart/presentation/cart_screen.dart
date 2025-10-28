@@ -103,6 +103,7 @@ class CartScreen extends ConsumerWidget {
 
               // Checkout button
               _buildCheckoutButton(context, items, pricingResult,ref),
+               SizedBox(height:20),
             ],
           );
         },

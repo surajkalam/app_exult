@@ -21,18 +21,19 @@ class ProductDetailsScreen extends ConsumerStatefulWidget {
 }
 
 class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
-  bool _isFavorite = false;
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _checkFavoriteStatus();
+    // No need to check favorite status manually - reactive provider handles it
   }
 
   @override
   Widget build(BuildContext context) {
     final currentuser = ref.watch(currentUserProvider);
+    // Watch reactive favorite status
+    final isFavorite = ref.watch(itemFavoriteStatusProvider(widget.product['name']));
 
     log('welcome menu description screen');
     log(
@@ -89,7 +90,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         product['name'] ?? 'Product Details',
         colorScheme,
         textTheme,
-        _isFavorite,
+        isFavorite, // Use reactive state
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -175,24 +176,13 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     );
   }
 
-  Future<void> _checkFavoriteStatus() async {
-    setState(() => _isLoading = true);
-    try {
-      final isFav = await ref
-          .read(favoritesProvider.notifier)
-          .isFavorite(widget.product['name']);
-      setState(() => _isFavorite = isFav);
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-
   Future<void> _toggleFavorite() async {
     if (_isLoading) return;
     setState(() => _isLoading = true);
     try {
       await ref.read(favoritesProvider.notifier).toggleFavorite(widget.product);
-      setState(() => _isFavorite = !_isFavorite);
+    } catch (e) {
+      // Handle error
     } finally {
       setState(() => _isLoading = false);
     }
@@ -204,7 +194,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     String title,
     ColorScheme colorscheme,
     TextTheme texttheme,
-    bool isFavorite,
+    bool isFavorite, // Use parameter instead of local state
   ) {
     return AppBar(
       backgroundColor: colorscheme.surface,
@@ -223,15 +213,22 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         onPressed: () => Navigator.maybePop(context),
       ),
       actions: [
-        IconButton(
-          icon: Icon(
-            isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
-            color: isFavorite ? Colors.red : colorscheme.secondaryFixed,
-          ),
-          onPressed: () async {
-            await _toggleFavorite();
-          },
-        ),
+        _isLoading
+            ? const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              )
+            : IconButton(
+                icon: Icon(
+                  isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
+                  color: isFavorite ? Colors.red : colorscheme.secondaryFixed,
+                ),
+                onPressed: _toggleFavorite,
+              ),
       ],
     );
   }

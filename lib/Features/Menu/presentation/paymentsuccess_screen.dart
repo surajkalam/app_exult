@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:async';
 import 'package:lottie/lottie.dart';
+import '../../Profile/Provider/coffee_loyalty_provider.dart';
+import '../../../Authentication/provider/current_user.dart';
 
 class PaymentSuccessScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic> paymentData;
@@ -48,6 +50,13 @@ class _PaymentSuccessScreenState extends ConsumerState<PaymentSuccessScreen> {
     // final colorScheme = Theme.of(context).colorScheme;
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
+    // Add order to loyalty system when payment is successful
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final user = ref.read(currentUserProvider);
+      if (user?.phoneNumber != null) {
+        ref.read(coffeeLoyaltyProvider.notifier).addOrder(user!.phoneNumber);
+      }
+    });
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,

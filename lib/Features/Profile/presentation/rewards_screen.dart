@@ -5,8 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../core/core.dart';
 import '../profile.dart';
+import '../../../Authentication/provider/current_user.dart';
 
 class RewarsScreens extends ConsumerWidget {
   RewarsScreens({super.key});
@@ -275,94 +277,288 @@ class RewarsScreens extends ConsumerWidget {
     required ColorScheme colorscheme,
     required TextTheme texttheme,
   }) {
-    return GestureDetector(
-      onTap: () {
-        _showRewardSnackbar(context, requiredCoins, colorscheme, texttheme);
-      },
-      child: Container(
-        padding: EdgeInsets.all(width * 0.04),
-        decoration: BoxDecoration(
-          color: colorscheme.onPrimary,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: colorscheme.shadow.withOpacity(0.05),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              height: height * 0.06,
-              width: width * 0.12,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: colorscheme.onSecondary.withOpacity(0.2),
-              ),
-              child: Center(
-                child: Image(
-                  image: AssetImage(iconPath),
-                  height: height * 0.03,
-                  width: width * 0.06,
-                  color: colorscheme.onSecondary,
+    return Consumer(
+      builder: (context, ref, child) {
+        final currentPoints = ref.watch(currentPointsProvider);
+        final canClaim = currentPoints >= requiredCoins;
+        
+        return GestureDetector(
+          onTap: () {
+            if (canClaim) {
+              _showClaimDialog(context, ref, title, requiredCoins, colorscheme, texttheme);
+            } else {
+              _showRewardSnackbar(context, requiredCoins - currentPoints, colorscheme, texttheme);
+            }
+          },
+          child: Container(
+            padding: EdgeInsets.all(width * 0.04),
+            decoration: BoxDecoration(
+              color: canClaim ? colorscheme.primaryContainer.withOpacity(0.1) : colorscheme.onPrimary,
+              borderRadius: BorderRadius.circular(16),
+              border: canClaim ? Border.all(color: colorscheme.primary, width: 2) : null,
+              boxShadow: [
+                BoxShadow(
+                  color: colorscheme.shadow.withOpacity(0.05),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
                 ),
-              ),
+              ],
             ),
-            SizedBox(width: width * 0.04),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: texttheme.bodyMedium?.copyWith(
-                      color: colorscheme.primaryContainer,
-                      fontSize: 13,
+            child: Row(
+              children: [
+                Container(
+                  height: height * 0.06,
+                  width: width * 0.12,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: canClaim 
+                      ? colorscheme.primary.withOpacity(0.2)
+                      : colorscheme.onSecondary.withOpacity(0.2),
+                  ),
+                  child: Center(
+                    child: Image(
+                      image: AssetImage(iconPath),
+                      height: height * 0.03,
+                      width: width * 0.06,
+                      color: canClaim ? colorscheme.primary : colorscheme.onSecondary,
                     ),
                   ),
-                  SizedBox(height: height * 0.005),
-                  Text(
-                    subtitle,
+                ),
+                SizedBox(width: width * 0.04),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: texttheme.bodyMedium?.copyWith(
+                          color: colorscheme.primaryContainer,
+                          fontSize: 13,
+                          fontWeight: canClaim ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                      SizedBox(height: height * 0.005),
+                      Text(
+                        subtitle,
+                        style: texttheme.bodyMedium?.copyWith(
+                          color: colorscheme.secondary,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: canClaim 
+                      ? Colors.green.withOpacity(0.1)
+                      : colorscheme.onSecondary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: canClaim ? Border.all(color: Colors.green) : null,
+                  ),
+                  child: Text(
+                    canClaim ? "Claim" : "$requiredCoins coins",
                     style: texttheme.bodyMedium?.copyWith(
-                      color: colorscheme.secondary,
+                      color: canClaim ? Colors.green[700] : colorscheme.onSecondary,
                       fontSize: 10,
+                      fontWeight: canClaim ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: colorscheme.onSecondary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                "$requiredCoins coins",
-                style: texttheme.bodyMedium?.copyWith(
-                  color: colorscheme.onSecondary,
-                  fontSize: 10,
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
+  }
+
+  void _showClaimDialog(
+    BuildContext context,
+    WidgetRef ref,
+    String rewardTitle,
+    int requiredCoins,
+    ColorScheme colorscheme,
+    TextTheme texttheme,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Reward Icon
+                Container(
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.local_cafe,
+                    size: 48,
+                    color: Colors.green[600],
+                  ),
+                ),
+                SizedBox(height: 16),
+                // Title
+                Text(
+                  'Claim $rewardTitle',
+                  style: texttheme.titleMedium?.copyWith(
+                    color: colorscheme.primaryContainer,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8),
+                // Message
+                Text(
+                  'Congratulations! You have enough points to claim your $rewardTitle.',
+                  textAlign: TextAlign.center,
+                  style: texttheme.bodyMedium?.copyWith(
+                    color: colorscheme.secondary,
+                  ),
+                ),
+                SizedBox(height: 24),
+                // Buttons
+                Row(
+                  children: [
+                    // Cancel Button
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: OutlinedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          side: BorderSide(color: colorscheme.secondary),
+                        ),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(color: colorscheme.secondary),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    // Claim Button
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          _claimReward(context, ref, rewardTitle, requiredCoins, colorscheme, texttheme);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green[600],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          'Claim',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _claimReward(
+    BuildContext context,
+    WidgetRef ref,
+    String rewardTitle,
+    int requiredCoins,
+    ColorScheme colorscheme,
+    TextTheme texttheme,
+  ) async {
+    try {
+      // Deduct points
+      final currentPoints = ref.read(currentPointsProvider);
+      final newPoints = currentPoints - requiredCoins;
+      ref.read(currentPointsProvider.notifier).state = newPoints;
+      
+      // Update points in Firebase
+      final user = ref.read(currentUserProvider);
+      if (user?.phoneNumber != null) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user!.phoneNumber)
+            .update({
+          'points': newPoints,
+        });
+        
+        // Log the reward claim
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.phoneNumber!)
+            .collection('claimedRewards')
+            .add({
+          'rewardTitle': rewardTitle,
+          'pointsUsed': requiredCoins,
+          'claimedAt': FieldValue.serverTimestamp(),
+        });
+      }
+      
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white, size: 20),
+              SizedBox(width: 8),
+              Text('🎉 $rewardTitle claimed successfully!'),
+            ],
+          ),
+          backgroundColor: Colors.green[600],
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+      
+      // Navigate to coffee category if it's a coffee reward
+      if (rewardTitle.toLowerCase().contains('coffee')) {
+        Future.delayed(Duration(seconds: 1), () {
+          context.push('/coffee-category');
+        });
+      }
+      
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to claim reward. Please try again.'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   }
 
   void _showRewardSnackbar(
     BuildContext context,
-    int requiredCoins,
+    int remainingCoins,
     ColorScheme colorscheme,
     TextTheme texttheme,
   ) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          "Complete $requiredCoins coins to apply",
+          "You need $remainingCoins more coins to claim this reward",
           style: texttheme.labelMedium?.copyWith(
             color: colorscheme.onSecondaryFixed,
             fontSize: 11,

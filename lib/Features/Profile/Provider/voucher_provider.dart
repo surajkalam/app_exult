@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:coffee_exult_app/Features/Profile/data/voucher_model.dart';
 
+import '../../../Authentication/provider/current_user.dart';
+
 // Provider for voucher controller
 final voucherControllerProvider = Provider<TextEditingController>((ref) {
   return TextEditingController();
@@ -25,6 +27,27 @@ final voucherErrorProvider = StateProvider<String?>((ref) => null);
 
 // Provider for selected voucher
 final selectedVoucherProvider = StateProvider<VoucherProduct?>((ref) => null);
+
+// Add used vouchers tracking
+final usedVouchersProvider = StateProvider<Set<String>>((ref) => {});
+
+// Provider to check if voucher is used by current user
+final isVoucherUsedProvider = FutureProvider.family<bool, String>((ref, voucherId) async {
+  final user = ref.read(currentUserProvider);
+  if (user?.phoneNumber == null) return false;
+  
+  try {
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user!.phoneNumber)
+        .collection('usedVouchers')
+        .doc(voucherId)
+        .get();
+    return doc.exists;
+  } catch (e) {
+    return false;
+  }
+});
 
 // Provider to fetch all vouchers
 final voucherCategoriesProvider = FutureProvider<List<VoucherProduct>>((ref) async {
@@ -154,4 +177,20 @@ void removeVoucher(WidgetRef ref) {
   ref.read(selectedVoucherProvider.notifier).state = null;
   ref.read(voucherControllerProvider).clear();
   ref.read(voucherErrorProvider.notifier).state = null;
+}
+
+// Mark voucher as used
+Future<void> markVoucherAsUsed(WidgetRef ref, String voucherId) async {
+  final user = ref.read(currentUserProvider);
+  if (user?.phoneNumber == null) return;
+  
+  await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user!.phoneNumber)
+      .collection('usedVouchers')
+      .doc(voucherId)
+      .set({
+    'usedAt': FieldValue.serverTimestamp(),
+    'voucherId': voucherId,
+  });
 }

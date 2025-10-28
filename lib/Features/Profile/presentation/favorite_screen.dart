@@ -192,6 +192,8 @@ class FavoriteMenuScreen extends ConsumerWidget {
     BuildContext context,
   ) {
     final hasImage = item['image'] != null;
+    // Watch reactive favorite status
+    final isFavorite = ref.watch(itemFavoriteStatusProvider(item['name']));
 
     return GestureDetector(
       onTap: () {
@@ -265,7 +267,8 @@ class FavoriteMenuScreen extends ConsumerWidget {
                           ref,
                           item['name'],
                           width,
-                        ), // Use 'name' as document ID
+                          isFavorite, // Pass reactive state
+                        ),
                       ],
                     ),
                   ],
@@ -335,9 +338,14 @@ class FavoriteMenuScreen extends ConsumerWidget {
     WidgetRef ref,
     String itemName,
     double width,
+    bool isFavorite, // Add parameter
   ) {
     return IconButton(
-      icon: Icon(Icons.favorite_rounded, color: Colors.red, size: width * 0.06),
+      icon: Icon(
+        isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+        color: Colors.red,
+        size: width * 0.06,
+      ),
       onPressed: () => _showRemoveConfirmation(context, ref, itemName, width),
     );
   }
@@ -375,17 +383,7 @@ class FavoriteMenuScreen extends ConsumerWidget {
   }
 
   Future<void> _removeFavorite(WidgetRef ref, String itemName) async {
-    final userPhoneNumber = ref.read(userPhoneProvider);
-    if (userPhoneNumber == null) return;
-
-    await ref
-        .read(firestoreProvider)
-        .collection('users')
-        .doc(userPhoneNumber)
-        .collection('favorites')
-        .doc(
-          itemName,
-        ) // Using item name as document ID (matches your toggleFavorite logic)
-        .delete();
+    // Use the reactive state notifier
+    await ref.read(favoritesStateProvider.notifier).removeFavorite(itemName);
   }
 }

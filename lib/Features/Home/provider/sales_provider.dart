@@ -7,19 +7,31 @@ final firebaseSalesServiceProvider = Provider<FirebaseSalesService>((ref) {
   return FirebaseSalesService();
 });
 
-// Top Sellers Provider (Future)
+// Top Sellers Provider for LAST MONTH (Future)
 final topSellersProvider = FutureProvider<List<UserSales>>((ref) async {
   final salesService = ref.read(firebaseSalesServiceProvider);
-  return await salesService.getTopSellersThisMonth();
+  return await salesService.getTopSellersLastMonth(); // Changed to last month
 });
 
-// Top Sellers Provider (Stream - real-time updates)
+// Top Sellers Provider (Stream - real-time updates for last month)
 final topSellersStreamProvider = StreamProvider<List<UserSales>>((ref) {
   final salesService = ref.read(firebaseSalesServiceProvider);
   return salesService.getTopSellersStream();
 });
 
+// Current month provider (if needed for comparison)
+final currentMonthSellersProvider = FutureProvider<List<UserSales>>((ref) async {
+  final salesService = ref.read(firebaseSalesServiceProvider);
+  return await salesService.getTopSellersThisMonth();
+});
+
 // Refresh provider
 final refreshTopSellersProvider = Provider<void>((ref) {
   ref.invalidate(topSellersProvider);
+});
+
+// Month name provider
+final lastMonthNameProvider = Provider<String>((ref) {
+  final salesService = ref.read(firebaseSalesServiceProvider);
+  return salesService.getLastMonthName();
 });

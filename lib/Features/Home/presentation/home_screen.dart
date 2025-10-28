@@ -135,20 +135,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ),
                   SizedBox(height: height * 0.03),
-                  Text(
-                    'Voucher for you🎉',
-                    style: textTheme.titleMedium?.copyWith(
-                      color: colorScheme.primaryContainer,
-                    ),
-                  ),
-                  SizedBox(height: height * 0.03),
-                  GestureDetector(
-                    onTap: () async {
-                      context.push('/voucher-screen');
-                    },
-                    child: vouchersection(height, width, voucherlist),
-                  ),
-                  SizedBox(height: height * 0.03),
+                  // Text(
+                  //   'Voucher for you🎉',
+                  //   style: textTheme.titleMedium?.copyWith(
+                  //     color: colorScheme.primaryContainer,
+                  //   ),
+                  // ),
+                  // SizedBox(height: height * 0.03),
+                  // GestureDetector(
+                  //   onTap: () async {
+                  //     context.push('/voucher-screen');
+                  //   },
+                  //   child: vouchersection(height, width, voucherlist),
+                  // ),
+                  // SizedBox(height: height * 0.03),
                   _buildCategoriesSection(
                     height,
                     width,
@@ -178,12 +178,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             textTheme,
                           ),
                         ),
-                        _buildBestsellerSection(
-                          height,
-                          width,
-                          colorScheme,
-                          textTheme,
-                        ),
+                        // _buildBestsellerSection(
+                        //   height,
+                        //   width,
+                        //   colorScheme,
+                        //   textTheme,
+                        // ),
                       ],
                     ),
                   ),
@@ -210,7 +210,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   SizedBox(height: height * 0.02),
                   _buildSessionalSection(height, width, colorScheme, textTheme),
-                  SizedBox(height: height * 0.06),
+                  SizedBox(height: height * 0.1),
                 ],
               ),
             ),
@@ -524,35 +524,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget vouchersection(double height, double width, List voucherlist) {
-    return SizedBox(
-      height: height * 0.17,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: voucherlist.length,
-        itemBuilder: (context, voucherindex) => Container(
-          width: width * 0.7,
-          height: height * 0.12,
-          margin: EdgeInsets.only(right: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 4,
-                offset: Offset(0, 2),
-              ),
-            ],
-            image: DecorationImage(
-              image: AssetImage(voucherlist[voucherindex]),
-              fit: BoxFit.fill,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget vouchersection(double height, double width, List voucherlist) {
+  //   return SizedBox(
+  //     height: height * 0.17,
+  //     child: ListView.builder(
+  //       scrollDirection: Axis.horizontal,
+  //       itemCount: voucherlist.length,
+  //       itemBuilder: (context, voucherindex) => Container(
+  //         width: width * 0.7,
+  //         height: height * 0.12,
+  //         margin: EdgeInsets.only(right: 12),
+  //         decoration: BoxDecoration(
+  //           borderRadius: BorderRadius.circular(20),
+  //           color: Colors.white,
+  //           boxShadow: [
+  //             BoxShadow(
+  //               color: Colors.black12,
+  //               blurRadius: 4,
+  //               offset: Offset(0, 2),
+  //             ),
+  //           ],
+  //           image: DecorationImage(
+  //             image: AssetImage(voucherlist[voucherindex]),
+  //             fit: BoxFit.fill,
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Future<String> getCategoriesname() async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -846,9 +846,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     texttheme,
   ) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding:EdgeInsets.all(8.0),
       child: Container(
-        width: width - 120,
+        width: width - 80,
         height: height * 0.28,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
