@@ -610,16 +610,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           .doc(docid)
           .collection(category)
           .get();
-
-      // log('Total products found in $category: ${categorySnapshot.docs.length}');
-
-      // Print each product's data to console
-      // for (final doc in categorySnapshot.docs) {
-      //   log('Product ID: ${doc.id}');
-      //   log('Product data: ${doc.data()}');
-      //   log('-----------------------------');
-      // }
-
       final List<Product> allProducts = categorySnapshot.docs.map((productDoc) {
         final data = productDoc.data() as Map<String, dynamic>;
         // Include the document ID in the data
@@ -830,20 +820,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ColorScheme colorscheme,
     textTheme,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: textTheme.titleMedium?.copyWith(
-            color: colorscheme.primaryContainer,
+    return InkWell(
+      onTap: () {
+        // context.push('/datastore');
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: textTheme.titleMedium?.copyWith(
+              color: colorscheme.primaryContainer,
+            ),
           ),
-        ),
-        SizedBox(height: 4),
-      ],
+          SizedBox(height: 4),
+        ],
+      ),
     );
   }
-
   // Build bestseller section
   Widget _buildBestsellerSection(
     double height,

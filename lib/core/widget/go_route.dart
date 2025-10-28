@@ -6,6 +6,7 @@ import 'package:coffee_exult_app/Features/Home/Home.dart';
 import 'package:coffee_exult_app/Features/Profile/presentation/coffeereferscreen.dart';
 import 'package:coffee_exult_app/Features/Profile/presentation/order_screen.dart';
 import 'package:coffee_exult_app/Features/Profile/presentation/voucher_screen.dart';
+import 'package:coffee_exult_app/Features/firebasestoredata/Screens/widget/admin_dashboard.dart';
 import 'package:coffee_exult_app/Features/firebasestoredata/Screens/widget/admin_pannel.dart';
 import 'package:coffee_exult_app/Features/payment/paymentmethods.dart';
 import 'package:coffee_exult_app/core/core.dart';
@@ -15,6 +16,7 @@ import 'package:go_router/go_router.dart';
 import '../../Features/Cart/Cart.dart';
 import '../../Features/Map/Map.dart';
 import '../../Features/Menu/Menu.dart';
+import '../../Features/Menu/presentation/search_menu_screen.dart'; // Import the new screen
 import '../../Features/Profile/profile.dart';
 import '../../Features/firebasestoredata/Screens/Screens.dart';
 
@@ -53,6 +55,7 @@ final GoRouter approuter = GoRouter(
       builder: (context, state) => GiveVoucherScreen(),
     ),
     GoRoute(path: '/navbar', builder: (context, state) => const MainAppere()),
+    GoRoute(path: '/search-menu', builder: (context, state) => const SearchMenuScreen()),
 
     // GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
     GoRoute(
@@ -160,7 +163,7 @@ final GoRouter approuter = GoRouter(
     ),
     GoRoute(
       path: '/datastore',
-      builder: (context, state) => const Datadstore(),
+      builder: (context, state) => const AdminPanel(),
     ),
     // GoRoute(
     //   path: '/scratch-cart',

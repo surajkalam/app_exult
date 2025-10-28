@@ -30,7 +30,9 @@ class MenuScreen extends ConsumerWidget {
               Iconsax.search_normal,
               color: colorScheme.secondaryFixed,
             ),
-            onPressed: () {},
+            onPressed: () {
+              context.push('/search-menu');
+            },
           ),
         ],
       ),
