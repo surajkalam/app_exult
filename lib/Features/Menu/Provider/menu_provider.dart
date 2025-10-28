@@ -34,9 +34,12 @@ final List offerlist = [
 ];
 // Pricing calculator (static methods - safe for build)
 class PricingCalculator {
-  static const double deliveryCharge = 40.00;
-  static const double serviceCharge = 10.87;
-  static const double taxRate = 0.10; // 10%
+  // static const double deliveryCharge = 40.00;
+  // static const double serviceCharge = 10.87;
+  // static const double taxRate = 0.10; // 10%
+   static const double deliveryCharge = 00;
+  static const double serviceCharge = 00;
+  static const double taxRate = 0.0; // 10%
 
   // Calculate pricing without modifying providers (safe for build)
   static PricingResult calculatePricing({

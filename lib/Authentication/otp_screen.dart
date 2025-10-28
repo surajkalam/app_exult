@@ -61,7 +61,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
       showAppSnackBar(
         // ignore: use_build_context_synchronously
         context,
-        message: 'Error: ${e.toString()}',
+        message: 'Try again',
         backgroundColor: Colors.white,
         textColor: Colors.red,
       );

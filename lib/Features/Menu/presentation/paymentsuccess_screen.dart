@@ -19,18 +19,26 @@ class PaymentSuccessScreen extends ConsumerStatefulWidget {
       _PaymentSuccessScreenState();
 }
 class _PaymentSuccessScreenState extends ConsumerState<PaymentSuccessScreen> {
-  
+  bool _hasProcessedPayment = false;
+
   @override
    void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _storePaymentData();
+      if (!_hasProcessedPayment) {
+        _hasProcessedPayment = true;
+        _storePaymentData();
+        _updateLoyalty();
+      }
     });
     Timer(Duration(seconds: 4), () {
-      context.go('/navbar');
+      if (mounted) {
+        context.go('/navbar');
+      }
     });
   }
-    void _storePaymentData() {
+
+  void _storePaymentData() {
     final payment = PaymentData(
       productName: widget.paymentData['productName'] ?? 'Unknown Product',
       quantity: widget.paymentData['quantity'] ?? 1,
@@ -39,8 +47,20 @@ class _PaymentSuccessScreenState extends ConsumerState<PaymentSuccessScreen> {
       status: widget.paymentData['status'] ?? 'completed',
       completedAt: DateTime.now(),
     );
-     
+
     ref.read(orderpaymentProvider.notifier).addPayment(payment);
+    log('✅ Payment data stored to local database');
+  }
+
+  void _updateLoyalty() {
+    final user = ref.read(currentUserProvider);
+    if (user?.phoneNumber != null) {
+      log('📱 Updating coffee loyalty for user: ${user!.phoneNumber}');
+      ref.read(coffeeLoyaltyProvider.notifier).addOrder(user.phoneNumber);
+      log('✅ Coffee loyalty updated');
+    } else {
+      log('⚠️ No user phone number found for loyalty update');
+    }
   }
 
   @override
@@ -50,13 +70,6 @@ class _PaymentSuccessScreenState extends ConsumerState<PaymentSuccessScreen> {
     // final colorScheme = Theme.of(context).colorScheme;
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-    // Add order to loyalty system when payment is successful
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final user = ref.read(currentUserProvider);
-      if (user?.phoneNumber != null) {
-        ref.read(coffeeLoyaltyProvider.notifier).addOrder(user!.phoneNumber);
-      }
-    });
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,

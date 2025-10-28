@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../Authentication/provider/current_user.dart';
@@ -69,9 +70,28 @@ class CoffeeLoyaltyNotifier extends StateNotifier<CoffeeLoyaltyState> {
     if (phoneNumber == null) return;
 
     try {
-      final newTotalOrders = state.totalOrders + 1;
+      // First, load current data from Firebase to ensure we have the latest count
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(phoneNumber)
+          .collection('loyalty')
+          .doc('coffee')
+          .get();
+
+      int currentTotalOrders = 0;
+      if (doc.exists) {
+        currentTotalOrders = doc.data()?['totalOrders'] ?? 0;
+      }
+
+      final newTotalOrders = currentTotalOrders + 1;
       final newFilledLayers = newTotalOrders % 3;
       final hasFreeCoffee = newFilledLayers == 0;
+
+      log('☕ Coffee Loyalty Update:');
+      log('   Previous orders: $currentTotalOrders');
+      log('   New total orders: $newTotalOrders');
+      log('   Filled layers: ${hasFreeCoffee ? 3 : newFilledLayers}/3');
+      log('   Has free coffee: $hasFreeCoffee');
 
       // Update Firebase
       await FirebaseFirestore.instance
@@ -90,8 +110,10 @@ class CoffeeLoyaltyNotifier extends StateNotifier<CoffeeLoyaltyState> {
         totalOrders: newTotalOrders,
         hasFreeCoffee: hasFreeCoffee,
       );
+
+      log('✅ Coffee loyalty state updated successfully');
     } catch (e) {
-      // Handle error
+      log('❌ Error updating coffee loyalty: $e');
     }
   }
 

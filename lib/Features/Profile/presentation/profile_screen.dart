@@ -606,13 +606,13 @@ class ProfileScreen extends ConsumerWidget {
           onFreeCoffeeEarned: () async {
             final user = ref.read(currentUserProvider);
             await ref.read(coffeeLoyaltyProvider.notifier).claimFreeCoffee(user?.phoneNumber);
-            
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('🎉 Free coffee claimed! Enjoy your reward!'),
                   backgroundColor: Colors.green,
                   behavior: SnackBarBehavior.floating,
+                  margin: const EdgeInsets.all(16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -622,7 +622,6 @@ class ProfileScreen extends ConsumerWidget {
           },
         ),
         SizedBox(height: 24),
-        
         // Existing account options container
         Container(
           padding: EdgeInsets.all(20),

@@ -822,7 +822,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   ) {
     return InkWell(
       onTap: () {
-        // context.push('/datastore');
+        context.push('/datastore');
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

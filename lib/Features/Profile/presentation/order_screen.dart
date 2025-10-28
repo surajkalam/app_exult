@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../Provider/recentorder_provider.dart';
+import '../Provider/fetchpaymentdata.dart';
 
 
 class RecentOrdersScreen extends ConsumerWidget {
@@ -11,7 +11,7 @@ class RecentOrdersScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final payments = ref.watch(orderpaymentProvider);
+    final paymentsAsync = ref.watch(userPaymentsProvider);
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
@@ -35,57 +35,81 @@ class RecentOrdersScreen extends ConsumerWidget {
           IconButton(
             icon: Icon(Icons.refresh, color: colorScheme.primary),
             onPressed: () {
-              ref.read(orderpaymentProvider.notifier).refreshPayments();
+              ref.invalidate(userPaymentsProvider);
             },
           ),
         ],
       ),
-      body: payments.isEmpty
-          ? _buildEmptyState(context, colorScheme, textTheme)
-          : RefreshIndicator(
-              onRefresh: () async {
-                ref.read(orderpaymentProvider.notifier).refreshPayments();
-              },
-              child: Column(
-                children: [
-                  // Summary header
-                  _buildSummaryHeader(context, payments, colorScheme, textTheme),
-                  
-                  // Orders list
-                  Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(16.0),
-                      itemCount: payments.length,
-                      itemBuilder: (context, index) {
-                        final payment = payments[index];
-                        return _buildEnhancedOrderCard(
-                          context, 
-                          payment, 
-                          index, 
-                          colorScheme, 
-                          textTheme
-                        );
-                      },
-                    ),
-                  ),
-                ],
+      body: paymentsAsync.when(
+        loading: () => Center(
+          child: CircularProgressIndicator(color: colorScheme.primary),
+        ),
+        error: (error, stack) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 60, color: colorScheme.error),
+              const SizedBox(height: 16),
+              Text(
+                'Error loading orders',
+                style: textTheme.titleMedium?.copyWith(color: colorScheme.error),
               ),
-            ),
+              const SizedBox(height: 8),
+              Text(
+                error.toString(),
+                style: textTheme.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+        data: (payments) => payments.isEmpty
+            ? _buildEmptyState(context, colorScheme, textTheme)
+            : RefreshIndicator(
+                onRefresh: () async {
+                  ref.invalidate(userPaymentsProvider);
+                },
+                child: Column(
+                  children: [
+                    // Summary header
+                    _buildSummaryHeader(context, payments, colorScheme, textTheme),
+
+                    // Orders list
+                    Expanded(
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(16.0),
+                        itemCount: payments.length,
+                        itemBuilder: (context, index) {
+                          final payment = payments[index];
+                          return _buildEnhancedOrderCard(
+                            context,
+                            payment,
+                            index,
+                            colorScheme,
+                            textTheme
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+      ),
     );
   }
 
   Widget _buildSummaryHeader(
     BuildContext context,
-    List<dynamic> payments,
+    List<Map<String, dynamic>> payments,
     ColorScheme colorScheme,
     TextTheme textTheme,
   ) {
     final totalAmount = payments.fold<double>(
-      0.0, 
-      (sum, payment) => sum + (payment.totalPrice ?? 0.0)
+      0.0,
+      (sum, payment) => sum + ((payment['amount'] ?? payment['totalPrice'] ?? 0.0) as num).toDouble()
     );
     final totalOrders = payments.length;
-    final completedOrders = payments.where((p) => p.status == 'completed').length;
+    final completedOrders = payments.where((p) => (p['status'] ?? '') == 'completed').length;
 
     return Container(
       margin: EdgeInsets.all(16),
@@ -175,13 +199,34 @@ class RecentOrdersScreen extends ConsumerWidget {
 
   Widget _buildEnhancedOrderCard(
     BuildContext context,
-    dynamic payment,
+    Map<String, dynamic> payment,
     int index,
     ColorScheme colorScheme,
     TextTheme textTheme,
   ) {
-    final statusColor = _getStatusColor(payment.status);
-    final isCompleted = payment.status.toLowerCase() == 'completed';
+    final status = payment['status'] ?? 'completed';
+    final statusColor = _getStatusColor(status);
+    final isCompleted = status.toLowerCase() == 'completed';
+
+    // Parse completedAt from various possible formats
+    DateTime completedAt;
+    try {
+      final completedAtValue = payment['completedAt'] ?? payment['timestamp'];
+      if (completedAtValue is DateTime) {
+        completedAt = completedAtValue;
+      } else if (completedAtValue is String) {
+        completedAt = DateTime.parse(completedAtValue);
+      } else {
+        completedAt = DateTime.now();
+      }
+    } catch (e) {
+      completedAt = DateTime.now();
+    }
+
+    final productName = payment['productName'] ?? 'Unknown Product';
+    final quantity = (payment['quantity'] ?? 1) as int;
+    final price = ((payment['price'] ?? 0.0) as num).toDouble();
+    final totalPrice = ((payment['amount'] ?? payment['totalPrice'] ?? 0.0) as num).toDouble();
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16.0),
@@ -227,14 +272,14 @@ class RecentOrdersScreen extends ConsumerWidget {
                       ),
                     ),
                     SizedBox(width: 12),
-                    
+
                     // Product info
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            payment.productName,
+                            productName,
                             style: textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: colorScheme.onSurface,
@@ -252,7 +297,7 @@ class RecentOrdersScreen extends ConsumerWidget {
                               ),
                               SizedBox(width: 4),
                               Text(
-                                DateFormat('MMM dd, yyyy • hh:mm a').format(payment.completedAt),
+                                DateFormat('MMM dd, yyyy • hh:mm a').format(completedAt),
                                 style: textTheme.bodySmall?.copyWith(
                                   color: colorScheme.onSurfaceVariant,
                                 ),
@@ -262,7 +307,7 @@ class RecentOrdersScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    
+
                     // Status badge
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -281,7 +326,7 @@ class RecentOrdersScreen extends ConsumerWidget {
                           ),
                           SizedBox(width: 4),
                           Text(
-                            payment.status.toUpperCase(),
+                            status.toUpperCase(),
                             style: textTheme.labelSmall?.copyWith(
                               color: statusColor,
                               fontWeight: FontWeight.bold,
@@ -292,9 +337,9 @@ class RecentOrdersScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
-                
+
                 SizedBox(height: 16),
-                
+
                 // Order details
                 Container(
                   padding: EdgeInsets.all(12),
@@ -309,21 +354,21 @@ class RecentOrdersScreen extends ConsumerWidget {
                         children: [
                           _buildDetailItem(
                             'Quantity',
-                            '${payment.quantity}x',
+                            '${quantity}x',
                             Icons.shopping_cart,
                             textTheme,
                             colorScheme,
                           ),
                           _buildDetailItem(
                             'Unit Price',
-                            '\$${payment.price.toStringAsFixed(2)}',
+                            '\$${price.toStringAsFixed(2)}',
                             Icons.attach_money,
                             textTheme,
                             colorScheme,
                           ),
                           _buildDetailItem(
                             'Total',
-                            '\$${payment.totalPrice.toStringAsFixed(2)}',
+                            '\$${totalPrice.toStringAsFixed(2)}',
                             Icons.receipt,
                             textTheme,
                             colorScheme,
@@ -387,7 +432,7 @@ class RecentOrdersScreen extends ConsumerWidget {
   ) {
     return Column(
       children: [
-        Icon(icon, size: 16, color: colorScheme.primary),
+        Icon(icon, size: 16, color: colorScheme.secondaryFixed),
         SizedBox(height: 4),
         Text(
           value,
@@ -399,7 +444,7 @@ class RecentOrdersScreen extends ConsumerWidget {
         Text(
           label,
           style: textTheme.labelSmall?.copyWith(
-            color: colorScheme.onSurfaceVariant,
+            color: colorScheme.primaryContainer,
           ),
         ),
       ],
@@ -433,7 +478,7 @@ class RecentOrdersScreen extends ConsumerWidget {
             Text(
               'No Orders Yet',
               style: textTheme.headlineSmall?.copyWith(
-                color: colorScheme.onSurface,
+                color: colorScheme.primaryContainer,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -442,7 +487,7 @@ class RecentOrdersScreen extends ConsumerWidget {
               'Your order history will appear here\nonce you make your first purchase',
               textAlign: TextAlign.center,
               style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
+                color: colorScheme.primaryContainer,
               ),
             ),
             SizedBox(height: 24),
@@ -467,10 +512,31 @@ class RecentOrdersScreen extends ConsumerWidget {
 
   void _showOrderDetails(
     BuildContext context,
-    dynamic payment,
+    Map<String, dynamic> payment,
     ColorScheme colorScheme,
     TextTheme textTheme,
   ) {
+    // Parse completedAt from various possible formats
+    DateTime completedAt;
+    try {
+      final completedAtValue = payment['completedAt'] ?? payment['timestamp'];
+      if (completedAtValue is DateTime) {
+        completedAt = completedAtValue;
+      } else if (completedAtValue is String) {
+        completedAt = DateTime.parse(completedAtValue);
+      } else {
+        completedAt = DateTime.now();
+      }
+    } catch (e) {
+      completedAt = DateTime.now();
+    }
+
+    final productName = payment['productName'] ?? 'Unknown Product';
+    final quantity = (payment['quantity'] ?? 1) as int;
+    final price = ((payment['price'] ?? 0.0) as num).toDouble();
+    final totalPrice = ((payment['amount'] ?? payment['totalPrice'] ?? 0.0) as num).toDouble();
+    final status = payment['status'] ?? 'completed';
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -493,7 +559,7 @@ class RecentOrdersScreen extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            
+
             // Header
             Padding(
               padding: EdgeInsets.all(20),
@@ -513,7 +579,7 @@ class RecentOrdersScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            
+
             // Details content
             Expanded(
               child: SingleChildScrollView(
@@ -521,13 +587,17 @@ class RecentOrdersScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildDetailRow('Product Name', payment.productName),
-                    _buildDetailRow('Quantity', '${payment.quantity}'),
-                    _buildDetailRow('Unit Price', '\$${payment.price.toStringAsFixed(2)}'),
-                    _buildDetailRow('Total Amount', '\$${payment.totalPrice.toStringAsFixed(2)}'),
-                    _buildDetailRow('Status', payment.status),
-                    _buildDetailRow('Order Date', DateFormat('MMMM dd, yyyy').format(payment.completedAt)),
-                    _buildDetailRow('Order Time', DateFormat('hh:mm a').format(payment.completedAt)),
+                    _buildDetailRow('Product Name', productName),
+                    _buildDetailRow('Quantity', '$quantity'),
+                    _buildDetailRow('Unit Price', '\$${price.toStringAsFixed(2)}'),
+                    _buildDetailRow('Total Amount', '\$${totalPrice.toStringAsFixed(2)}'),
+                    _buildDetailRow('Status', status),
+                    _buildDetailRow('Order Date', DateFormat('MMMM dd, yyyy').format(completedAt)),
+                    _buildDetailRow('Order Time', DateFormat('hh:mm a').format(completedAt)),
+                    if (payment['orderId'] != null)
+                      _buildDetailRow('Order ID', payment['orderId']),
+                    if (payment['paymentId'] != null)
+                      _buildDetailRow('Payment ID', payment['paymentId']),
                   ],
                 ),
               ),
@@ -567,10 +637,11 @@ class RecentOrdersScreen extends ConsumerWidget {
     );
   }
 
-  void _reorderItem(BuildContext context, dynamic payment) {
+  void _reorderItem(BuildContext context, Map<String, dynamic> payment) {
+    final productName = payment['productName'] ?? 'Item';
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${payment.productName} added to cart for reorder!'),
+        content: Text('$productName added to cart for reorder!'),
         backgroundColor: Colors.green,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
