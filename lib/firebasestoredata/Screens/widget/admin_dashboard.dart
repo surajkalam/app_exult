@@ -148,14 +148,13 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
           ),
         ),
         const SizedBox(height: 20),
-        
         GridView.count(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           crossAxisCount: _getCrossAxisCount(context),
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
-          childAspectRatio: 0.85, // Adjusted aspect ratio to prevent overflow
+          childAspectRatio: 0.85,
           children: [
             _buildActionCard(
               'Items Store',
@@ -279,10 +278,10 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
                   fontWeight: FontWeight.bold,
                   color: Colors.grey[800],
                 ),
-                 maxLines: 1,
+                maxLines: 1,
                   overflow: TextOverflow.ellipsis,
               ),
-               SizedBox(height: 2),
+              SizedBox(height: 2),
               Expanded(
                 child: Text(
                   description,

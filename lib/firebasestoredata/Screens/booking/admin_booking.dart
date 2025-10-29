@@ -27,13 +27,15 @@ Widget build(BuildContext context) {
   final bookings = ref.watch(filteredBookingsProvider);
   final stats = ref.watch(bookingStatsProvider);
   final filter = ref.watch(bookingFilterProvider);
+  final colorscheme = Theme.of(context).colorScheme;
 
   return Scaffold(
     appBar: AppBar(
-      title: const Text('Event Bookings Management'),
+      title:Text('Event Bookings Management',  style: TextStyle(color: colorscheme.primaryContainer,fontWeight: FontWeight.w500,fontSize: 13),
+      ),
       actions: [
-        _buildFilterDropdown(),
-        const SizedBox(width: 16),
+        _buildFilterDropdown(colorscheme),
+         SizedBox(width: 16),
       ],
     ),
     body: Column(
@@ -66,7 +68,7 @@ Widget build(BuildContext context) {
                     padding: const EdgeInsets.all(16),
                     itemCount: bookings.length,
                     itemBuilder: (context, index) {
-                      return _buildBookingCard(bookings[index], context);
+                      return _buildBookingCard(bookings[index], context,colorscheme);
                     },
                   ),
                 ),
@@ -120,14 +122,15 @@ Widget build(BuildContext context) {
     );
   }
 
-  Widget _buildFilterDropdown() {
+  Widget _buildFilterDropdown( ColorScheme colorscheme) {
     return DropdownButton<String>(
       value: ref.read(bookingFilterProvider),
       onChanged: (value) {
         ref.read(bookingFilterProvider.notifier).state = value!;
       },
-      items: const [
-        DropdownMenuItem(value: 'all', child: Text('All Bookings')),
+      items:  [
+        DropdownMenuItem(value: 'all', child: Text('All Bookings', style: TextStyle(color: colorscheme.primaryContainer,fontWeight: FontWeight.w400,fontSize: 13),
+        )),
         DropdownMenuItem(value: 'pending', child: Text('Pending')),
         DropdownMenuItem(value: 'approved', child: Text('Approved')),
         DropdownMenuItem(value: 'rejected', child: Text('Rejected')),
@@ -135,9 +138,8 @@ Widget build(BuildContext context) {
     );
   }
 
-  Widget _buildBookingCard(Map<String, dynamic> booking, BuildContext context) {
+  Widget _buildBookingCard(Map<String, dynamic> booking, BuildContext context,ColorScheme colorscheme) {
     final bookingDetails = booking['bookingDetails'] ?? {};
-    
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 2,
@@ -224,19 +226,21 @@ Widget build(BuildContext context) {
                 children: [
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: () => _handleBookingAction(booking, 'approved', context),
+                      onPressed: () => _handleBookingAction(booking, 'approved', context,colorscheme),
                       icon: const Icon(Icons.check, size: 18),
-                      label: const Text('Approve'),
+                      label: const Text('Approve',
+                      
+                      ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
+                        backgroundColor: colorscheme.onSecondary,
+                        foregroundColor: colorscheme.onSecondaryFixed,
                       ),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: OutlinedButton.icon(
-                      onPressed: () => _showRejectionOptions(booking, context),
+                      onPressed: () => _showRejectionOptions(booking, context,colorscheme),
                       icon: const Icon(Icons.close, size: 18),
                       label: const Text('Reject'),
                       style: OutlinedButton.styleFrom(
@@ -342,9 +346,10 @@ Widget build(BuildContext context) {
     Map<String, dynamic> booking, 
     String action, 
     BuildContext context,
+    ColorScheme colorscheme,
   ) async {
     final adminService = ref.read(adminFirestoreServiceProvider);
-    final response = await _showResponseDialog(context, action, booking);
+    final response = await _showResponseDialog(context, action, booking,colorscheme);
 
     if (response != null) {
       try {
@@ -358,21 +363,21 @@ Widget build(BuildContext context) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Booking ${action == 'approved' ? 'approved' : 'rejected'} successfully'),
-            backgroundColor: action == 'approved' ? Colors.green : Colors.orange,
+            backgroundColor: action == 'approved' ? colorscheme.onSecondary : colorscheme.onPrimaryFixedVariant,
           ),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red,
+            content: Text('select option'),
+            backgroundColor: colorscheme.error,
           ),
         );
       }
     }
   }
 
-  void _showRejectionOptions(Map<String, dynamic> booking, BuildContext context) {
+  void _showRejectionOptions(Map<String, dynamic> booking, BuildContext context,ColorScheme colorscheme) {
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
@@ -382,7 +387,7 @@ Widget build(BuildContext context) {
           children: [
             const Text(
               'Select Rejection Reason',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 16),
             _buildRejectionOption(
@@ -390,24 +395,28 @@ Widget build(BuildContext context) {
               'Time Unavailable',
               'We apologize, but the requested time slot is unavailable.',
               booking,
+              colorscheme
             ),
             _buildRejectionOption(
               context,
               'Capacity Issue',
               'Unfortunately, we cannot accommodate the number of guests.',
               booking,
+              colorscheme
             ),
             _buildRejectionOption(
               context,
               'Venue Constraints',
               'This event type requires arrangements we cannot provide.',
               booking,
+              colorscheme
             ),
             _buildRejectionOption(
               context,
               'Custom Response',
               'Write your own response...',
               booking,
+              colorscheme
             ),
           ],
         ),
@@ -420,17 +429,19 @@ Widget build(BuildContext context) {
     String title,
     String response,
     Map<String, dynamic> booking,
+    ColorScheme colorscheme,
   ) {
     return ListTile(
-      leading: const Icon(Icons.info_outline),
-      title: Text(title),
-      subtitle: response != 'Write your own response...' ? Text(response) : null,
+      leading: Icon(Icons.info_outline,color: colorscheme.primaryContainer,),
+      title: Text(title,style: TextStyle(color: colorscheme.primaryContainer,fontWeight: FontWeight.w500,fontSize: 13),
+      ),
+      subtitle: response != 'Write your own response...' ? Text(response,style: TextStyle(color: colorscheme.primaryContainer,fontWeight: FontWeight.w400,fontSize: 10)) : null,
       onTap: () {
         Navigator.pop(context);
         if (title == 'Custom Response') {
-          _handleBookingAction(booking, 'rejected', context);
+          _handleBookingAction(booking, 'rejected', context,colorscheme);
         } else {
-          _handleBookingAction(booking, 'rejected', context);
+          _handleBookingAction(booking, 'rejected', context,colorscheme);
         }
       },
     );
@@ -438,8 +449,9 @@ Widget build(BuildContext context) {
 
   Future<String?> _showResponseDialog(
     BuildContext context, 
-    String action, 
+    String action,
     Map<String, dynamic> booking,
+    ColorScheme colorscheme,
   ) async {
     TextEditingController controller = TextEditingController();
     
@@ -459,15 +471,26 @@ Widget build(BuildContext context) {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Event: ${bookingDetails['eventType']}'),
-            Text('User: ${booking['userName']}'),
-            const SizedBox(height: 16),
+            Text('Event: ${bookingDetails['eventType']}',
+            style: TextStyle(color: colorscheme.primaryContainer,fontWeight: FontWeight.w500,fontSize: 13),
+            ),
+            Text('User: ${booking['userName']}',
+            style: TextStyle(color: colorscheme.primaryContainer,fontWeight: FontWeight.w500,fontSize: 13),
+            ),
+             SizedBox(height: 16),
             TextField(
               controller: controller,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: 'Enter your response to the user...',
+                hintStyle: TextStyle(color: colorscheme.primaryContainer,fontSize: 11),
                 labelText: 'Admin Response',
-                border: OutlineInputBorder(),
+                labelStyle: TextStyle(color: colorscheme.primaryContainer,fontSize: 10),
+                border:  OutlineInputBorder(
+                  borderSide: BorderSide(color: colorscheme.primaryContainer),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: colorscheme.primaryContainer),
+                )
               ),
               maxLines: 5,
             ),
