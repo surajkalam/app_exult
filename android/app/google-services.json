@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "234073029931",
+    "project_id": "excoffee-8a23b",
+    "storage_bucket": "excoffee-8a23b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:234073029931:android:9ebb1dc9ed63f4426b196e",
+        "android_client_info": {
+          "package_name": "com.example.coffee_exult_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAr7P0Z6cYCosGfSBc-Dd-s_99aWcgxfk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:234073029931:android:010e95d645873fe76b196e",
+        "android_client_info": {
+          "package_name": "com.example.exult_admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAr7P0Z6cYCosGfSBc-Dd-s_99aWcgxfk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
