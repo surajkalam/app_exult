@@ -15,24 +15,25 @@ class FavoriteMenuScreen extends ConsumerWidget {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     final favoritesAsync = ref.watch(favoritesStreamProvider);
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colorScheme.onPrimary,
       appBar: CustomAppBar(
         titleText: 'Favorites',
         centerTitle: true,
-        backgroundColor: AppColors.primary,
         elevation: 0.5,
       ),
       body: favoritesAsync.when(
-        loading: () => _buildLoadingState(width, height),
-        error: (error, stack) => _buildErrorState(error, ref, width, height),
+        loading: () => _buildLoadingState(width, height,colorScheme,textTheme),
+        error: (error, stack) => _buildErrorState(error, ref, width, height,colorScheme,textTheme),
         data: (favorites) =>
-            _buildFavoritesList(favorites, ref, width, height, context),
+            _buildFavoritesList(favorites, ref, width, height, context,colorScheme,textTheme),
       ),
     );
   }
 
-  Widget _buildLoadingState(double width, double height) {
+  Widget _buildLoadingState(double width, double height, ColorScheme colorscheme,TextTheme textTheme) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -42,14 +43,14 @@ class FavoriteMenuScreen extends ConsumerWidget {
             height: 30,
             child: CircularProgressIndicator(
               strokeWidth: 2.5,
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+              valueColor: AlwaysStoppedAnimation<Color>(colorscheme.primaryContainer),
             ),
           ),
           SizedBox(height: height * 0.02),
           Text(
             'Loading your favorites...',
-            style: GoogleFonts.dmSans(
-              color: AppColors.textSecondary,
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorscheme.secondary,
               fontSize: 16,
             ),
           ),
@@ -63,6 +64,8 @@ class FavoriteMenuScreen extends ConsumerWidget {
     WidgetRef ref,
     double width,
     double height,
+    ColorScheme colorscheme,
+    TextTheme textTheme,
   ) {
     return Center(
       child: Padding(
@@ -79,35 +82,27 @@ class FavoriteMenuScreen extends ConsumerWidget {
             SizedBox(height: height * 0.02),
             Text(
               'Unable to load favorites',
-              style: GoogleFonts.dmSans(
-                color: AppColors.textPrimary,
+              style: textTheme.bodyMedium?.copyWith(
+                color: colorscheme.primaryContainer,
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
               ),
             ),
-            SizedBox(height: height * 0.01),
-            Text(
-              'Error: $error',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.dmSans(
-                color: AppColors.textSecondary,
-                fontSize: 14,
-              ),
-            ),
             SizedBox(height: height * 0.03),
-            _buildRetryButton(ref, width, height),
+            _buildRetryButton(ref, width, height,colorscheme,textTheme),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildRetryButton(WidgetRef ref, double width, double height) {
+  Widget _buildRetryButton(WidgetRef ref, double width, double height,ColorScheme colorscheme,TextTheme textTheme,
+  ) {
     return ElevatedButton(
       onPressed: () => ref.refresh(favoritesStreamProvider),
       style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.white,
-        backgroundColor: AppColors.primary,
+        foregroundColor: colorscheme.onSecondaryFixed,
+        backgroundColor: colorscheme.primaryContainer,
         padding: EdgeInsets.symmetric(
           horizontal: width * 0.06,
           vertical: height * 0.015,
@@ -116,7 +111,11 @@ class FavoriteMenuScreen extends ConsumerWidget {
       ),
       child: Text(
         'Try Again',
-        style: GoogleFonts.dmSans(fontSize: 16, fontWeight: FontWeight.w500),
+        style: textTheme.labelMedium?.copyWith(
+          color: colorscheme.onSecondaryFixed,
+          fontWeight: FontWeight.w500,
+          fontSize: 12,
+        ),
       ),
     );
   }
@@ -127,10 +126,12 @@ class FavoriteMenuScreen extends ConsumerWidget {
     double width,
     double height,
     BuildContext context,
+    ColorScheme colorscheme,
+    TextTheme texttheme,
   ) {
     log('favorites item :$favorites');
     if (favorites.isEmpty) {
-      return _buildEmptyState(width, height);
+      return _buildEmptyState(width, height,colorscheme,texttheme);
     }
 
     return ListView.separated(
@@ -142,12 +143,13 @@ class FavoriteMenuScreen extends ConsumerWidget {
       separatorBuilder: (context, index) => SizedBox(height: height * 0.02),
       itemBuilder: (context, index) {
         final item = favorites[index];
-        return _buildFavoriteItem(item, ref, width, height, context);
+        return _buildFavoriteItem(item, ref, width, height, context,colorscheme,texttheme);
       },
     );
   }
 
-  Widget _buildEmptyState(double width, double height) {
+  Widget _buildEmptyState(double width, double height,ColorScheme colorscheme,TextTheme textTheme,
+  ) {
     return Center(
       child: Padding(
         padding: EdgeInsets.all(width * 0.08),
@@ -157,15 +159,14 @@ class FavoriteMenuScreen extends ConsumerWidget {
             Icon(
               Icons.favorite_border_rounded,
               size: 60,
-              // ignore: deprecated_member_use
-              color: AppColors.textSecondary.withOpacity(0.5),
+              color: colorscheme.secondaryFixed,
             ),
             SizedBox(height: height * 0.02),
             Text(
               'No favorites yet',
-              style: GoogleFonts.dmSans(
-                color: AppColors.textPrimary,
-                fontSize: 18,
+              style: textTheme.bodyMedium?.copyWith(
+                color: colorscheme.primaryContainer,
+                fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -173,9 +174,9 @@ class FavoriteMenuScreen extends ConsumerWidget {
             Text(
               'Items you mark as favorite will appear here',
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSans(
-                color: AppColors.textSecondary,
-                fontSize: 14,
+              style: textTheme.bodySmall?.copyWith(
+                color: colorscheme.secondary,
+                fontSize: 12,
               ),
             ),
           ],
@@ -185,11 +186,13 @@ class FavoriteMenuScreen extends ConsumerWidget {
   }
 
   Widget _buildFavoriteItem(
-    item,
+    Map<String, dynamic> item,
     WidgetRef ref,
     double width,
     double height,
     BuildContext context,
+    ColorScheme colorscheme,
+    TextTheme texttheme,
   ) {
     final hasImage = item['image'] != null;
     // Watch reactive favorite status
@@ -207,7 +210,7 @@ class FavoriteMenuScreen extends ConsumerWidget {
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
               blurRadius: 8,
-              offset: const Offset(0, 4),
+              offset:Offset(0, 4),
             ),
           ],
         ),
@@ -227,9 +230,9 @@ class FavoriteMenuScreen extends ConsumerWidget {
                           item['image'],
                           fit: BoxFit.cover,
                           errorBuilder: (_, _, _) =>
-                              _buildPlaceholderIcon(width),
+                              _buildPlaceholderIcon(width,colorscheme,texttheme),
                         )
-                      : _buildPlaceholderIcon(width),
+                      : _buildPlaceholderIcon(width,colorscheme,texttheme),
                 ),
               ),
               SizedBox(width: width * 0.04),
@@ -249,16 +252,16 @@ class FavoriteMenuScreen extends ConsumerWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: height * 0.008),
-                    _buildRatingRow(item, width),
+                    _buildRatingRow(item, width,colorscheme,texttheme),
                     SizedBox(height: height * 0.012),
                     Row(
                       children: [
                         Text(
                           'INR ${item['price'] ?? '0'}',
-                          style: GoogleFonts.dmSans(
+                          style: texttheme.bodyMedium?.copyWith(
+                            color: colorscheme.onPrimaryFixedVariant,
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.primary,
                           ),
                         ),
                         const Spacer(),
@@ -267,7 +270,9 @@ class FavoriteMenuScreen extends ConsumerWidget {
                           ref,
                           item['name'],
                           width,
-                          isFavorite, // Pass reactive state
+                          isFavorite,
+                          colorscheme,
+                          texttheme,
                         ),
                       ],
                     ),
@@ -281,54 +286,54 @@ class FavoriteMenuScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildPlaceholderIcon(double width) {
+  Widget _buildPlaceholderIcon(double width,ColorScheme colorscheme,TextTheme textTheme) {
     return Center(
       child: Icon(
         Icons.coffee_rounded,
         size: width * 0.1,
-        color: AppColors.primary,
+        color:colorscheme.secondaryFixed,
       ),
     );
   }
 
   // ignore: strict_top_level_inference
-  Widget _buildRatingRow(item, double width) {
+  Widget _buildRatingRow(item, double width,ColorScheme colorscheme,TextTheme textTheme) {
     return Row(
       children: [
         Container(
           padding: EdgeInsets.symmetric(horizontal: width * 0.02, vertical: 4),
           decoration: BoxDecoration(
             // ignore: deprecated_member_use
-            color: AppColors.accent.withOpacity(0.1),
+            color: colorscheme.onSecondary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Row(
             children: [
               Icon(
                 Icons.star_rounded,
-                color: AppColors.accent,
+                color: colorscheme.onSecondary,
                 size: width * 0.04,
               ),
               SizedBox(width: width * 0.01),
               Text(
                 (item['rating']?.toStringAsFixed(1) ?? '0.0'),
-                style: GoogleFonts.dmSans(
-                  fontSize: 12,
+                style: textTheme.bodySmall?.copyWith(
+                  color: colorscheme.onSecondary,
+                  fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.accent,
                 ),
               ),
             ],
           ),
         ),
         SizedBox(width: width * 0.02),
-        Text(
-          '${item['ratingCount'] ?? '0'} reviews',
-          style: GoogleFonts.dmSans(
-            fontSize: 12,
-            color: AppColors.textSecondary,
-          ),
-        ),
+        // Text(
+        //   '${item['ratingCount'] ?? '0'} reviews',
+        //   style: GoogleFonts.dmSans(
+        //     fontSize: 12,
+        //     color: AppColors.textSecondary,
+        //   ),
+        // ),
       ],
     );
   }
@@ -339,6 +344,8 @@ class FavoriteMenuScreen extends ConsumerWidget {
     String itemName,
     double width,
     bool isFavorite, // Add parameter
+    ColorScheme colorscheme,
+    TextTheme textTheme,
   ) {
     return IconButton(
       icon: Icon(
@@ -346,7 +353,7 @@ class FavoriteMenuScreen extends ConsumerWidget {
         color: Colors.red,
         size: width * 0.06,
       ),
-      onPressed: () => _showRemoveConfirmation(context, ref, itemName, width),
+      onPressed: () => _showRemoveConfirmation(context, ref, itemName, width,colorscheme,textTheme  ),
     );
   }
 
@@ -355,26 +362,48 @@ class FavoriteMenuScreen extends ConsumerWidget {
     WidgetRef ref,
     String itemName,
     double width,
+    ColorScheme colorscheme,
+    TextTheme textTheme,
   ) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Remove from favorites?"),
+          title: Text("Remove from favorites?",
+          style: textTheme.bodyLarge?.copyWith(
+            color: colorscheme.primaryContainer,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+          ),
           content: Text(
             "Are you sure you want to remove this item from your favorites?",
+            style: textTheme.bodySmall?.copyWith(
+              color: colorscheme.secondary,
+              fontSize: 11,
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text("Cancel"),
+              child: Text("Cancel",
+              style: textTheme.labelMedium?.copyWith(
+                color: colorscheme.primaryContainer,
+                fontSize: 12,
+              ),
+              ),
             ),
             TextButton(
               onPressed: () {
                 _removeFavorite(ref, itemName);
                 Navigator.of(context).pop();
               },
-              child: Text("Remove"),
+              child: Text("Remove",
+               style: textTheme.labelMedium?.copyWith(
+                color: colorscheme.primaryContainer,
+                fontSize: 12,
+              ),
+              ),
             ),
           ],
         );

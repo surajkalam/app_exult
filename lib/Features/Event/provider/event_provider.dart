@@ -50,12 +50,11 @@ final userBookingsProvider = StreamProvider.family<List<EventBooking>, String>((
 class EventBookingNotifier extends StateNotifier<EventBooking> {
   EventBookingNotifier() : super(
     EventBooking(
-      bookingId: '', 
-
+      bookingId: '',
       categoryId: '',
       selectedDate: DateTime.now(),
       selectedTime: const TimeOfDay(hour: 18, minute: 0),
-       endingTime: const TimeOfDay(hour: 11, minute: 0),
+      endingTime: const TimeOfDay(hour: 11, minute: 0),
       numberOfGuests: 1,
       eventType: '',
       createdAt: DateTime.now(),

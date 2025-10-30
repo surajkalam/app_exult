@@ -40,6 +40,7 @@ class FirebaseMenuService {
             'image': data['image'] ?? '',
             'description': data['description'] ?? '',
             'price': data['price']?.toString() ?? '0',
+            'isAvailable':data['isAvailable']??'true',
           };
         }).toList();
       }

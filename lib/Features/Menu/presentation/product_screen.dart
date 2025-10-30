@@ -26,6 +26,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   @override
   void initState() {
     super.initState();
+    
     // No need to check favorite status manually - reactive provider handles it
   }
 
@@ -34,7 +35,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     final currentuser = ref.watch(currentUserProvider);
     // Watch reactive favorite status
     final isFavorite = ref.watch(itemFavoriteStatusProvider(widget.product['name']));
-
+    final isAvailable = widget.product['isAvailable'] ?? '';
+    log('isAvailable: $isAvailable');
     log('welcome menu description screen');
     log(
       'Current user: ${currentuser?.uid ?? "No user logged in"}, '
@@ -65,7 +67,6 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         });
       }
     });
-
     final quantity = ref.watch(quantityProvider);
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
@@ -75,14 +76,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               ? product['price'] as num
               : (double.tryParse(product['price'].toString()) ?? 0.0))
         : 0.0;
-
     // Calculate discount and final price
     final discountAmount = (price * quantity * voucherDiscount) / 100;
     final totalPrice = price * quantity;
     final finalPrice = totalPrice - discountAmount;
-
     log('starting product :$product');
-
     return Scaffold(
       backgroundColor: colorScheme.onPrimary,
       appBar: _buildAppBar(
@@ -121,7 +119,6 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               textTheme,
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-
             // Voucher Input Section
             _buildVoucherSection(
               context,
@@ -134,7 +131,6 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               textTheme,
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-
             // Price Section
             _buildPriceSection(
               price,
@@ -148,7 +144,6 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               textTheme,
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-
             // Description (if available)
             if (product['description'] != null)
               _buildDescriptionSection(
@@ -242,30 +237,70 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     ColorScheme colorscheme,
     TextTheme texttheme,
   ) {
-    return Container(
-      height: height * 0.32,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: colorscheme.onSecondaryFixed,
-        boxShadow: [
-          BoxShadow(
-            color: colorscheme.shadow,
-            offset: Offset(0, 6),
-            blurRadius: 12,
+    final isAvailable = product['isAvailable'] ?? true;
+
+    return Stack(
+      children: [
+        Container(
+          height: height * 0.32,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: colorscheme.onSecondaryFixed,
+            boxShadow: [
+              BoxShadow(
+                color: colorscheme.shadow,
+                offset: Offset(0, 6),
+                blurRadius: 12,
+              ),
+            ],
           ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: product['image'] != null
-            ? Image.network(
-                product['image'],
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => _buildImagePlaceholder(colorscheme),
-              )
-            : _buildImagePlaceholder(colorscheme),
-      ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: product['image'] != null
+                ? Image.network(
+                    product['image'],
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => _buildImagePlaceholder(colorscheme),
+                  )
+                : _buildImagePlaceholder(colorscheme),
+          ),
+        ),
+        // Not Available Overlay Badge
+        if (!isAvailable)
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.black.withOpacity(0.7),
+              ),
+              child: Center(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        offset: Offset(0, 4),
+                        blurRadius: 8,
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    'NOT AVAILABLE',
+                    style: texttheme.titleMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -839,12 +874,13 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     TextTheme texttheme,
   ) {
     final isLoggedIn = ref.watch(isLoggedInProvider);
+    final isAvailable = product['isAvailable'] ?? true;
 
     // Calculate final pricing
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: isLoggedIn
+        onPressed: (isLoggedIn && isAvailable)
             ? () {
                 final user = ref.read(currentUserProvider);
                 final subtotal = price * quantity;
@@ -879,13 +915,15 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               }
             : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: colorscheme.onPrimaryFixedVariant,
+          backgroundColor: isAvailable
+              ? colorscheme.onPrimaryFixedVariant
+              : Colors.grey,
           foregroundColor: colorscheme.onSecondaryFixed,
           padding: EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          elevation: isLoggedIn ? 4 : 0,
+          elevation: (isLoggedIn && isAvailable) ? 4 : 0,
           // ignore: deprecated_member_use
           shadowColor: colorscheme.shadow.withOpacity(0.3),
         ),
@@ -893,13 +931,15 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Iconsax.shopping_cart,
+              isAvailable ? Iconsax.shopping_cart : Icons.block,
               size: 20,
               color: colorscheme.onSecondaryFixed,
             ),
             SizedBox(width: 8),
             Text(
-              'Proceed to Checkout ($quantity items) ₹${finalPrice.toStringAsFixed(2)}',
+              isAvailable
+                  ? 'Proceed to Checkout ($quantity items) ₹${finalPrice.toStringAsFixed(2)}'
+                  : 'Product Not Available',
               style: texttheme.bodySmall?.copyWith(
                 color: colorscheme.onSecondaryFixed,
                 fontSize: 10,
@@ -996,3 +1036,4 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     log('=======================');
   }
 }
+//  in featurefirestorestoredata/menus/items_store.dart every card having three dot on tap not available then update in database and show in feture /menu/presentation/product_screen.dart  their show batch not available if available show their 

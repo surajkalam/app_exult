@@ -87,7 +87,8 @@ class _SearchMenuScreenState extends ConsumerState<SearchMenuScreen> {
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Search for coffee, tea, or menu items...',
-                prefixIcon: Icon(Iconsax.search_normal, color: colorScheme.secondaryFixed),
+                hintStyle: textTheme.bodyMedium?.copyWith(color: colorScheme.primaryContainer,fontSize: 12),
+                prefixIcon: Icon(Iconsax.search_normal, color: colorScheme.primaryContainer),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
                         icon: Icon(Icons.clear, color: colorScheme.secondaryFixed),
@@ -162,32 +163,66 @@ class _SearchMenuScreenState extends ConsumerState<SearchMenuScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-            child: itemImage != null
-                ? Image.network(
-                    itemImage,
-                    height: 120,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      height: 120,
-                      color: colorScheme.surfaceVariant,
-                      child: Center(
-                        child: Icon(Icons.broken_image, color: colorScheme.onSurfaceVariant),
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+                child: itemImage != null
+                    ? Image.network(
+                        itemImage,
+                        height: 120,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          height: 120,
+                          color: colorScheme.surfaceVariant,
+                          child: Center(
+                            child: Icon(Icons.broken_image, color: colorScheme.onSurfaceVariant),
+                          ),
+                        ),
+                      )
+                    : Container(
+                        height: 120,
+                        color: colorScheme.surfaceVariant,
+                        child: Center(
+                          child: Icon(Icons.coffee, color: colorScheme.onSurfaceVariant),
+                        ),
+                      ),
+              ),
+              // Not Available Badge
+              if (item['isAvailable'] == false)
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                      color: Colors.black.withOpacity(0.6),
+                    ),
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          'NOT AVAILABLE',
+                          style: textTheme.labelSmall?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 10,
+                          ),
+                        ),
                       ),
                     ),
-                  )
-                : Container(
-                    height: 120,
-                    color: colorScheme.surfaceVariant,
-                    child: Center(
-                      child: Icon(Icons.coffee, color: colorScheme.onSurfaceVariant),
-                    ),
                   ),
+                ),
+            ],
           ),
           Padding(
             padding: const EdgeInsets.all(12.0),

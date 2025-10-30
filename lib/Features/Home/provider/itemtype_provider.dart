@@ -33,7 +33,6 @@ final itemsByTypeProvider = FutureProvider.family<List<Item>, String>((ref, item
             .get();
 
         log('✅ Found ${querySnapshot.docs.length} items of type $itemType in $category');
-        
         for (var doc in querySnapshot.docs) {
           try {
             final itemData = doc.data();

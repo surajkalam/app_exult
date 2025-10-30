@@ -32,11 +32,11 @@ class DatabaseHelper {
         quantity INTEGER,
         image TEXT,
         rating REAL,
-        added_at TEXT
+        added_at TEXT,
       )
     ''');
   }
-
+ // isAvailable INTEGER NOT NULL DEFAULT 1
   Future<int> insertCartItem(Map<String, dynamic> item) async {
     final db = await instance.database;
      log('Inserting item: ${item['name']}'); 

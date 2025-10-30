@@ -25,7 +25,7 @@ final userDetailsProvider = FutureProvider<UserDetails>((ref) async {
   try {
     final userDoc = await FirebaseFirestore.instance
         .collection('users')
-        .doc(currentUser.uid)
+        .doc(currentUser.phoneNumber)
         .get();
 
     if (userDoc.exists) {

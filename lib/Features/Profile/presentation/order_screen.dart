@@ -378,9 +378,7 @@ class RecentOrdersScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                
                 SizedBox(height: 12),
-                
                 // Action buttons
                 Row(
                   children: [

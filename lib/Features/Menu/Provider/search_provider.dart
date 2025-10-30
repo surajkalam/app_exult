@@ -1,4 +1,6 @@
 // providers/search_provider.dart
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -43,7 +45,7 @@ final searchResultsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) a
     
     return results;
   } catch (e) {
-    print('Search error: $e');
+    log('Search error: $e');
     return [];
   }
 });

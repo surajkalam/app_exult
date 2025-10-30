@@ -37,7 +37,7 @@ class MenuScreen extends ConsumerWidget {
         ],
       ),
       body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
+        physics: BouncingScrollPhysics(),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Column(
@@ -92,6 +92,7 @@ class MenuScreen extends ConsumerWidget {
                 colorScheme,
                 textTheme,
               ),
+               SizedBox(height: height * 0.07),
             ],
           ),
         ),

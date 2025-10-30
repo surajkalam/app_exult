@@ -89,6 +89,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
       final booking = ref.read(eventBookingProvider);
       final firestoreService = ref.read(userFirestoreServiceProvider);
       final currentuser = ref.read(currentUserProvider);
+      final phone = currentuser?.phoneNumber?.replaceFirst('+91', '') ?? '';
       // final notifier = ref.read(eventBookingProvider.notifier);
 
       if (currentuser == null) {
@@ -164,7 +165,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
           booking: booking,
           userName: userDetails.name,
           userEmail: userDetails.email,
-          userPhone: userDetails.phone,
+          userPhone:phone,
         );
         // ignore: use_build_context_synchronously
         if (!mounted) return;
@@ -522,14 +523,14 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                     ),
                   ),
                   SizedBox(height: height * 0.09),
-                  Text(
-                    'Error: $e', // Show actual error
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontSize: 13,
-                    ),
-                  ),
+                  // Text(
+                  //   'Error: $e', // Show actual error
+                  //   textAlign: TextAlign.center,
+                  //   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  //     color: Theme.of(context).colorScheme.secondary,
+                  //     fontSize: 13,
+                  //   ),
+                  // ),
                   SizedBox(height: height * 0.02),
                   SizedBox(
                     width: double.infinity,
@@ -941,6 +942,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
     log('Current User Phone: ${currentuser?.phoneNumber}');
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
+    
     return Scaffold(
       appBar: CustomAppBar(
         titleText: 'Book Your Event',
@@ -981,8 +983,8 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Theme.of(context).colorScheme.surface,
-              Theme.of(context).colorScheme.surfaceContainerLow,
+              Theme.of(context).colorScheme.onSurface,
+              Theme.of(context).colorScheme.onSurface,
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -996,378 +998,389 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                 opacity: _fadeAnimation,
                 child: Form(
                   key: _formKey,
-                  child: ListView(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    padding: EdgeInsets.all(width * 0.02),
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(height * 0.02),
-                        decoration: BoxDecoration(
-                          color: colorScheme.surface,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              // ignore: deprecated_member_use
-                              color: colorScheme.shadow.withOpacity(0.1),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.category,
-                                  color: colorScheme.primary,
-                                  size: 24,
-                                ),
-                                SizedBox(width: width * 0.02),
-                                Text(
-                                  'Select Event Category',
-                                  style: Theme.of(context).textTheme.labelLarge
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.w400,
-                                        color: colorScheme.primary,
-                                      ),
+                  child: Padding(
+                    padding:  EdgeInsets.symmetric(horizontal: width*0.02),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: colorScheme.outlineVariant)
+                      ),
+                      child: ListView(
+                        physics: AlwaysScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        // padding: EdgeInsets.all(width * 0.02),
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(height * 0.02),
+                            decoration: BoxDecoration(
+                              color: colorScheme.onSurface,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  // ignore: deprecated_member_use
+                                  color: colorScheme.shadow,
+                                  blurRadius: 8,
+                                  offset:Offset(0, 2),
                                 ),
                               ],
                             ),
-                            SizedBox(height: height * 0.02),
-                            GridView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 12,
-                                    mainAxisSpacing: 12,
-                                    childAspectRatio: 0.9,
-                                  ),
-                              itemCount: categories.length,
-                              itemBuilder: (context, index) {
-                                final category = categories[index];
-                                return AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  child: CategoryCard(
-                                    icon: category.icon,
-                                    title: category.name,
-                                    description: category.description,
-                                    isSelected:
-                                        booking.categoryId == category.id,
-                                    onTap: () {
-                                      ref
-                                          .read(eventBookingProvider.notifier)
-                                          .setCategory(category.id);
-                                    },
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      if (booking.categoryId.isNotEmpty) ...[
-                        SizedBox(height: height * 0.02),
-                        // Event Details Card
-                        Container(
-                          padding: EdgeInsets.all(height * 0.02),
-                          decoration: BoxDecoration(
-                            color: colorScheme.surface,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                // ignore: deprecated_member_use
-                                color: colorScheme.shadow.withOpacity(0.1),
-                                blurRadius: 8,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildEventTypeSection(
-                                booking.categoryId,
-                                colorScheme,
-                                width,
-                                height,
-                              ),
-                              SizedBox(height: height * 0.02),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.access_time,
-                                    color: colorScheme.primary,
-                                    size: 20,
-                                  ),
-                                  SizedBox(width: width * 0.01),
-                                  Text(
-                                    'Select Date & Time',
-                                    style: Theme.of(context).textTheme.bodyLarge
-                                        ?.copyWith(
-                                          fontSize: 14,
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.primary,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: height * 0.014),
-                              Container(
-                                padding: EdgeInsets.all(height * 0.01),
-                                decoration: BoxDecoration(
-                                  color: colorScheme.surfaceContainerLow,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: DateTimePicker(
-                                  selectedDate: booking.selectedDate,
-                                  selectedTime: booking.selectedTime,
-                                  endingTime: booking.endingTime,
-                                  onDateChanged: (date) {
-                                    ref
-                                        .read(eventBookingProvider.notifier)
-                                        .setDate(date);
-                                  },
-                                  onTimeChanged: (time) {
-                                    ref
-                                        .read(eventBookingProvider.notifier)
-                                        .setTime(time);
-                                  },
-                                  onEndingTimeChanged: (endingTime) {
-                                    ref
-                                        .read(eventBookingProvider.notifier)
-                                        .setEndingTime(endingTime);
-                                  },
-                                ),
-                              ),
-                              SizedBox(height: height * 0.024),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.people,
-                                    color: colorScheme.primary,
-                                    size: 20,
-                                  ),
-                                  SizedBox(width: width * 0.01),
-                                  Text(
-                                    'Number of Guests',
-                                    style: Theme.of(context).textTheme.bodyLarge
-                                        ?.copyWith(
-                                          fontSize: 14,
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.primary,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: height * 0.014),
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    // ignore: deprecated_member_use
-                                    color: Theme.of(
-                                      context,
-                                      // ignore: deprecated_member_use
-                                    ).colorScheme.secondary.withOpacity(0.3),
-                                    width: 1.5,
-                                  ),
-                                ),
-                                child: DropdownButtonFormField<int>(
-                                  initialValue: booking.numberOfGuests,
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    contentPadding: EdgeInsets.all(
-                                      width * 0.03,
-                                    ),
-                                  ),
-                                  items: List.generate(20, (index) => index + 1)
-                                      .map((int value) {
-                                        return DropdownMenuItem<int>(
-                                          value: value,
-                                          child: Text(
-                                            '$value ${value == 1 ? 'guest' : 'guests'}',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall
-                                                ?.copyWith(
-                                                  color: Theme.of(
-                                                    context,
-                                                  ).colorScheme.secondary,
-                                                ),
-                                          ),
-                                        );
-                                      })
-                                      .toList(),
-                                  onChanged: (value) {
-                                    ref
-                                        .read(eventBookingProvider.notifier)
-                                        .setGuests(value!);
-                                  },
-                                  validator: (value) {
-                                    if (value == null || value < 1) {
-                                      return 'Please select number of guests';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: height * 0.02),
-                        Container(
-                          padding: EdgeInsets.all(width * 0.024),
-                          decoration: BoxDecoration(
-                            color: colorScheme.surface,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              // ignore: deprecated_member_use
-                              color: Theme.of(
-                                context,
-                                // ignore: deprecated_member_use
-                              ).colorScheme.secondary.withOpacity(0.3),
-                              width: 1.5,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                // ignore: deprecated_member_use
-                                color: colorScheme.shadow.withOpacity(0.1),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              _buildAdditionalOptions(
-                                booking.categoryId,
-                                colorScheme,
-                                textTheme,
-                                height,
-                                width,
-                              ),
-                              SizedBox(height: height * 0.025),
-                              // Special Requests
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.note_add,
-                                    color: colorScheme.primary,
-                                    size: 20,
-                                  ),
-                                  SizedBox(width: width * 0.01),
-                                  Text(
-                                    'Special Requests',
-                                    style: Theme.of(context).textTheme.bodyLarge
-                                        ?.copyWith(
-                                          fontSize: 14,
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.primary,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: height * 0.014),
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    // ignore: deprecated_member_use
-                                    color: Theme.of(
-                                      context,
-                                      // ignore: deprecated_member_use
-                                    ).colorScheme.secondary.withOpacity(0.3),
-                                    width: 1.5,
-                                  ),
-                                ),
-                                child: TextFormField(
-                                  controller: _specialRequestsController,
-                                  maxLines: 3,
-                                  decoration: InputDecoration(
-                                    hintText:
-                                        'Any special requirements or requests...',
-                                    border: InputBorder.none,
-                                    contentPadding: EdgeInsets.all(
-                                      width * 0.02,
-                                    ),
-                                    hintStyle: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
-                                        ?.copyWith(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.secondary,
-                                        ),
-                                  ),
-                                  onChanged: (value) {
-                                    ref
-                                        .read(eventBookingProvider.notifier)
-                                        .setSpecialRequests(value);
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: height * 0.03),
-                        Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            // ignore: deprecated_member_use
-                            color: colorScheme.secondaryFixed.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                // ignore: deprecated_member_use
-                                color: colorScheme.primary.withOpacity(0.3),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: ElevatedButton(
-                            onPressed: () => _submitBooking(height, width),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent,
-                              padding: EdgeInsets.symmetric(
-                                vertical: height * 0.013,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(Icons.send, color: colorScheme.onPrimary),
-                                SizedBox(width: width * 0.01),
-                                Text(
-                                  'Submit Booking Request',
-                                  style: Theme.of(context).textTheme.bodyLarge
-                                      ?.copyWith(
-                                        fontSize: 14,
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.category,
+                                      color: colorScheme.primary,
+                                      size: 24,
+                                    ),
+                                    SizedBox(width: width * 0.02),
+                                    Text(
+                                      'Select Event Category',
+                                      style: Theme.of(context).textTheme.labelLarge
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w400,
+                                            color: colorScheme.primary,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: height * 0.02),
+                                GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                        crossAxisSpacing: 12,
+                                        mainAxisSpacing: 12,
+                                        childAspectRatio: 0.9,
+                                      ),
+                                  itemCount: categories.length,
+                                  itemBuilder: (context, index) {
+                                    final category = categories[index];
+                                    return AnimatedContainer(
+                                      duration: Duration(milliseconds: 200),
+                                      child: CategoryCard(
+                                        icon: category.icon,
+                                        title: category.name,
+                                        description: category.description,
+                                        isSelected:
+                                            booking.categoryId == category.id,
+                                        onTap: () {
+                                          ref
+                                              .read(eventBookingProvider.notifier)
+                                              .setCategory(category.id);
+                                        },
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                      
+                          if (booking.categoryId.isNotEmpty) ...[
+                            SizedBox(height: height * 0.02),
+                            // Event Details Card
+                            Container(
+                              padding: EdgeInsets.all(height * 0.02),
+                              decoration: BoxDecoration(
+                                color: colorScheme.onSurface,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: colorScheme.outlineVariant),
+                                boxShadow: [
+                                  BoxShadow(
+                                    // ignore: deprecated_member_use
+                                    color: colorScheme.shadow.withOpacity(0.1),
+                                    blurRadius: 8,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildEventTypeSection(
+                                    booking.categoryId,
+                                    colorScheme,
+                                    width,
+                                    height,
+                                  ),
+                                  SizedBox(height: height * 0.02),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.access_time,
+                                        color: colorScheme.primary,
+                                        size: 20,
+                                      ),
+                                      SizedBox(width: width * 0.01),
+                                      Text(
+                                        'Select Date & Time',
+                                        style: Theme.of(context).textTheme.bodyLarge
+                                            ?.copyWith(
+                                              fontSize: 14,
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.primary,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: height * 0.014),
+                                  Container(
+                                    padding: EdgeInsets.all(height * 0.01),
+                                    decoration: BoxDecoration(
+                                      color: colorScheme.onSurface,
+                                      borderRadius: BorderRadius.circular(16),
+                                      // border: Border.all(
+                                      //   color: colorScheme.outlineVariant,
+                                      // ),
+                                    ),
+                                    child: DateTimePicker(
+                                      selectedDate: booking.selectedDate,
+                                      selectedTime: booking.selectedTime,
+                                      endingTime: booking.endingTime,
+                                      onDateChanged: (date) {
+                                        ref
+                                            .read(eventBookingProvider.notifier)
+                                            .setDate(date);
+                                      },
+                                      onTimeChanged: (time) {
+                                        ref
+                                            .read(eventBookingProvider.notifier)
+                                            .setTime(time);
+                                      },
+                                      onEndingTimeChanged: (endingTime) {
+                                        ref
+                                            .read(eventBookingProvider.notifier)
+                                            .setEndingTime(endingTime);
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(height: height * 0.024),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.people,
+                                        color: colorScheme.primaryContainer,
+                                        size: 20,
+                                      ),
+                                      SizedBox(width: width * 0.01),
+                                      Text(
+                                        'Number of Guests',
+                                        style: Theme.of(context).textTheme.bodyLarge
+                                            ?.copyWith(
+                                              fontSize: 14,
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.primaryContainer,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: height * 0.014),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
                                         color: Theme.of(
                                           context,
-                                        ).colorScheme.primary,
+                                        ).colorScheme.secondary.withOpacity(0.3),
+                                        width: 1.5,
                                       ),
-                                ),
-                              ],
+                                    ),
+                                    child: DropdownButtonFormField<int>(
+                                      initialValue: booking.numberOfGuests,
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        contentPadding: EdgeInsets.all(
+                                          width * 0.03,
+                                        ),
+                                      ),
+                                      items: List.generate(100, (index) => index + 1)
+                                          .map((int value) {
+                                            return DropdownMenuItem<int>(
+                                              value: value,
+                                              child: Text(
+                                                '$value ${value == 1 ? 'guest' : 'guests'}',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall
+                                                    ?.copyWith(
+                                                      color: Theme.of(
+                                                        context,
+                                                      ).colorScheme.secondary,
+                                                    ),
+                                              ),
+                                            );
+                                          })
+                                          .toList(),
+                                      onChanged: (value) {
+                                        ref
+                                            .read(eventBookingProvider.notifier)
+                                            .setGuests(value!);
+                                      },
+                                      validator: (value) {
+                                        if (value == null || value < 1) {
+                                          return 'Please select number of guests';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ),
-                      ],
-                      SizedBox(height: height * 0.1),
-                    ],
+                            SizedBox(height: height * 0.02),
+                            Container(
+                              padding: EdgeInsets.all(width * 0.024),
+                              decoration: BoxDecoration(
+                                color: colorScheme.surface,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  // ignore: deprecated_member_use
+                                  color: Theme.of(
+                                    context,
+                                    // ignore: deprecated_member_use
+                                  ).colorScheme.secondary.withOpacity(0.3),
+                                  width: 1.5,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    // ignore: deprecated_member_use
+                                    color: colorScheme.shadow.withOpacity(0.1),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  _buildAdditionalOptions(
+                                    booking.categoryId,
+                                    colorScheme,
+                                    textTheme,
+                                    height,
+                                    width,
+                                  ),
+                                  SizedBox(height: height * 0.025),
+                                  // Special Requests
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.note_add,
+                                        color: colorScheme.primary,
+                                        size: 20,
+                                      ),
+                                      SizedBox(width: width * 0.01),
+                                      Text(
+                                        'Special Requests',
+                                        style: Theme.of(context).textTheme.bodyLarge
+                                            ?.copyWith(
+                                              fontSize: 14,
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.primary,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: height * 0.014),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        // ignore: deprecated_member_use
+                                        color: Theme.of(
+                                          context,
+                                          // ignore: deprecated_member_use
+                                        ).colorScheme.secondary.withOpacity(0.3),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    child: TextFormField(
+                                      controller: _specialRequestsController,
+                                      maxLines: 3,
+                                      decoration: InputDecoration(
+                                        hintText:
+                                            'Any special requirements or requests...',
+                                        border: InputBorder.none,
+                                        contentPadding: EdgeInsets.all(
+                                          width * 0.02,
+                                        ),
+                                        hintStyle: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.secondary,
+                                            ),
+                                      ),
+                                      onChanged: (value) {
+                                        ref
+                                            .read(eventBookingProvider.notifier)
+                                            .setSpecialRequests(value);
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: height * 0.03),
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                // ignore: deprecated_member_use
+                                color: colorScheme.secondaryFixed.withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    // ignore: deprecated_member_use
+                                    color: colorScheme.primary.withOpacity(0.3),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: ElevatedButton(
+                                onPressed: () => _submitBooking(height, width),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: height * 0.013,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.send, color: colorScheme.onPrimary),
+                                    SizedBox(width: width * 0.01),
+                                    Text(
+                                      'Submit Booking Request',
+                                      style: Theme.of(context).textTheme.bodyLarge
+                                          ?.copyWith(
+                                            fontSize: 14,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                          SizedBox(height: height * 0.1),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),

@@ -751,7 +751,6 @@ class ProfileScreen extends ConsumerWidget {
                     child: ElevatedButton(
                       onPressed: () async {
                         Navigator.of(context).pop();
-                        // FIX: Use the correct method call
                         await ref.read(authNotifierProvider.notifier).signOut();
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(

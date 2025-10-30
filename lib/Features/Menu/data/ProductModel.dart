@@ -6,6 +6,7 @@ class Product {
   final double rating;
   final String? image;
   final String? description;
+  final bool? isAvailable;
 
   Product({
     required this.id,
@@ -14,6 +15,7 @@ class Product {
     required this.rating,
     this.image,
     this.description,
+    this.isAvailable,
   });
 
   factory Product.fromMap(Map<String, dynamic> map) {
@@ -24,6 +26,7 @@ class Product {
       rating: (map['rating'] ?? 0).toDouble(),
       image: map['image'],
       description: map['description'],
+      isAvailable:map['isAvailable']
     );
   }
    Map<String, dynamic> toMap() {
@@ -34,6 +37,7 @@ class Product {
       'rating': rating,
       'image': image,
       'description': description,
+      'isAvailable':isAvailable,
     };
   }
 }

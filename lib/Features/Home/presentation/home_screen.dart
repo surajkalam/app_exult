@@ -491,7 +491,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             items: bannerImages.map((imagePath) {
               return GestureDetector(
                 onTap: () {
-                  // context.push('/datastore');
+                  context.push('/datastore');
                   // if (imagePath.contains('combobanner')) {
                   //   context.push('/offer');
                   // }
@@ -522,39 +522,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ],
       ),
     );
-  }
-
-  // Widget vouchersection(double height, double width, List voucherlist) {
-  //   return SizedBox(
-  //     height: height * 0.17,
-  //     child: ListView.builder(
-  //       scrollDirection: Axis.horizontal,
-  //       itemCount: voucherlist.length,
-  //       itemBuilder: (context, voucherindex) => Container(
-  //         width: width * 0.7,
-  //         height: height * 0.12,
-  //         margin: EdgeInsets.only(right: 12),
-  //         decoration: BoxDecoration(
-  //           borderRadius: BorderRadius.circular(20),
-  //           color: Colors.white,
-  //           boxShadow: [
-  //             BoxShadow(
-  //               color: Colors.black12,
-  //               blurRadius: 4,
-  //               offset: Offset(0, 2),
-  //             ),
-  //           ],
-  //           image: DecorationImage(
-  //             image: AssetImage(voucherlist[voucherindex]),
-  //             fit: BoxFit.fill,
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  Future<String> getCategoriesname() async {
+  }  Future<String> getCategoriesname() async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     try {
       log('Fetching categories from items/Voucher/categories');
@@ -700,7 +668,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'Frozen',
       'Cooler',
       'Pastry',
-      'Special',
+      'House Specials',
     ];
     final icons = [
       Iconsax.coffee,
@@ -786,17 +754,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 ),
                               ),
                               SizedBox(height: 4),
-                              Text(
-                                categories[index],
-                                style: GoogleFonts.dmSans(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w500,
-                                  color: isHovered
-                                      ? colorscheme.onSecondary
-                                      : colorscheme.primary,
+                              SizedBox(
+                                width: width * 0.11,
+                                child: Text(
+                                  categories[index],
+                                  style: GoogleFonts.dmSans(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w500,
+                                    color: isHovered
+                                        ? colorscheme.onSecondary
+                                        : colorscheme.primary,
+                                  ),
+                                  maxLines: 2,
+                                  softWrap: true,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
                                 ),
-                                softWrap: true,
-                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),
@@ -822,7 +795,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   ) {
     return InkWell(
       onTap: () {
-        context.push('/datastore');
+        // context.push('/datastore');
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
