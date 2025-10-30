@@ -11,7 +11,6 @@ import 'package:go_router/go_router.dart';
 import '../../../Authentication/provider/current_user.dart';
 import '../../../core/core.dart';
 import '../provider/event_provider.dart';
-
 class EventBookingScreen extends ConsumerStatefulWidget {
   const EventBookingScreen({super.key});
 
@@ -607,39 +606,39 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(
-              '$label:',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildInfoRow(String label, String value) {
+  //   return Padding(
+  //     padding: const EdgeInsets.only(bottom: 8),
+  //     child: Row(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         SizedBox(
+  //           width: 100,
+  //           child: Text(
+  //             '$label:',
+  //             style: TextStyle(
+  //               fontWeight: FontWeight.w600,
+  //               color: Theme.of(context).colorScheme.onSurfaceVariant,
+  //             ),
+  //           ),
+  //         ),
+  //         Expanded(
+  //           child: Text(
+  //             value,
+  //             style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   String _getCategoryName(String categoryId) {
     final categories = ref.read(eventCategoriesProvider);
     return categories.firstWhere((cat) => cat.id == categoryId).name;
   }
 
-  Widget _buildStepIndicator(double height, double width) {
+  Widget _buildStepIndicator(double height, double width,ColorScheme colorscheme) {
     final booking = ref.watch(eventBookingProvider);
     int activeStep = booking.categoryId.isEmpty
         ? 0
@@ -653,11 +652,11 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
         padding: EdgeInsets.symmetric(horizontal: width * 0.04),
         child: Row(
           children: [
-            _buildStepDot(0, activeStep >= 0, 'Category', width, height),
+            _buildStepDot(0, activeStep >= 0, 'Category', width, height,colorscheme),
             Expanded(child: _buildStepLine(activeStep >= 1)),
-            _buildStepDot(1, activeStep >= 1, 'Details', width, height),
+            _buildStepDot(1, activeStep >= 1, 'Details', width, height,colorscheme),
             Expanded(child: _buildStepLine(activeStep >= 2)),
-            _buildStepDot(2, activeStep >= 2, 'Confirm', width, height),
+            _buildStepDot(2, activeStep >= 2, 'Confirm', width, height,colorscheme),
           ],
         ),
       ),
@@ -670,6 +669,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
     String label,
     double width,
     double height,
+    ColorScheme colorscheme
   ) {
     return Column(
       children: [
@@ -681,7 +681,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                 ? Theme.of(context).colorScheme.onSecondary
                 : Theme.of(context).colorScheme.primaryFixedDim,
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.grey),
+            border: Border.all(color: colorscheme.outlineVariant),
             boxShadow: isActive
                 ? [
                     BoxShadow(
@@ -717,7 +717,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
           style: TextStyle(
             fontSize: 12,
             color: isActive
-                ? Theme.of(context).colorScheme.primary
+                ? Theme.of(context).colorScheme.primaryContainer
                 : Theme.of(context).colorScheme.secondaryFixed,
             fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
           ),
@@ -757,7 +757,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
             children: [
               Icon(
                 Icons.event,
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.primaryContainer,
                 size: 20,
               ),
               SizedBox(width: 8),
@@ -765,7 +765,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                 'Event Type',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontSize: 14,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.primaryContainer,
                 ),
               ),
             ],
@@ -781,7 +781,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
               ),
             ),
             child: DropdownButtonFormField<String>(
-              value:
+              initialValue:
                   booking.eventType.isNotEmpty &&
                       options.contains(booking.eventType)
                   ? booking.eventType
@@ -803,8 +803,8 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                   color: Theme.of(
                     context,
                     // ignore: deprecated_member_use
-                  ).colorScheme.secondary.withOpacity(0.2),
-                  fontSize: 11,
+                  ).colorScheme.secondary,
+                  fontSize: 10,
                 ),
               ),
               dropdownColor: Theme.of(context).colorScheme.surface,
@@ -860,7 +860,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
           children: [
             Icon(
               Icons.add_circle_outline,
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.primaryContainer,
               size: 20,
             ),
             SizedBox(width: width * 0.01),
@@ -868,7 +868,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
               'Additional Services',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 fontSize: 14,
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.primaryContainer,
               ),
             ),
           ],
@@ -876,8 +876,9 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
         SizedBox(height: height * 0.01),
         Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerLow,
+            color: Theme.of(context).colorScheme.onSurface,
             borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant)
           ),
           child: Column(
             children: options.keys.map((key) {
@@ -898,7 +899,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                     _formatOptionName(key),
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontSize: 13,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Theme.of(context).colorScheme.primaryContainer,
                     ),
                   ),
                   value: booking.additionalOptions[key] ?? false,
@@ -908,7 +909,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                         .setAdditionalOption(key, value);
                   },
                   controlAffinity: ListTileControlAffinity.leading,
-                  activeColor: Theme.of(context).colorScheme.secondary,
+                  activeColor: Theme.of(context).colorScheme.primaryContainer,
                 ),
               );
             }).toList(),
@@ -992,7 +993,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
         ),
         child: Column(
           children: [
-            _buildStepIndicator(height, width),
+            _buildStepIndicator(height, width,colorScheme),
             Expanded(
               child: FadeTransition(
                 opacity: _fadeAnimation,
@@ -1031,7 +1032,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                                   children: [
                                     Icon(
                                       Icons.category,
-                                      color: colorScheme.primary,
+                                      color: colorScheme.primaryContainer,
                                       size: 24,
                                     ),
                                     SizedBox(width: width * 0.02),
@@ -1040,7 +1041,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                                       style: Theme.of(context).textTheme.labelLarge
                                           ?.copyWith(
                                             fontWeight: FontWeight.w400,
-                                            color: colorScheme.primary,
+                                            color: colorScheme.primaryContainer,
                                           ),
                                     ),
                                   ],
@@ -1112,7 +1113,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                                     children: [
                                       Icon(
                                         Icons.access_time,
-                                        color: colorScheme.primary,
+                                        color: colorScheme.primaryContainer,
                                         size: 20,
                                       ),
                                       SizedBox(width: width * 0.01),
@@ -1123,7 +1124,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                                               fontSize: 14,
                                               color: Theme.of(
                                                 context,
-                                              ).colorScheme.primary,
+                                              ).colorScheme.primaryContainer,
                                             ),
                                       ),
                                     ],
@@ -1290,18 +1291,25 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                                   SizedBox(height: height * 0.014),
                                   Container(
                                     decoration: BoxDecoration(
+                                      color:Theme.of(context).colorScheme.onSurface,
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
                                         // ignore: deprecated_member_use
                                         color: Theme.of(
                                           context,
                                           // ignore: deprecated_member_use
-                                        ).colorScheme.secondary.withOpacity(0.3),
+                                        ).colorScheme.outlineVariant,
                                         width: 1.5,
                                       ),
                                     ),
                                     child: TextFormField(
                                       controller: _specialRequestsController,
+                                      style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              color: Theme.of(context).colorScheme.primaryContainer
+                                            ),
                                       maxLines: 3,
                                       decoration: InputDecoration(
                                         hintText:
