@@ -34,12 +34,12 @@ final List offerlist = [
 ];
 // Pricing calculator (static methods - safe for build)
 class PricingCalculator {
-  // static const double deliveryCharge = 40.00;
-  // static const double serviceCharge = 10.87;
-  // static const double taxRate = 0.10; // 10%
-   static const double deliveryCharge = 00;
-  static const double serviceCharge = 00;
-  static const double taxRate = 0.0; // 10%
+  static const double deliveryCharge = 40.00;
+  static const double serviceCharge = 10.87;
+  static const double taxRate = 0.10; // 10%
+  //  static const double deliveryCharge = 00;
+  // static const double serviceCharge = 00;
+  // static const double taxRate = 0.0; // 10%
 
   // Calculate pricing without modifying providers (safe for build)
   static PricingResult calculatePricing({
@@ -76,7 +76,6 @@ class PricingResult {
   final double discountAmount;
   final double voucherDiscountPercentage;
   final double grandTotal;
-
   const PricingResult({
     required this.subtotal,
     required this.deliveryCharge,
@@ -86,24 +85,20 @@ class PricingResult {
     required this.voucherDiscountPercentage,
     required this.grandTotal,
   });
-
   @override
   String toString() {
     return 'PricingResult(subtotal: $subtotal, delivery: $deliveryCharge, service: $serviceCharge, tax: $tax, discount: $discountAmount, grandTotal: $grandTotal)';
   }
 }
-
 // Provider to calculate pricing based on cart and voucher (reactive)
 final cartPricingProvider = Provider<PricingResult>((ref) {
   final cartState = ref.watch(cartProvider);
   final voucherDiscount = ref.watch(voucherDiscountProvider);
-  
   return cartState.when(
     data: (items) {
       final subtotal = items.fold(0.0, (sum, item) {
         return sum + (item['price'] * (item['quantity'] ?? 1));
       });
-      
       return PricingCalculator.calculatePricing(
         subtotal: subtotal,
         voucherDiscountPercentage: voucherDiscount,

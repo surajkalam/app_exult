@@ -120,15 +120,14 @@ class _CategoryCardState extends State<CategoryCard>
                 boxShadow: [
                   if (widget.isSelected)
                     BoxShadow(
-                      color: _getCategoryColor().withValues(alpha: 0.1),
+                      color: _getCategoryColor().withValues(alpha: 0.01),
                       blurRadius: 20,
-                      spreadRadius: 2,
                       offset: const Offset(0, 5),
                     ),
                   BoxShadow(
-                    color: colorScheme.shadow.withValues(alpha:0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 3),
+                    color: colorScheme.outlineVariant,
+                    blurRadius: 4,
+                    offset:Offset(0, 3),
                   ),
                 ],
               ),

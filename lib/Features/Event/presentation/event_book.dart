@@ -1,7 +1,5 @@
 // screens/event_booking_screen.dart
 import 'dart:developer';
-
-
 import 'package:coffee_exult_app/Features/Event/provider/user_details.dart';
 import 'package:coffee_exult_app/Features/Event/widget/card_widget.dart';
 import 'package:flutter/material.dart';
@@ -1016,12 +1014,13 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                             decoration: BoxDecoration(
                               color: colorScheme.onSurface,
                               borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color:colorScheme.outlineVariant),
                               boxShadow: [
                                 BoxShadow(
                                   // ignore: deprecated_member_use
                                   color: colorScheme.shadow,
-                                  blurRadius: 8,
-                                  offset:Offset(0, 2),
+                                  blurRadius: 4,
+                                  offset:Offset(2, 2),
                                 ),
                               ],
                             ),
@@ -1080,7 +1079,6 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                               ],
                             ),
                           ),
-                      
                           if (booking.categoryId.isNotEmpty) ...[
                             SizedBox(height: height * 0.02),
                             // Event Details Card
@@ -1188,6 +1186,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                                       border: Border.all(
                                         color: Theme.of(
                                           context,
+                                        // ignore: deprecated_member_use
                                         ).colorScheme.secondary.withOpacity(0.3),
                                         width: 1.5,
                                       ),
