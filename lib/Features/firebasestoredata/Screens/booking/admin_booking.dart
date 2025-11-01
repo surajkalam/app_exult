@@ -13,7 +13,7 @@ class AdminBookingsScreen extends ConsumerStatefulWidget {
 
 class _AdminBookingsScreenState extends ConsumerState<AdminBookingsScreen> {
   final Map<String, String> _predefinedResponses = {
-    'approved': 'We\’re excited to host your event at Exult Coffee Shop! Our team will be in touch shortly to confirm the details and discuss any special arrangements you may need.',
+    'approved': 'We\re excited to host your event at Exult Coffee Shop! Our team will be in touch shortly to confirm the details and discuss any special arrangements you may need.',
     'rejected_time': 'We apologize, but the requested time slot is unfortunately unavailable. We\'d be happy to suggest alternative dates/times that work for you.',
     'rejected_capacity': 'Due to space constraints, we\'re unable to accommodate the number of guests for this event type. We can discuss alternative options.',
     'rejected_venue': 'This event type requires special arrangements that we\'re currently unable to provide at our venue.',
@@ -25,7 +25,7 @@ class _AdminBookingsScreenState extends ConsumerState<AdminBookingsScreen> {
 Widget build(BuildContext context) {
   final bookings = ref.watch(filteredBookingsProvider);
   final stats = ref.watch(bookingStatsProvider);
-  final filter = ref.watch(bookingFilterProvider);
+  // final filter = ref.watch(bookingFilterProvider);
 
   return Scaffold(
     appBar: AppBar(
@@ -444,7 +444,7 @@ Widget build(BuildContext context) {
     
     // Pre-fill with appropriate response
     final bookingDetails = booking['bookingDetails'] ?? {};
-    final eventType = bookingDetails['eventType'] ?? 'event';
+    // final eventType = bookingDetails['eventType'] ?? 'event';
     
     if (action == 'approved') {
       controller.text = _predefinedResponses['approved']!;

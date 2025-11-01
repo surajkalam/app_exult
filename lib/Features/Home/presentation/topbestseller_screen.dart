@@ -11,26 +11,30 @@ class TopBestsellersScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final topSellersAsync = ref.watch(topSellersStreamProvider);
     final lastMonthName = ref.watch(lastMonthNameProvider);
+    //  final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Top 10 Bestsellers - $lastMonthName'), // Show last month
+        title: Text('Top 10 Bestsellers - $lastMonthName'),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon:  Icon(Icons.refresh),
             onPressed: () => ref.refresh(topSellersProvider),
           ),
         ],
       ),
       body: topSellersAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () =>Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error, size: 64, color: Colors.red),
-              const SizedBox(height: 16),
+               Icon(Icons.error, size: 64, color: Colors.red),
+               SizedBox(height: height*0.018),
               Text(
                 'Error loading data',
                 style: TextStyle(fontSize: 18, color: Colors.grey[600]),
@@ -40,7 +44,7 @@ class TopBestsellersScreen extends ConsumerWidget {
                 style: TextStyle(fontSize: 12, color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => ref.refresh(topSellersProvider),
                 child: Text('Retry'),
@@ -70,19 +74,17 @@ class TopBestsellersScreen extends ConsumerWidget {
               ),
             );
           }
-
           return Column(
             children: [
-              // Month info header
               Container(
                 width: double.infinity,
                 margin: EdgeInsets.all(16),
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor.withOpacity(0.1),
+                  color: colorScheme.primaryContainer.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: Theme.of(context).primaryColor.withOpacity(0.3),
+                    color:colorScheme.outlineVariant,
                   ),
                 ),
                 child: Column(
@@ -95,62 +97,57 @@ class TopBestsellersScreen extends ConsumerWidget {
                     SizedBox(height: 8),
                     Text(
                       'Top Performers',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).primaryColor,
+                      style: textTheme.titleMedium?.copyWith(
+                        color: colorScheme.primaryContainer,
                       ),
                     ),
                     Text(
                       'Based on $lastMonthName sales',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
+                      style: textTheme.labelMedium?.copyWith(
+                        color: colorScheme.secondary,
                       ),
                     ),
                   ],
                 ),
               ),
-              
               // Bestsellers list
               Expanded(
                 child: ListView.builder(
                   itemCount: sellers.length,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding:  EdgeInsets.symmetric(horizontal: 16),
                   itemBuilder: (context, index) {
                     final seller = sellers[index];
                     final rank = index + 1;
-
                     return Card(
-                      margin: const EdgeInsets.only(bottom: 12),
+                      margin:EdgeInsets.only(bottom: 12),
                       elevation: 2,
                       child: ListTile(
                         leading: _buildRankBadge(rank),
                         title: Text(
                           seller.userName,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
+                          style: textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.primaryContainer,
+                      ),
                         ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               '${seller.paymentCount} ${seller.paymentCount == 1 ? 'sale' : 'sales'}',
-                              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                              style: textTheme.bodySmall?.copyWith(
+                                color: colorScheme.primaryContainer.withValues(alpha: 0.5),
+                              ),
                             ),
                             Text(
                               '\$${seller.totalAmount.toStringAsFixed(2)}',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.green[700],
-                                fontWeight: FontWeight.bold,
+                            
+                              style: textTheme.bodyLarge?.copyWith(
+                                color: colorScheme.onSecondary,
                               ),
                             ),
                           ],
                         ),
-                        trailing: rank <= 3 
+                        trailing: rank <= 10 
                           ? Icon(
                               Icons.star,
                               color: _getRankColor(rank),
@@ -181,6 +178,24 @@ class TopBestsellersScreen extends ConsumerWidget {
         icon = Icons.emoji_events;
         break;
       case 3:
+        icon = Icons.emoji_events;
+      case 4:
+        icon = Icons.emoji_events;
+        break;
+      case 5:
+        icon = Icons.emoji_events;
+        break;
+      case 6:
+        icon = Icons.emoji_events;
+      case 7:
+        icon = Icons.emoji_events;
+        break;
+      case 8:
+        icon = Icons.emoji_events;
+        break;
+      case 9:
+        icon = Icons.emoji_events;
+      case 10:
         icon = Icons.emoji_events;
         break;
       default:
@@ -214,11 +229,25 @@ class TopBestsellersScreen extends ConsumerWidget {
       case 1:
         return Colors.amber; // Gold
       case 2:
-        return Colors.grey; // Silver
+        return Colors.amberAccent; // Silver
       case 3:
-        return Colors.brown; // Bronze
-      default:
+        return Colors.orangeAccent;
+      case 4:
+        return Colors.limeAccent; // Gold
+      case 5:
+        return Colors.deepOrangeAccent; // Silver
+      case 6:
+        return Colors.deepOrange;
+      case 7:
+        return Colors.orangeAccent; // Gold
+      case 8:
+        return Colors.orange; // Silver
+      case 9:
         return Colors.blue;
+      case 10:
+        return Colors.blueAccent;
+      default:
+        return Colors.purpleAccent;
     }
   }
 }

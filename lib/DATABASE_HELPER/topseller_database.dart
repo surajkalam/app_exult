@@ -50,7 +50,7 @@ class FirebaseSalesService {
           topSellers.add(
             UserSales(
               userId: userId,
-              userName: userData['name'] ?? 'Unknown',
+              userName: userData['userId'] ?? 'Unknown',
               paymentCount: salesData['paymentCount'],
               totalAmount: salesData['totalAmount'],
             ),

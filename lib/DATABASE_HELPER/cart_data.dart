@@ -32,7 +32,7 @@ class DatabaseHelper {
         quantity INTEGER,
         image TEXT,
         rating REAL,
-        added_at TEXT,
+        added_at TEXT
       )
     ''');
   }

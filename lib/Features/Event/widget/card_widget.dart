@@ -30,7 +30,7 @@ class _CategoryCardState extends State<CategoryCard>
   late Animation<Color?> _colorAnimation;
 
   static const Color primaryAccent = Color(0xFF6D4C41);
-  static const Color secondaryAccent = Color(0xFFD7CCC8);
+  // static const Color secondaryAccent = Color(0xFFD7CCC8);
   static const Color vibrantBlue = Color(0xFF60B5FF);
   static const Color vibrantPurple = Color(0xFFDB8DD0);
   static const Color vibrantGreen = Color(0xFF4CAF50);
