@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_exult_app/Authentication/provider/current_user.dart';
 
 import 'package:coffee_exult_app/core/core.dart';
-import 'package:coffee_exult_app/DATABASE_HELPER/cart_data.dart';
 import 'package:coffee_exult_app/Features/Cart/provider/cart_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -399,10 +398,8 @@ class CategoryItemsScreen extends ConsumerWidget {
         }
         return;
       }
-      //  log('true:$itemData[isAvailable]');
-      final userId = UserUtils.getUserIdentifier(user);
+
       final itemName = itemData['name'];
-      //  late final phoneNumber = user?.phoneNumber;
       final currentUser = ref.read(currentUserProvider);
       await FirebaseFirestore.instance
           .collection('users')
@@ -413,18 +410,7 @@ class CategoryItemsScreen extends ConsumerWidget {
             ...itemData,
             'quantity': FieldValue.increment(1),
             'addedAt': FieldValue.serverTimestamp(),
-            'userId': userId, // Store user ID for querying
           }, SetOptions(merge: true));
-
-      await DatabaseHelper.instance.insertCartItem({
-        'product_id': itemData['id'] ?? itemData['name'],
-        'name': itemData['name'],
-        'price': itemData['price'],
-        'quantity': 1,
-        'image': itemData['image'],
-        'rating': itemData['rating'],
-        // 'isAvailable': itemData['isAvailable'] ? 1 : 0,
-      });
 
       if (context.mounted) {
         final ref = ProviderScope.containerOf(context);

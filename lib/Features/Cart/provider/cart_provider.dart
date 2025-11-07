@@ -1,41 +1,92 @@
-import 'package:coffee_exult_app/DATABASE_HELPER/cart_data.dart';
+import 'dart:developer';
+
+import 'package:coffee_exult_app/Services/firebase_cart_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
-final cartProvider = StateNotifierProvider<CartNotifier, AsyncValue<List<Map<String, dynamic>>>>((ref) {
-  return CartNotifier();
+final cartServiceProvider = Provider<FirebaseCartService>((ref) {
+  return FirebaseCartService();
 });
 
-class CartNotifier extends StateNotifier<AsyncValue<List<Map<String, dynamic>>>> {
-  CartNotifier() : super(const AsyncValue.loading()) {
+final cartProvider =
+    StateNotifierProvider<CartNotifier, AsyncValue<List<Map<String, dynamic>>>>(
+      (ref) {
+        final cartService = ref.watch(cartServiceProvider);
+        return CartNotifier(cartService);
+      },
+    );
+
+class CartNotifier
+    extends StateNotifier<AsyncValue<List<Map<String, dynamic>>>> {
+  final FirebaseCartService _cartService;
+
+  CartNotifier(this._cartService) : super(const AsyncValue.loading()) {
     _loadCartItems();
   }
 
+  // Future<void> _loadCartItems() async {
+  //   try {
+  //     final items = await _cartService.getCartItems();
+  //     state = AsyncValue.data(items);
+  //   } catch (e, stack) {
+  //     state = AsyncValue.error(e, stack);
+  //   }
+  // }
   Future<void> _loadCartItems() async {
     try {
-      final items = await DatabaseHelper.instance.getCartItems();
-      state = AsyncValue.data(items);
-    } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
-    }
-  }
+      state = const AsyncValue.loading();
 
-  Future<void> updateQuantity(int id, int newQuantity) async {
-    try {
-      if (newQuantity > 0) {
-        await DatabaseHelper.instance.updateCartItemQuantity(id, newQuantity);
-      } else {
-        await DatabaseHelper.instance.removeCartItem(id);
+      final items = await _cartService.getCartItems();
+
+      // Log the sanitized data for debugging
+      for (var item in items) {
+        log(
+          '✅ Sanitized Item: ${item['name']} - Price: ${item['price']} (${item['price'].runtimeType}) - Quantity: ${item['quantity']} (${item['quantity'].runtimeType})',
+        );
       }
-      await _loadCartItems();
+
+      state = AsyncValue.data(items);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
+  Future<void> updateQuantity(String itemId, int newQuantity) async {
+    try {
+      // First update the local state for immediate UI feedback
+      state.maybeWhen(
+        data: (items) {
+          final updatedItems = items.map((item) {
+            if (item['id'] == itemId || item['name'] == itemId) {
+              final updatedItem = Map<String, dynamic>.from(item);
+              updatedItem['quantity'] = newQuantity;
+              return updatedItem;
+            }
+            return item;
+          }).where((item) => (item['quantity'] as int) > 0).toList();
+
+          state = AsyncValue.data(updatedItems);
+        },
+        orElse: () {},
+      );
+
+      // Then update Firebase in the background
+      if (newQuantity > 0) {
+        await _cartService.updateQuantity(itemId, newQuantity);
+      } else {
+        await _cartService.removeItem(itemId);
+      }
+
+      // No reload needed - local state is already updated and Firebase is synced
     } catch (e, stack) {
+      // If Firebase update fails, reload to revert local changes
+      await _loadCartItems();
       state = AsyncValue.error(e, stack);
     }
   }
 
-  Future<void> removeItem(int id) async {
+  Future<void> removeItem(String itemId) async {
     try {
-      await DatabaseHelper.instance.removeCartItem(id);
+      await _cartService.removeItem(itemId);
       await _loadCartItems();
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
@@ -44,8 +95,7 @@ class CartNotifier extends StateNotifier<AsyncValue<List<Map<String, dynamic>>>>
 
   Future<void> checkout() async {
     try {
-      // Add your checkout logic here
-      await DatabaseHelper.instance.close();
+      await _cartService.clearCart();
       state = const AsyncValue.data([]);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
@@ -54,21 +104,19 @@ class CartNotifier extends StateNotifier<AsyncValue<List<Map<String, dynamic>>>>
 
   Future<void> removeAllItems() async {
     try {
-      // Check if cart is already empty
       final currentState = state;
       if (currentState is AsyncData && currentState.value!.isEmpty) {
-        return; // Cart is already empty, no action needed
+        return;
       }
-      
+
       state = const AsyncValue.loading();
-      await DatabaseHelper.instance.clearCart();
+      await _cartService.clearCart();
       state = const AsyncValue.data([]);
     } catch (e, stack) {
-      // If error occurs, try to reload current state
       try {
         await _loadCartItems();
       } catch (_) {
-        state = const AsyncValue.data([]); // Fallback to empty cart
+        state = const AsyncValue.data([]);
       }
     }
   }

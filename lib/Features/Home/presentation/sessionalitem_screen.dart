@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_exult_app/Authentication/provider/current_user.dart';
-import 'package:coffee_exult_app/DATABASE_HELPER/cart_data.dart';
 import 'package:coffee_exult_app/Features/Cart/provider/cart_provider.dart';
 
 import 'package:flutter/material.dart';
@@ -383,17 +382,7 @@ class SessionalItemsScreen extends ConsumerWidget {
             ...item.toMap(),
             'quantity': FieldValue.increment(1),
             'addedAt': FieldValue.serverTimestamp(),
-            'userId': userId,
           }, SetOptions(merge: true));
-
-      await DatabaseHelper.instance.insertCartItem({
-        'product_id': item.id ?? item.name,
-        'name': item.name,
-        'price': item.price,
-        'quantity': 1,
-        'image': item.image,
-        'rating': item.rating,
-      });
 
       if (context.mounted) {
         final ref = ProviderScope.containerOf(context);
