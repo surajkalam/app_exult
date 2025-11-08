@@ -9,8 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:lottie/lottie.dart';
 
 final selectedtableNumberProvider = StateProvider<int?>((ref) => null);
+final orderTypeProvider = StateProvider<String>((ref) => 'Coffee Hub');
+final customerNameProvider = StateProvider<String?>((ref) => null);
 
 class CartScreen extends ConsumerWidget {
   const CartScreen({super.key});
@@ -48,7 +51,7 @@ class CartScreen extends ConsumerWidget {
   ) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    int? _selectedNumber;
+    // int? _selectedNumber;
     return Scaffold(
       backgroundColor: colorScheme.onPrimary,
       appBar: AppBar(
@@ -125,6 +128,7 @@ class CartScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 20),
                     _buildOrderSummary(items),
+                    SizedBox(height: 20),
                     _buildchooseoption(colorScheme, textTheme),
                     SizedBox(height: 20),
                   ],
@@ -151,7 +155,7 @@ class CartScreen extends ConsumerWidget {
     // SAFE TYPE CONVERSIONS
     final quantity = _safeParseInt(item['quantity'] ?? 1);
     final basePrice = _safeParseDouble(item['price']);
-    final itemPrice = basePrice * quantity;
+    // final itemPrice = basePrice * quantity;
     final rating = _safeParseDouble(item['rating'] ?? 0.0);
 
     return InkWell(
@@ -362,53 +366,259 @@ class CartScreen extends ConsumerWidget {
     return Consumer(
       builder: (context, ref, child) {
         final selectedNumber = ref.watch(selectedtableNumberProvider);
+        final orderType = ref.watch(orderTypeProvider);
+        final customerName = ref.watch(customerNameProvider);
 
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DropdownButtonFormField<int>(
-              initialValue: selectedNumber,
-              decoration: InputDecoration(
-                labelText: 'Select a number',
-                border: OutlineInputBorder(),
-                filled: true,
-              ),
-              items: List.generate(10, (index) {
-                final number = index + 1;
-                return DropdownMenuItem<int>(
-                  value: number,
-                  child: Text('Number $number'),
-                );
-              }),
-              onChanged: (int? newValue) {
-                // Update the provider state
-                ref.read(selectedtableNumberProvider.notifier).state = newValue;
-              },
-              validator: (value) {
-                if (value == null) {
-                  return 'Please select a number';
-                }
-                return null;
-              },
+            // Order Type and Table Number in Single Row
+            Row(
+              children: [
+                // Order Type Dropdown
+                Expanded(
+                  flex: orderType == 'Coffee Hub' ? 3 : 1,
+                  child: DropdownButtonFormField<String>(
+                    initialValue: orderType,
+                    dropdownColor: colorscheme.onPrimary,
+                    decoration: InputDecoration(
+                      labelText: 'Order Type',
+                      labelStyle: texttheme.bodySmall?.copyWith(
+                        color: colorscheme.primaryContainer.withOpacity(0.5),
+                        fontSize: 11,
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(color: colorscheme.primary),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                    items: [
+                      DropdownMenuItem(
+                        value: 'Coffee Hub',
+                        child: Text(
+                          'At Coffee Hub',
+                          style: texttheme.bodySmall?.copyWith(
+                            color: colorscheme.primaryContainer.withOpacity(
+                              0.7,
+                            ),
+                            fontSize: 10,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Parcel',
+                        child: Text(
+                          'Parcel (Takeaway)',
+                          style: texttheme.bodySmall?.copyWith(
+                            color: colorscheme.primaryContainer.withOpacity(
+                              0.7,
+                            ),
+                            fontSize: 10,
+                          ),
+                        ),
+                      ),
+                    ],
+                    onChanged: (String? newValue) {
+                      ref.read(orderTypeProvider.notifier).state =
+                          newValue ?? 'Coffee Hub';
+                      // Clear table number when switching to parcel
+                      if (newValue == 'Parcel') {
+                        ref.read(selectedtableNumberProvider.notifier).state =
+                            null;
+                      }
+                    },
+                  ),
+                ),
+                SizedBox(width: 8),
+                // Table Number Dropdown (only show for Coffee Hub)
+                if (orderType == 'Coffee Hub')
+                  Expanded(
+                    flex: 2,
+                    child: DropdownButtonFormField<int>(
+                      initialValue: selectedNumber,
+                      dropdownColor: colorscheme.onPrimary,
+                      decoration: InputDecoration(
+                        labelText: 'Table Number',
+                        labelStyle: texttheme.bodySmall?.copyWith(
+                          color: colorscheme.primaryContainer.withOpacity(0.5),
+                          fontSize: 11,
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(color: colorscheme.primary),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                      items: List.generate(10, (index) {
+                        final number = index + 1;
+                        return DropdownMenuItem<int>(
+                          value: number,
+                          child: Text(
+                            'Table $number',
+                            style: texttheme.bodySmall?.copyWith(
+                              color: colorscheme.primaryContainer.withOpacity(
+                                0.7,
+                              ),
+                              fontSize: 12,
+                            ),
+                          ),
+                        );
+                      }),
+                      onChanged: (int? newValue) {
+                        ref.read(selectedtableNumberProvider.notifier).state =
+                            newValue;
+                      },
+                    ),
+                  ),
+              ],
             ),
 
-            SizedBox(height: 20),
+            SizedBox(height: 16),
 
-            // Show selected number below
-            if (selectedNumber != null)
+            // Show message for Parcel
+            if (orderType == 'Parcel')
               Container(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.green[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.green),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline, color: Colors.green, size: 16),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'You don\'t need a table number for parcel order',
+                        style: texttheme.bodySmall?.copyWith(
+                          color: Colors.green[700],
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+            // Customer Name Field (for Parcel orders)
+            if (orderType == 'Parcel') ...[
+              SizedBox(height: 16),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Your Name (for parcel)',
+                  labelStyle: texttheme.bodySmall?.copyWith(
+                    color: colorscheme.primaryContainer.withOpacity(0.5),
+                    fontSize: 11,
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide(color: colorscheme.primary),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  prefixIcon: Icon(Icons.person_outline, size: 20),
+                ),
+                onChanged: (value) {
+                  ref.read(customerNameProvider.notifier).state =
+                      value.isNotEmpty ? value : null;
+                },
+                validator: (value) {
+                  if (orderType == 'Parcel' &&
+                      (value == null || value.isEmpty)) {
+                    return 'Please enter your name for parcel order';
+                  }
+                  return null;
+                },
+              ),
+            ],
+
+            SizedBox(height: 16),
+
+            // Show selected options below
+            if (orderType == 'Coffee Hub' && selectedNumber != null)
+              Container(
+                padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: Colors.blue[50],
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.blue),
                 ),
-                child: Text(
-                  'You selected: $selectedNumber',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue[700],
-                  ),
+                child: Row(
+                  children: [
+                    Icon(Icons.table_restaurant, color: Colors.blue, size: 16),
+                    SizedBox(width: 8),
+                    Text(
+                      'Table $selectedNumber selected for Coffee Hub',
+                      style: texttheme.bodySmall?.copyWith(
+                        color: Colors.blue[700],
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+            if (orderType == 'Parcel' && customerName != null)
+              Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.orange[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.orange),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.local_shipping, color: Colors.orange, size: 16),
+                    SizedBox(width: 8),
+                    Text(
+                      'Parcel order for: $customerName',
+                      style: texttheme.bodySmall?.copyWith(
+                        color: Colors.orange[700],
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
                 ),
               ),
           ],
@@ -564,7 +774,41 @@ class CartScreen extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(ColorScheme colorscheme, TextTheme texttheme) {
-    return Center(child: Text('Cart is empty'));
+    return SizedBox(
+      height: double.infinity,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/Icons/Empty Cart.json',
+              height: 250,
+              width: 250,
+              fit: BoxFit.cover,
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Cart is empty',
+              style: GoogleFonts.dmSans(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: colorscheme.primary,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Browse our menu and add items to your cart',
+              style: GoogleFonts.dmSans(
+                fontSize: 14,
+                color: colorscheme.primaryContainer.withOpacity(0.5),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   // Build order summary
@@ -711,7 +955,7 @@ class CartScreen extends ConsumerWidget {
             elevation: 0,
           ),
           child: Text(
-            'PAY NOW ₹${total.toStringAsFixed(2)}',
+            'ORDER NOW ₹${total.toStringAsFixed(2)}',
             style: GoogleFonts.dmSans(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -723,6 +967,90 @@ class CartScreen extends ConsumerWidget {
   }
 
   // Proceed to checkout method
+  // void _proceedToCheckout(
+  //   BuildContext context,
+  //   List<Map<String, dynamic>> items,
+  //   double total,
+  //   WidgetRef ref,
+  // ) async {
+  //   final user = ref.read(currentUserProvider);
+
+  //   log('=== Cart Checkout Details ===');
+  //   log('Total Items: ${items.length}');
+  //   log('Total Amount: ₹${total.toStringAsFixed(2)}');
+
+  //   // Check if user is logged in
+  //   if (user == null || user.phoneNumber == null) {
+  //     log('User not authenticated with phone number');
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(
+  //         content: Text(
+  //           'Please login with your phone number before making a payment.',
+  //         ),
+  //         backgroundColor: Colors.red,
+  //       ),
+  //     );
+  //     context.push('/login-screen');
+  //     return;
+  //   }
+
+  //   final orderId = 'ORD_${DateTime.now().millisecondsSinceEpoch}';
+
+  //   try {
+  //     log('Initiating payment from cart...');
+
+  //     // Calculate total quantity from all cart items
+  //     final totalQuantity = items.fold(
+  //       0,
+  //       (int sum, item) => sum + ((item['quantity'] as num).toInt() ?? 1),
+  //     );
+
+  //     // Use the first item's name or create a generic name for cart order
+  //     final productName = items.isNotEmpty
+  //         ? items.first['name'] ?? 'Cart Items'
+  //         : 'Cart Order';
+
+  //     await ref
+  //         .read(paymentProvider.notifier)
+  //         .initiatePayment(
+  //           amount: total,
+  //           productName: 'Cart - $productName & ${items.length - 1} more',
+  //           quantity: totalQuantity,
+  //           orderId: orderId,
+  //         );
+
+  //     // Optional: Show success message
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text(
+  //           'Proceeding to payment with ${items.length} items',
+  //           style: GoogleFonts.dmSans(
+  //             fontSize: 12,
+  //             fontWeight: FontWeight.w400,
+  //           ),
+  //         ),
+  //         backgroundColor: const Color(0xFF36C07E),
+  //         behavior: SnackBarBehavior.floating,
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(12),
+  //         ),
+  //         margin: EdgeInsets.all(16),
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     log('Checkout error: $e');
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text('Checkout failed: ${e.toString()}'),
+  //         backgroundColor: Colors.red,
+  //         behavior: SnackBarBehavior.floating,
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(12),
+  //         ),
+  //       ),
+  //     );
+  //   }
+  // }
   void _proceedToCheckout(
     BuildContext context,
     List<Map<String, dynamic>> items,
@@ -730,10 +1058,42 @@ class CartScreen extends ConsumerWidget {
     WidgetRef ref,
   ) async {
     final user = ref.read(currentUserProvider);
+    final orderType = ref.read(orderTypeProvider);
+    final tableNumber = ref.read(selectedtableNumberProvider);
+    final customerName = ref.read(customerNameProvider);
 
     log('=== Cart Checkout Details ===');
     log('Total Items: ${items.length}');
     log('Total Amount: ₹${total.toStringAsFixed(2)}');
+    log('Order Type: $orderType');
+
+    if (orderType == 'Coffee Hub') {
+      log('Table Number: $tableNumber');
+    } else {
+      log('Customer Name: $customerName');
+    }
+
+    // Validation
+    if (orderType == 'Coffee Hub' && tableNumber == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please select a table number for Coffee Hub order'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    if (orderType == 'Parcel' &&
+        (customerName == null || customerName.isEmpty)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please enter your name for parcel order'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
 
     // Check if user is logged in
     if (user == null || user.phoneNumber == null) {
@@ -758,7 +1118,7 @@ class CartScreen extends ConsumerWidget {
       // Calculate total quantity from all cart items
       final totalQuantity = items.fold(
         0,
-        (int sum, item) => sum + ((item['quantity'] as num).toInt() ?? 1),
+        (int sum, item) => sum + ((item['quantity'] as num).toInt()),
       );
 
       // Use the first item's name or create a generic name for cart order
@@ -766,20 +1126,31 @@ class CartScreen extends ConsumerWidget {
           ? items.first['name'] ?? 'Cart Items'
           : 'Cart Order';
 
+      // Create order description based on type
+      final orderDescription = orderType == 'Coffee Hub'
+          ? 'Table $tableNumber - $productName & ${items.length - 1} more'
+          : 'Parcel for $customerName - $productName & ${items.length - 1} more';
+
       await ref
           .read(paymentProvider.notifier)
           .initiatePayment(
             amount: total,
-            productName: 'Cart - $productName & ${items.length - 1} more',
+            productName: orderDescription,
             quantity: totalQuantity,
             orderId: orderId,
+            orderType: orderType,
+            customerName: customerName,
+            tableNumber: tableNumber,
+            cartItems: items,
           );
 
       // Optional: Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Proceeding to payment with ${items.length} items',
+            orderType == 'Coffee Hub'
+                ? 'Order placed for Table $tableNumber'
+                : 'Parcel order placed for $customerName',
             style: GoogleFonts.dmSans(
               fontSize: 12,
               fontWeight: FontWeight.w400,

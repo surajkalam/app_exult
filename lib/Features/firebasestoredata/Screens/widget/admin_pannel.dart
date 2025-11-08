@@ -2,6 +2,7 @@
 import 'package:coffee_exult_app/Features/firebasestoredata/Screens/Menus/item_store.dart';
 import 'package:coffee_exult_app/Features/firebasestoredata/Screens/booking/admin_booking.dart';
 import 'package:coffee_exult_app/Features/firebasestoredata/Screens/offer_data.dart';
+import 'package:coffee_exult_app/Features/firebasestoredata/Screens/orders_screen.dart';
 import 'package:coffee_exult_app/Features/firebasestoredata/Screens/voucher/voucher_storescreen.dart';
 import 'package:coffee_exult_app/Features/firebasestoredata/Screens/widget/admin_dashboard.dart';
 import 'package:coffee_exult_app/Features/firebasestoredata/provider/admin_provider.dart';
@@ -22,6 +23,7 @@ class _AdminPanelState extends ConsumerState<AdminPanel> {
     const OfferdataStoreScreen(),
     const VoucherStoreScreen(),
     const AdminBookingsScreen(),
+    AdminOrdersScreen(),
   ];
 
   @override

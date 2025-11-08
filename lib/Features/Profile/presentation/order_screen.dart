@@ -1,10 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../Provider/fetchpaymentdata.dart';
-
 
 class RecentOrdersScreen extends ConsumerWidget {
   const RecentOrdersScreen({super.key});
@@ -16,19 +14,22 @@ class RecentOrdersScreen extends ConsumerWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: Text(
           'Recent Orders',
-          style: textTheme.headlineSmall?.copyWith(
-            color: colorScheme.primary,
-            fontWeight: FontWeight.w600,
+          style: textTheme.titleSmall?.copyWith(
+            color: colorScheme.primaryContainer,
+            fontWeight: FontWeight.w400,
           ),
         ),
         backgroundColor: colorScheme.surface,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: colorScheme.primary),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: colorScheme.primary,
+            size: 16,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
@@ -52,7 +53,9 @@ class RecentOrdersScreen extends ConsumerWidget {
               const SizedBox(height: 16),
               Text(
                 'Error loading orders',
-                style: textTheme.titleMedium?.copyWith(color: colorScheme.error),
+                style: textTheme.titleMedium?.copyWith(
+                  color: colorScheme.error,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
@@ -72,7 +75,12 @@ class RecentOrdersScreen extends ConsumerWidget {
                 child: Column(
                   children: [
                     // Summary header
-                    _buildSummaryHeader(context, payments, colorScheme, textTheme),
+                    _buildSummaryHeader(
+                      context,
+                      payments,
+                      colorScheme,
+                      textTheme,
+                    ),
 
                     // Orders list
                     Expanded(
@@ -86,7 +94,7 @@ class RecentOrdersScreen extends ConsumerWidget {
                             payment,
                             index,
                             colorScheme,
-                            textTheme
+                            textTheme,
                           );
                         },
                       ),
@@ -106,10 +114,15 @@ class RecentOrdersScreen extends ConsumerWidget {
   ) {
     final totalAmount = payments.fold<double>(
       0.0,
-      (sum, payment) => sum + ((payment['amount'] ?? payment['totalPrice'] ?? 0.0) as num).toDouble()
+      (sum, payment) =>
+          sum +
+          ((payment['amount'] ?? payment['totalPrice'] ?? 0.0) as num)
+              .toDouble(),
     );
     final totalOrders = payments.length;
-    final completedOrders = payments.where((p) => (p['status'] ?? '') == 'completed').length;
+    final completedOrders = payments
+        .where((p) => (p['status'] ?? '') == 'completed')
+        .length;
 
     return Container(
       margin: EdgeInsets.all(16),
@@ -178,18 +191,20 @@ class RecentOrdersScreen extends ConsumerWidget {
     return Column(
       children: [
         Icon(icon, color: color, size: 24),
-        SizedBox(height: 8),
+        SizedBox(height: 10),
         Text(
           value,
-          style: textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
+          style: textTheme.bodySmall?.copyWith(
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
             color: color,
           ),
         ),
         Text(
           label,
           style: textTheme.bodySmall?.copyWith(
-            color: color.withOpacity(0.7),
+            fontSize: 10,
+            color: color.withValues(alpha: 0.7),
           ),
           textAlign: TextAlign.center,
         ),
@@ -226,29 +241,30 @@ class RecentOrdersScreen extends ConsumerWidget {
     final productName = payment['productName'] ?? 'Unknown Product';
     final quantity = (payment['quantity'] ?? 1) as int;
     final price = ((payment['price'] ?? 0.0) as num).toDouble();
-    final totalPrice = ((payment['amount'] ?? payment['totalPrice'] ?? 0.0) as num).toDouble();
+    final totalPrice =
+        ((payment['amount'] ?? payment['totalPrice'] ?? 0.0) as num).toDouble();
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16.0),
       decoration: BoxDecoration(
-        color: colorScheme.surface,
+        color: colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(16),
+
         boxShadow: [
           BoxShadow(
-            color: colorScheme.shadow.withOpacity(0.1),
+            color: colorScheme.shadow.withValues(alpha: 0.1),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
-        border: Border.all(
-          color: colorScheme.outline.withOpacity(0.1),
-        ),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: () => _showOrderDetails(context, payment, colorScheme, textTheme),
+          onTap: () =>
+              _showOrderDetails(context, payment, colorScheme, textTheme),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -281,10 +297,11 @@ class RecentOrdersScreen extends ConsumerWidget {
                           Text(
                             productName,
                             style: textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: colorScheme.onSurface,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12,
+                              color: colorScheme.primaryContainer,
                             ),
-                            maxLines: 1,
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                           SizedBox(height: 4),
@@ -293,13 +310,15 @@ class RecentOrdersScreen extends ConsumerWidget {
                               Icon(
                                 Icons.access_time,
                                 size: 14,
-                                color: colorScheme.onSurfaceVariant,
+                                color: colorScheme.primaryContainer,
                               ),
                               SizedBox(width: 4),
                               Text(
-                                DateFormat('MMM dd, yyyy • hh:mm a').format(completedAt),
+                                DateFormat(
+                                  'MMM dd, yyyy • hh:mm a',
+                                ).format(completedAt),
                                 style: textTheme.bodySmall?.copyWith(
-                                  color: colorScheme.onSurfaceVariant,
+                                  color: colorScheme.primaryContainer,
                                 ),
                               ),
                             ],
@@ -307,44 +326,111 @@ class RecentOrdersScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
-
                     // Status badge
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: statusColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: statusColor.withOpacity(0.3)),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            isCompleted ? Icons.check_circle : Icons.pending,
-                            size: 12,
-                            color: statusColor,
-                          ),
-                          SizedBox(width: 4),
-                          Text(
-                            status.toUpperCase(),
-                            style: textTheme.labelSmall?.copyWith(
-                              color: statusColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    // Container(
+                    //   padding: EdgeInsets.symmetric(
+                    //     horizontal: 08,
+                    //     vertical: 4,
+                    //   ),
+                    //   decoration: BoxDecoration(
+                    //     color: statusColor.withOpacity(0.1),
+                    //     borderRadius: BorderRadius.circular(20),
+                    //     border: Border.all(color: statusColor.withOpacity(0.3)),
+                    //   ),
+                    //   child: Row(
+                    //     mainAxisSize: MainAxisSize.min,
+                    //     children: [
+                    //       Icon(
+                    //         isCompleted ? Icons.check_circle : Icons.pending,
+                    //         size: 12,
+                    //         color: statusColor,
+                    //       ),
+                    //       SizedBox(width: 4),
+                    //       Text(
+                    //         status.toUpperCase(),
+                    //         style: textTheme.labelSmall?.copyWith(
+                    //           color: statusColor,
+                    //           fontWeight: FontWeight.bold,
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                   ],
                 ),
 
-                SizedBox(height: 16),
+                SizedBox(height: 08),
+
+                // Admin response section
+                if (payment['adminResponseMessage'] != null || payment['adminResponseTag'] != null) ...[
+                  Container(
+                    padding: EdgeInsets.all(12),
+                    margin: EdgeInsets.only(bottom: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.blue[50],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.blue[200]!),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.admin_panel_settings,
+                              size: 16,
+                              color: Colors.blue[700],
+                            ),
+                            SizedBox(width: 6),
+                            Text(
+                              'Admin Response',
+                              style: textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.blue[700],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (payment['adminResponseTag'] != null) ...[
+                          SizedBox(height: 6),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: _getAdminTagColor(payment['adminResponseTag']).withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: _getAdminTagColor(payment['adminResponseTag'])),
+                            ),
+                            child: Text(
+                              payment['adminResponseTag'].toUpperCase(),
+                              style: textTheme.labelSmall?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: _getAdminTagColor(payment['adminResponseTag']),
+                                fontSize: 10,
+                              ),
+                            ),
+                          ),
+                        ],
+                        if (payment['adminResponseMessage'] != null) ...[
+                          SizedBox(height: 6),
+                          Text(
+                            payment['adminResponseMessage'],
+                            style: textTheme.bodySmall?.copyWith(
+                              color: Colors.blue[800],
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
 
                 // Order details
                 Container(
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: colorScheme.surfaceVariant.withOpacity(0.3),
+                    color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
@@ -359,13 +445,13 @@ class RecentOrdersScreen extends ConsumerWidget {
                             textTheme,
                             colorScheme,
                           ),
-                          _buildDetailItem(
-                            'Unit Price',
-                            '\$${price.toStringAsFixed(2)}',
-                            Icons.attach_money,
-                            textTheme,
-                            colorScheme,
-                          ),
+                          // _buildDetailItem(
+                          //   'Unit Price',
+                          //   '\$${price.toStringAsFixed(2)}',
+                          //   Icons.attach_money,
+                          //   textTheme,
+                          //   colorScheme,
+                          // ),
                           _buildDetailItem(
                             'Total',
                             '\$${totalPrice.toStringAsFixed(2)}',
@@ -378,15 +464,26 @@ class RecentOrdersScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                SizedBox(height: 12),
+                SizedBox(height: 08),
                 // Action buttons
                 Row(
                   children: [
                     Expanded(
                       child: OutlinedButton.icon(
-                        onPressed: () => _showOrderDetails(context, payment, colorScheme, textTheme),
+                        onPressed: () => _showOrderDetails(
+                          context,
+                          payment,
+                          colorScheme,
+                          textTheme,
+                        ),
                         icon: Icon(Icons.visibility, size: 16),
-                        label: Text('View Details'),
+                        label: Text(
+                          'Details',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: colorScheme.primary,
                           side: BorderSide(color: colorScheme.primary),
@@ -399,11 +496,21 @@ class RecentOrdersScreen extends ConsumerWidget {
                     SizedBox(width: 12),
                     Expanded(
                       child: ElevatedButton.icon(
-                        onPressed: isCompleted ? () => _reorderItem(context, payment) : null,
+                        onPressed: isCompleted
+                            ? () => _reorderItem(context, payment)
+                            : null,
                         icon: Icon(Icons.refresh, size: 16),
-                        label: Text('Reorder'),
+                        label: Text(
+                          'Reorder',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: isCompleted ? colorScheme.primary : colorScheme.outline,
+                          backgroundColor: isCompleted
+                              ? colorScheme.primary
+                              : colorScheme.outline,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -431,18 +538,20 @@ class RecentOrdersScreen extends ConsumerWidget {
     return Column(
       children: [
         Icon(icon, size: 16, color: colorScheme.secondaryFixed),
-        SizedBox(height: 4),
+        SizedBox(height: 8),
         Text(
           value,
           style: textTheme.labelMedium?.copyWith(
             fontWeight: FontWeight.bold,
-            color: colorScheme.onSurface,
+            color: colorScheme.primaryContainer,
           ),
         ),
         Text(
           label,
           style: textTheme.labelSmall?.copyWith(
-            color: colorScheme.primaryContainer,
+            color: colorScheme.secondary,
+            fontSize: 10,
+            fontWeight: FontWeight.normal,
           ),
         ),
       ],
@@ -477,7 +586,8 @@ class RecentOrdersScreen extends ConsumerWidget {
               'No Orders Yet',
               style: textTheme.headlineSmall?.copyWith(
                 color: colorScheme.primaryContainer,
-                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
               ),
             ),
             SizedBox(height: 8),
@@ -486,6 +596,8 @@ class RecentOrdersScreen extends ConsumerWidget {
               textAlign: TextAlign.center,
               style: textTheme.bodyMedium?.copyWith(
                 color: colorScheme.primaryContainer,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
               ),
             ),
             SizedBox(height: 24),
@@ -532,7 +644,8 @@ class RecentOrdersScreen extends ConsumerWidget {
     final productName = payment['productName'] ?? 'Unknown Product';
     final quantity = (payment['quantity'] ?? 1) as int;
     final price = ((payment['price'] ?? 0.0) as num).toDouble();
-    final totalPrice = ((payment['amount'] ?? payment['totalPrice'] ?? 0.0) as num).toDouble();
+    final totalPrice =
+        ((payment['amount'] ?? payment['totalPrice'] ?? 0.0) as num).toDouble();
     final status = payment['status'] ?? 'completed';
 
     showModalBottomSheet(
@@ -566,7 +679,9 @@ class RecentOrdersScreen extends ConsumerWidget {
                   Text(
                     'Order Details',
                     style: textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                      color: colorScheme.primaryContainer,
                     ),
                   ),
                   Spacer(),
@@ -587,11 +702,23 @@ class RecentOrdersScreen extends ConsumerWidget {
                   children: [
                     _buildDetailRow('Product Name', productName),
                     _buildDetailRow('Quantity', '$quantity'),
-                    _buildDetailRow('Unit Price', '\$${price.toStringAsFixed(2)}'),
-                    _buildDetailRow('Total Amount', '\$${totalPrice.toStringAsFixed(2)}'),
+                    // _buildDetailRow(
+                    //   'Unit Price',
+                    //   '\$${price.toStringAsFixed(2)}',
+                    // ),
+                    _buildDetailRow(
+                      'Total Amount',
+                      '\$${totalPrice.toStringAsFixed(2)}',
+                    ),
                     _buildDetailRow('Status', status),
-                    _buildDetailRow('Order Date', DateFormat('MMMM dd, yyyy').format(completedAt)),
-                    _buildDetailRow('Order Time', DateFormat('hh:mm a').format(completedAt)),
+                    _buildDetailRow(
+                      'Order Date',
+                      DateFormat('MMMM dd, yyyy').format(completedAt),
+                    ),
+                    _buildDetailRow(
+                      'Order Time',
+                      DateFormat('hh:mm a').format(completedAt),
+                    ),
                     if (payment['orderId'] != null)
                       _buildDetailRow('Order ID', payment['orderId']),
                     if (payment['paymentId'] != null)
@@ -618,16 +745,24 @@ class RecentOrdersScreen extends ConsumerWidget {
               label,
               style: TextStyle(
                 fontWeight: FontWeight.w500,
+                fontSize: 12,
                 color: Colors.grey[600],
               ),
             ),
           ),
           Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-              ),
+            child: Row(
+              children: [
+                if (value == 'completed')
+                  Icon(Icons.check_rounded, color: Colors.green, size: 16),
+                if (value == 'completed') SizedBox(width: 4),
+                Text(
+                  value,
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 10),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
           ),
         ],
@@ -642,9 +777,7 @@ class RecentOrdersScreen extends ConsumerWidget {
         content: Text('$productName added to cart for reorder!'),
         backgroundColor: Colors.green,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -659,6 +792,22 @@ class RecentOrdersScreen extends ConsumerWidget {
         return Colors.red;
       default:
         return Colors.grey;
+    }
+  }
+
+  Color _getAdminTagColor(String tag) {
+    switch (tag.toLowerCase()) {
+      case 'approve':
+      case 'approved':
+        return Colors.green[700]!;
+      case 'wait':
+      case 'waiting':
+        return Colors.orange[700]!;
+      case 'reject':
+      case 'rejected':
+        return Colors.red[700]!;
+      default:
+        return Colors.blue[700]!;
     }
   }
 }

@@ -1,6 +1,7 @@
 // ignore: file_names
 import 'dart:developer';
 import 'package:coffee_exult_app/Authentication/provider/current_user.dart';
+import 'package:coffee_exult_app/Features/Profile/data/order_model.dart';
 import 'package:coffee_exult_app/Features/Profile/data/paymentorder_model.dart';
 import 'package:coffee_exult_app/Services/Razorpay_Service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -73,6 +74,10 @@ class PaymentNotifier extends StateNotifier<PaymentState> {
     required String productName,
     required int quantity,
     required String orderId,
+    String? orderType,
+    String? customerName,
+    int? tableNumber,
+    List<Map<String, dynamic>>? cartItems,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
 
@@ -84,6 +89,10 @@ class PaymentNotifier extends StateNotifier<PaymentState> {
       'orderId': orderId,
       'timestamp': DateTime.now(),
       'status': 'initiated',
+      'orderType': orderType,
+      'customerName': customerName,
+      'tableNumber': tableNumber,
+      'cartItems': cartItems,
     };
 
     try {
@@ -116,6 +125,37 @@ class PaymentNotifier extends StateNotifier<PaymentState> {
           'ORD_${DateTime.now().millisecondsSinceEpoch}';
       final now = DateTime.now();
 
+      // Create order items from cart items
+      final cartItems = _paymentData['cartItems'] as List<Map<String, dynamic>>?;
+      final orderItems = cartItems?.map((item) {
+        return OrderItem(
+          name: item['name'] ?? 'Unknown Item',
+          quantity: item['quantity'] ?? 1,
+          price: (item['price'] ?? 0.0).toDouble(),
+          totalPrice: ((item['price'] ?? 0.0) * (item['quantity'] ?? 1)).toDouble(),
+        );
+      }).toList() ?? [];
+
+      // Calculate totals
+      final subtotal = orderItems.fold(0.0, (sum, item) => sum + item.totalPrice);
+      final tax = subtotal * 0.10; // 10% tax
+      final totalAmount = subtotal + tax;
+
+      // Create complete order data
+      final orderData = OrderData(
+        orderId: orderId,
+        orderType: _paymentData['orderType'] ?? 'Coffee Hub',
+        customerName: _paymentData['customerName'],
+        tableNumber: _paymentData['tableNumber'],
+        items: orderItems,
+        subtotal: subtotal,
+        tax: tax,
+        totalAmount: totalAmount,
+        status: 'completed',
+        orderDate: now,
+        paymentId: response.paymentId ?? 'N/A',
+      );
+
       final completedPaymentData = {
         'amount': _paymentData['amount']?.toDouble() ?? 0.0,
         'productName':
@@ -131,6 +171,7 @@ class PaymentNotifier extends StateNotifier<PaymentState> {
             : now,
       };
 
+      await _saveOrderToFirebase(orderData);
       await _savePaymentToFirebase(completedPaymentData);
 
       state = state.copyWith(
@@ -146,6 +187,24 @@ class PaymentNotifier extends StateNotifier<PaymentState> {
         paymentSuccess: false,
       );
     }
+  }
+
+  Future<void> _saveOrderToFirebase(OrderData orderData) async {
+    final user = _ref.read(currentUserProvider);
+    if (user == null || user.phoneNumber == null) {
+      throw Exception('User not logged in or phone number missing');
+    }
+
+    final phoneNumber = user.phoneNumber!;
+
+    // Save to admin orders collection
+    await _firestore.collection('orders').doc(orderData.orderId).set({
+      ...orderData.toMap(),
+      'userPhone': phoneNumber,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+
+    log('Order details saved to Firebase orders collection successfully');
   }
 
   Future<void> _savePaymentToFirebase(

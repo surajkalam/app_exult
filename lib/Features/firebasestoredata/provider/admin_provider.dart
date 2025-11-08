@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum AdminTab {
   items,
+  orders,
   offers,
   vouchers,
   analytics

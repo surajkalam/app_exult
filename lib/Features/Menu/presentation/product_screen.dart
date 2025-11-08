@@ -26,15 +26,15 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    
-    // No need to check favorite status manually - reactive provider handles it
   }
 
   @override
   Widget build(BuildContext context) {
     final currentuser = ref.watch(currentUserProvider);
     // Watch reactive favorite status
-    final isFavorite = ref.watch(itemFavoriteStatusProvider(widget.product['name']));
+    final isFavorite = ref.watch(
+      itemFavoriteStatusProvider(widget.product['name']),
+    );
     final isAvailable = widget.product['isAvailable'] ?? '';
     log('isAvailable: $isAvailable');
     log('welcome menu description screen');
@@ -155,16 +155,16 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
 
             // Add to Cart Button
             SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-            _buildCheckoutButton(
-              context,
-              ref,
-              product,
-              quantity,
-              price,
-              finalPrice,
-              colorScheme,
-              textTheme,
-            ),
+            // _buildCheckoutButton(
+            //   context,
+            //   ref,
+            //   product,
+            //   quantity,
+            //   price,
+            //   finalPrice,
+            //   colorScheme,
+            //   textTheme,
+            // ),
           ],
         ),
       ),
@@ -238,7 +238,6 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     TextTheme texttheme,
   ) {
     final isAvailable = product['isAvailable'] ?? true;
-
     return Stack(
       children: [
         Container(
@@ -261,7 +260,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                 ? Image.network(
                     product['image'],
                     fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) => _buildImagePlaceholder(colorscheme),
+                    errorBuilder: (_, _, _) =>
+                        _buildImagePlaceholder(colorscheme),
                   )
                 : _buildImagePlaceholder(colorscheme),
           ),
@@ -272,7 +272,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: Colors.black.withOpacity(0.7),
+                color: Colors.black.withValues(alpha: 0.7),
               ),
               child: Center(
                 child: Container(
@@ -282,7 +282,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
+                        color: Colors.black.withValues(alpha: 0.3),
                         offset: Offset(0, 4),
                         blurRadius: 8,
                       ),
@@ -863,177 +863,177 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   }
 
   // Build checkout button
-  Widget _buildCheckoutButton(
-    BuildContext context,
-    WidgetRef ref,
-    Map<String, dynamic> product,
-    int quantity,
-    num price,
-    num finalPrice,
-    ColorScheme colorscheme,
-    TextTheme texttheme,
-  ) {
-    final isLoggedIn = ref.watch(isLoggedInProvider);
-    final isAvailable = product['isAvailable'] ?? true;
+  // Widget _buildCheckoutButton(
+  //   BuildContext context,
+  //   WidgetRef ref,
+  //   Map<String, dynamic> product,
+  //   int quantity,
+  //   num price,
+  //   num finalPrice,
+  //   ColorScheme colorscheme,
+  //   TextTheme texttheme,
+  // ) {
+  //   final isLoggedIn = ref.watch(isLoggedInProvider);
+  //   final isAvailable = product['isAvailable'] ?? true;
 
-    // Calculate final pricing
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: (isLoggedIn && isAvailable)
-            ? () {
-                final user = ref.read(currentUserProvider);
-                final subtotal = price * quantity;
-                final pricingResult = ref.watch(
-                  productPricingProvider(subtotal.toDouble()),
-                );
-                if (user == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Please log in before making a payment"),
-                      margin: EdgeInsets.all(16),
-                      behavior: SnackBarBehavior.floating,
-                      backgroundColor: Colors.red,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(12)),
-                      ),
-                    ),
-                  );
-                  return;
-                } else {
-                  _handleCheckout(
-                    context,
-                    ref,
-                    product,
-                    quantity,
-                    price,
-                    pricingResult.grandTotal, // Pass the correct grand total
-                    colorscheme,
-                    texttheme,
-                  );
-                }
-              }
-            : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isAvailable
-              ? colorscheme.onPrimaryFixedVariant
-              : Colors.grey,
-          foregroundColor: colorscheme.onSecondaryFixed,
-          padding: EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          elevation: (isLoggedIn && isAvailable) ? 4 : 0,
-          // ignore: deprecated_member_use
-          shadowColor: colorscheme.shadow.withOpacity(0.3),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              isAvailable ? Iconsax.shopping_cart : Icons.block,
-              size: 20,
-              color: colorscheme.onSecondaryFixed,
-            ),
-            SizedBox(width: 8),
-            Text(
-              isAvailable
-                  ? 'Proceed to Checkout ($quantity items) ₹${finalPrice.toStringAsFixed(2)}'
-                  : 'Product Not Available',
-              style: texttheme.bodySmall?.copyWith(
-                color: colorscheme.onSecondaryFixed,
-                fontSize: 10,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  //   // Calculate final pricing
+  //   return SizedBox(
+  //     width: double.infinity,
+  //     child: ElevatedButton(
+  //       onPressed: (isLoggedIn && isAvailable)
+  //           ? () {
+  //               final user = ref.read(currentUserProvider);
+  //               final subtotal = price * quantity;
+  //               final pricingResult = ref.watch(
+  //                 productPricingProvider(subtotal.toDouble()),
+  //               );
+  //               if (user == null) {
+  //                 ScaffoldMessenger.of(context).showSnackBar(
+  //                   const SnackBar(
+  //                     content: Text("Please log in before making a payment"),
+  //                     margin: EdgeInsets.all(16),
+  //                     behavior: SnackBarBehavior.floating,
+  //                     backgroundColor: Colors.red,
+  //                     shape: RoundedRectangleBorder(
+  //                       borderRadius: BorderRadius.all(Radius.circular(12)),
+  //                     ),
+  //                   ),
+  //                 );
+  //                 return;
+  //               } else {
+  //                 _handleCheckout(
+  //                   context,
+  //                   ref,
+  //                   product,
+  //                   quantity,
+  //                   price,
+  //                   pricingResult.grandTotal, // Pass the correct grand total
+  //                   colorscheme,
+  //                   texttheme,
+  //                 );
+  //               }
+  //             }
+  //           : null,
+  //       style: ElevatedButton.styleFrom(
+  //         backgroundColor: isAvailable
+  //             ? colorscheme.onPrimaryFixedVariant
+  //             : Colors.grey,
+  //         foregroundColor: colorscheme.onSecondaryFixed,
+  //         padding: EdgeInsets.symmetric(vertical: 16),
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(16),
+  //         ),
+  //         elevation: (isLoggedIn && isAvailable) ? 4 : 0,
+  //         // ignore: deprecated_member_use
+  //         shadowColor: colorscheme.shadow.withOpacity(0.3),
+  //       ),
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         children: [
+  //           Icon(
+  //             isAvailable ? Iconsax.shopping_cart : Icons.block,
+  //             size: 20,
+  //             color: colorscheme.onSecondaryFixed,
+  //           ),
+  //           SizedBox(width: 8),
+  //           Text(
+  //             isAvailable
+  //                 ? 'Proceed to Checkout ($quantity items) ₹${finalPrice.toStringAsFixed(2)}'
+  //                 : 'Product Not Available',
+  //             style: texttheme.bodySmall?.copyWith(
+  //               color: colorscheme.onSecondaryFixed,
+  //               fontSize: 10,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  void _handleCheckout(
-    BuildContext context,
-    WidgetRef ref,
-    Map<String, dynamic> product,
-    int quantity,
-    num price,
-    num finalPrice, // This is the old parameter - we'll replace it
-    ColorScheme colorscheme,
-    TextTheme texttheme,
-  ) async {
-    final user = ref.read(currentUserProvider);
-    final appliedVoucherId = ref.read(appliedVoucherIdProvider);
+  //   void _handleCheckout(
+  //     BuildContext context,
+  //     WidgetRef ref,
+  //     Map<String, dynamic> product,
+  //     int quantity,
+  //     num price,
+  //     num finalPrice, // This is the old parameter - we'll replace it
+  //     ColorScheme colorscheme,
+  //     TextTheme texttheme,
+  //   ) async {
+  //     final user = ref.read(currentUserProvider);
+  //     final appliedVoucherId = ref.read(appliedVoucherIdProvider);
 
-    // Calculate the current pricing using the provider
-    final subtotal = price * quantity;
-    final pricingResult = ref.read(productPricingProvider(subtotal.toDouble()));
+  //     // Calculate the current pricing using the provider
+  //     final subtotal = price * quantity;
+  //     final pricingResult = ref.read(productPricingProvider(subtotal.toDouble()));
 
-    log('User: ${user?.uid ?? "No user"}');
-    log('Phone: ${user?.phoneNumber ?? "N/A"}');
-    log('=== Checkout Details ===');
-    log('Product: ${product['name']}');
-    log('Quantity: $quantity');
-    log('Unit Price: ₹${price.toStringAsFixed(2)}');
-    log('Subtotal: ₹${pricingResult.subtotal.toStringAsFixed(2)}');
-    log('Delivery: ₹${pricingResult.deliveryCharge.toStringAsFixed(2)}');
-    log('Service: ₹${pricingResult.serviceCharge.toStringAsFixed(2)}');
-    log('Tax: ₹${pricingResult.tax.toStringAsFixed(2)}');
+  //     log('User: ${user?.uid ?? "No user"}');
+  //     log('Phone: ${user?.phoneNumber ?? "N/A"}');
+  //     log('=== Checkout Details ===');
+  //     log('Product: ${product['name']}');
+  //     log('Quantity: $quantity');
+  //     log('Unit Price: ₹${price.toStringAsFixed(2)}');
+  //     log('Subtotal: ₹${pricingResult.subtotal.toStringAsFixed(2)}');
+  //     log('Delivery: ₹${pricingResult.deliveryCharge.toStringAsFixed(2)}');
+  //     log('Service: ₹${pricingResult.serviceCharge.toStringAsFixed(2)}');
+  //     log('Tax: ₹${pricingResult.tax.toStringAsFixed(2)}');
 
-    if (pricingResult.voucherDiscountPercentage > 0) {
-      log(
-        'Discount: ${pricingResult.voucherDiscountPercentage}% (-₹${pricingResult.discountAmount.toStringAsFixed(2)})',
-      );
-    }
+  //     if (pricingResult.voucherDiscountPercentage > 0) {
+  //       log(
+  //         'Discount: ${pricingResult.voucherDiscountPercentage}% (-₹${pricingResult.discountAmount.toStringAsFixed(2)})',
+  //       );
+  //     }
 
-    log('Grand Total: ₹${pricingResult.grandTotal.toStringAsFixed(2)}');
+  //     log('Grand Total: ₹${pricingResult.grandTotal.toStringAsFixed(2)}');
 
-    if (appliedVoucherId != null) {
-      log('Applied Voucher: $appliedVoucherId');
-    }
+  //     if (appliedVoucherId != null) {
+  //       log('Applied Voucher: $appliedVoucherId');
+  //     }
 
-    if (user == null || user.phoneNumber == null) {
-      log('User not authenticated with phone number');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Please login with your phone number before making a payment.',
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-      context.push('/login-screen');
-      return;
-    }
+  //     if (user == null || user.phoneNumber == null) {
+  //       log('User not authenticated with phone number');
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(
+  //           content: Text(
+  //             'Please login with your phone number before making a payment.',
+  //           ),
+  //           backgroundColor: Colors.red,
+  //         ),
+  //       );
+  //       context.push('/login-screen');
+  //       return;
+  //     }
 
-    final orderId = 'ORD_${DateTime.now().millisecondsSinceEpoch}';
+  //     final orderId = 'ORD_${DateTime.now().millisecondsSinceEpoch}';
 
-    try {
-      log('Initiating payment...');
-      await ref
-          .read(paymentProvider.notifier)
-          .initiatePayment(
-            amount:
-                pricingResult.grandTotal, // Use pricing provider's grand total
-            productName: product['name'],
-            quantity: quantity,
-            orderId: orderId,
-          );
-    } catch (e) {
-      log('Payment initiation error: $e');
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Payment failed: ${e.toString()}'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      );
-    }
+  //     try {
+  //       log('Initiating payment...');
+  //       await ref
+  //           .read(paymentProvider.notifier)
+  //           .initiatePayment(
+  //             amount:
+  //                 pricingResult.grandTotal, // Use pricing provider's grand total
+  //             productName: product['name'],
+  //             quantity: quantity,
+  //             orderId: orderId,
+  //           );
+  //     } catch (e) {
+  //       log('Payment initiation error: $e');
+  //       // ignore: use_build_context_synchronously
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text('Payment failed: ${e.toString()}'),
+  //           backgroundColor: Colors.red,
+  //           behavior: SnackBarBehavior.floating,
+  //           shape: RoundedRectangleBorder(
+  //             borderRadius: BorderRadius.circular(12),
+  //           ),
+  //         ),
+  //       );
+  //     }
 
-    log('=======================');
-  }
+  //     log('=======================');
+  //   }
 }
 //  in featurefirestorestoredata/menus/items_store.dart every card having three dot on tap not available then update in database and show in feture /menu/presentation/product_screen.dart  their show batch not available if available show their 
