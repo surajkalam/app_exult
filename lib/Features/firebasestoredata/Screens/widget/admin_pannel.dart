@@ -75,7 +75,7 @@ class _AdminPanelState extends ConsumerState<AdminPanel> {
                           color: Colors.brown,
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 10),
                       const Text(
                         'Coffee Shop',
                         style: TextStyle(
@@ -91,7 +91,6 @@ class _AdminPanelState extends ConsumerState<AdminPanel> {
                     ],
                   ),
                 ),
-
                 // Navigation Items
                 _buildDrawerItem(
                   icon: Icons.dashboard,

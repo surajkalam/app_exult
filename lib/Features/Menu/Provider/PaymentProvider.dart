@@ -196,8 +196,26 @@ class PaymentNotifier extends StateNotifier<PaymentState> {
     }
 
     final phoneNumber = user.phoneNumber!;
+    final userId = phoneNumber; // Using phone number as userId like in bookings
 
-    // Save to admin orders collection
+    // Save to admin orders collection (like bookings structure)
+    await _firestore
+        .collection('admin')
+        .doc('orders')
+        .collection('allOrders')
+        .doc(orderData.orderId)
+        .set({
+          'orderId': orderData.orderId,
+          'userId': userId,
+          'userPhone': phoneNumber,
+          'orderDetails': orderData.toMap(),
+          'status': 'pending', // Like bookings
+          'createdAt': FieldValue.serverTimestamp(),
+          'adminResponse': '',
+          'priority': 'normal', // Can be customized based on order type
+        });
+
+    // Also save to the general orders collection for backward compatibility
     await _firestore.collection('orders').doc(orderData.orderId).set({
       ...orderData.toMap(),
       'userPhone': phoneNumber,
@@ -210,20 +228,13 @@ class PaymentNotifier extends StateNotifier<PaymentState> {
   Future<void> _savePaymentToFirebase(
     Map<String, dynamic> paymentDetails,
   ) async {
-    // final user = _auth.currentUser;
-    // if (user == null || user.phoneNumber == null) {
-    //   throw Exception('User not logged in');
-    // }
-  final user = _ref.read(currentUserProvider);
+    final user = _ref.read(currentUserProvider);
     if (user == null || user.phoneNumber == null) {
       throw Exception('User not logged in or phone number missing');
     }
 
-    final usernumber = FirebaseAuth.instance.currentUser;
-    late final phoneNumber = usernumber?.phoneNumber;
-    // final phoneNumber = user.phoneNumber!;
-    final userId =phoneNumber;
-    // final phoneNumber = user.phoneNumber;
+    final phoneNumber = user.phoneNumber!;
+    final userId = phoneNumber; // Using phone number as userId like in bookings
 
     // Reference to the user document
     final userDocRef = _firestore.collection('users').doc(userId);
@@ -238,6 +249,7 @@ class PaymentNotifier extends StateNotifier<PaymentState> {
         'lastLogin': FieldValue.serverTimestamp(),
       });
     }
+
     // Save payment under the user's payments subcollection
     await userDocRef.collection('payments').doc(paymentDetails['orderId']).set({
       ...paymentDetails,
@@ -245,12 +257,23 @@ class PaymentNotifier extends StateNotifier<PaymentState> {
       'userPhone': phoneNumber,
       'timestamp': FieldValue.serverTimestamp(),
     });
+
+    // Save to admin payments collection (like bookings structure)
     await _firestore
-        .collection('users')
-        .doc(phoneNumber)
-        .collection('payments')
+        .collection('admin')
+        .doc('payments')
+        .collection('allPayments')
         .doc(paymentDetails['orderId'])
-        .set(paymentDetails);
+        .set({
+          'paymentId': paymentDetails['orderId'],
+          'userId': userId,
+          'userPhone': phoneNumber,
+          'paymentDetails': paymentDetails,
+          'status': paymentDetails['status'] ?? 'completed',
+          'createdAt': FieldValue.serverTimestamp(),
+          'adminResponse': '',
+          'priority': 'normal',
+        });
 
     log('Payment details saved to Firebase successfully');
   }
