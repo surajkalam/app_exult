@@ -21,17 +21,17 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildWelcomeSection(),
-            
+
             const SizedBox(height: 32),
-            
+
             // Quick Actions Section
             _buildQuickActionsSection(ref, context),
-            
+
             const SizedBox(height: 32),
-            
+
             // Performance Metrics
             _buildPerformanceMetrics(),
-            
+
             const SizedBox(height: 20),
           ],
         ),
@@ -70,7 +70,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(Icons.coffee, color: Colors.white, size: 32),
@@ -92,7 +92,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
                       'Manage your coffee shop with ease',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                       ),
                     ),
                   ],
@@ -104,7 +104,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -114,10 +114,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
                 const SizedBox(width: 8),
                 Text(
                   '${_getCurrentDate()} • ${_getCurrentTime()}',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 14),
                 ),
               ],
             ),
@@ -142,13 +139,10 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
         const SizedBox(height: 8),
         Text(
           'Manage your coffee shop items and promotions',
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
+          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
         ),
         const SizedBox(height: 20),
-        
+
         GridView.count(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -218,11 +212,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -240,9 +230,24 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildMetricItem('Orders', '24', Icons.shopping_bag, Color(0xFF4CAF50)),
-              _buildMetricItem('Revenue', '\$286', Icons.attach_money, Color(0xFF2196F3)),
-              _buildMetricItem('Customers', '18', Icons.people, Color(0xFF9C27B0)),
+              _buildMetricItem(
+                'Orders',
+                '24',
+                Icons.shopping_bag,
+                Color(0xFF4CAF50),
+              ),
+              _buildMetricItem(
+                'Revenue',
+                '\$286',
+                Icons.attach_money,
+                Color(0xFF2196F3),
+              ),
+              _buildMetricItem(
+                'Customers',
+                '18',
+                Icons.people,
+                Color(0xFF9C27B0),
+              ),
             ],
           ),
         ],
@@ -250,7 +255,14 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
     );
   }
 
-  Widget _buildActionCard(String title, IconData icon, Color color, String description, IconData trailingIcon, VoidCallback onTap) {
+  Widget _buildActionCard(
+    String title,
+    IconData icon,
+    Color color,
+    String description,
+    IconData trailingIcon,
+    VoidCallback onTap,
+  ) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -258,7 +270,12 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          padding:  EdgeInsets.only(left: 14,right: 14,bottom: 6,top: 12), // Reduced padding
+          padding: EdgeInsets.only(
+            left: 14,
+            right: 14,
+            bottom: 6,
+            top: 12,
+          ), // Reduced padding
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min, // Added to prevent expansion
@@ -266,12 +283,12 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
               Container(
                 padding: const EdgeInsets.all(10), // Reduced padding
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(icon, size: 20, color: color), // Reduced icon size
               ),
-               SizedBox(height: 8), // Reduced spacing
+              SizedBox(height: 8), // Reduced spacing
               Text(
                 title,
                 style: TextStyle(
@@ -279,10 +296,10 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
                   fontWeight: FontWeight.bold,
                   color: Colors.grey[800],
                 ),
-                 maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-               SizedBox(height: 2),
+              SizedBox(height: 2),
               Expanded(
                 child: Text(
                   description,
@@ -317,13 +334,18 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
     );
   }
 
-  Widget _buildMetricItem(String label, String value, IconData icon, Color color) {
+  Widget _buildMetricItem(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Column(
       children: [
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(icon, size: 20, color: color),
@@ -337,13 +359,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
             color: color,
           ),
         ),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
-        ),
+        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
       ],
     );
   }
@@ -377,7 +393,9 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
             Text('Coming Soon'),
           ],
         ),
-        content: Text('Offer Cart feature will be available in the next update.'),
+        content: Text(
+          'Offer Cart feature will be available in the next update.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

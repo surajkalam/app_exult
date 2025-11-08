@@ -130,12 +130,12 @@ class RecentOrdersScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            colorScheme.primaryContainer.withOpacity(0.1),
-            colorScheme.secondaryContainer.withOpacity(0.1),
+            colorScheme.primaryContainer.withValues(alpha: 0.1),
+            colorScheme.secondaryContainer.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: colorScheme.outline.withOpacity(0.2)),
+        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
@@ -151,7 +151,7 @@ class RecentOrdersScreen extends ConsumerWidget {
           Container(
             width: 1,
             height: 40,
-            color: colorScheme.outline.withOpacity(0.3),
+            color: colorScheme.outline.withValues(alpha: 0.3),
           ),
           Expanded(
             child: _buildSummaryItem(
@@ -165,7 +165,7 @@ class RecentOrdersScreen extends ConsumerWidget {
           Container(
             width: 1,
             height: 40,
-            color: colorScheme.outline.withOpacity(0.3),
+            color: colorScheme.outline.withValues(alpha: 0.3),
           ),
           Expanded(
             child: _buildSummaryItem(
@@ -220,7 +220,7 @@ class RecentOrdersScreen extends ConsumerWidget {
     TextTheme textTheme,
   ) {
     final status = payment['status'] ?? 'completed';
-    final statusColor = _getStatusColor(status);
+    // final statusColor = _getStatusColor(status);
     final isCompleted = status.toLowerCase() == 'completed';
 
     // Parse completedAt from various possible formats
@@ -240,7 +240,7 @@ class RecentOrdersScreen extends ConsumerWidget {
 
     final productName = payment['productName'] ?? 'Unknown Product';
     final quantity = (payment['quantity'] ?? 1) as int;
-    final price = ((payment['price'] ?? 0.0) as num).toDouble();
+    // final price = ((payment['price'] ?? 0.0) as num).toDouble();
     final totalPrice =
         ((payment['amount'] ?? payment['totalPrice'] ?? 0.0) as num).toDouble();
 
@@ -278,7 +278,9 @@ class RecentOrdersScreen extends ConsumerWidget {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: colorScheme.primaryContainer.withOpacity(0.2),
+                        color: colorScheme.primaryContainer.withValues(
+                          alpha: 0.2,
+                        ),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
@@ -333,9 +335,9 @@ class RecentOrdersScreen extends ConsumerWidget {
                     //     vertical: 4,
                     //   ),
                     //   decoration: BoxDecoration(
-                    //     color: statusColor.withOpacity(0.1),
+                    //     color: statusColor.withValues(alpha:0.1),
                     //     borderRadius: BorderRadius.circular(20),
-                    //     border: Border.all(color: statusColor.withOpacity(0.3)),
+                    //     border: Border.all(color: statusColor.withValues(alpha:0.3)),
                     //   ),
                     //   child: Row(
                     //     mainAxisSize: MainAxisSize.min,
@@ -362,7 +364,8 @@ class RecentOrdersScreen extends ConsumerWidget {
                 SizedBox(height: 08),
 
                 // Admin response section
-                if (payment['adminResponseMessage'] != null || payment['adminResponseTag'] != null) ...[
+                if (payment['adminResponseMessage'] != null ||
+                    payment['adminResponseTag'] != null) ...[
                   Container(
                     padding: EdgeInsets.all(12),
                     margin: EdgeInsets.only(bottom: 8),
@@ -395,17 +398,28 @@ class RecentOrdersScreen extends ConsumerWidget {
                         if (payment['adminResponseTag'] != null) ...[
                           SizedBox(height: 6),
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
-                              color: _getAdminTagColor(payment['adminResponseTag']).withOpacity(0.2),
+                              color: _getAdminTagColor(
+                                payment['adminResponseTag'],
+                              ).withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: _getAdminTagColor(payment['adminResponseTag'])),
+                              border: Border.all(
+                                color: _getAdminTagColor(
+                                  payment['adminResponseTag'],
+                                ),
+                              ),
                             ),
                             child: Text(
                               payment['adminResponseTag'].toUpperCase(),
                               style: textTheme.labelSmall?.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: _getAdminTagColor(payment['adminResponseTag']),
+                                color: _getAdminTagColor(
+                                  payment['adminResponseTag'],
+                                ),
                                 fontSize: 10,
                               ),
                             ),
@@ -430,7 +444,9 @@ class RecentOrdersScreen extends ConsumerWidget {
                 Container(
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                    color: colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.3,
+                    ),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
@@ -572,7 +588,7 @@ class RecentOrdersScreen extends ConsumerWidget {
             Container(
               padding: EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: colorScheme.primaryContainer.withOpacity(0.1),
+                color: colorScheme.primaryContainer.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -643,7 +659,7 @@ class RecentOrdersScreen extends ConsumerWidget {
 
     final productName = payment['productName'] ?? 'Unknown Product';
     final quantity = (payment['quantity'] ?? 1) as int;
-    final price = ((payment['price'] ?? 0.0) as num).toDouble();
+    // final price = ((payment['price'] ?? 0.0) as num).toDouble();
     final totalPrice =
         ((payment['amount'] ?? payment['totalPrice'] ?? 0.0) as num).toDouble();
     final status = payment['status'] ?? 'completed';
@@ -782,18 +798,18 @@ class RecentOrdersScreen extends ConsumerWidget {
     );
   }
 
-  Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'completed':
-        return Colors.green;
-      case 'pending':
-        return Colors.orange;
-      case 'cancelled':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
-  }
+  // Color _getStatusColor(String status) {
+  //   switch (status.toLowerCase()) {
+  //     case 'completed':
+  //       return Colors.green;
+  //     case 'pending':
+  //       return Colors.orange;
+  //     case 'cancelled':
+  //       return Colors.red;
+  //     default:
+  //       return Colors.grey;
+  //   }
+  // }
 
   Color _getAdminTagColor(String tag) {
     switch (tag.toLowerCase()) {

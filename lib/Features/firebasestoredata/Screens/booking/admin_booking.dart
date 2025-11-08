@@ -8,72 +8,75 @@ class AdminBookingsScreen extends ConsumerStatefulWidget {
   const AdminBookingsScreen({super.key});
 
   @override
-  ConsumerState<AdminBookingsScreen> createState() => _AdminBookingsScreenState();
+  ConsumerState<AdminBookingsScreen> createState() =>
+      _AdminBookingsScreenState();
 }
 
 class _AdminBookingsScreenState extends ConsumerState<AdminBookingsScreen> {
   final Map<String, String> _predefinedResponses = {
-    'approved': 'We\re excited to host your event at Exult Coffee Shop! Our team will be in touch shortly to confirm the details and discuss any special arrangements you may need.',
-    'rejected_time': 'We apologize, but the requested time slot is unfortunately unavailable. We\'d be happy to suggest alternative dates/times that work for you.',
-    'rejected_capacity': 'Due to space constraints, we\'re unable to accommodate the number of guests for this event type. We can discuss alternative options.',
-    'rejected_venue': 'This event type requires special arrangements that we\'re currently unable to provide at our venue.',
+    'approved':
+        'We\re excited to host your event at Exult Coffee Shop! Our team will be in touch shortly to confirm the details and discuss any special arrangements you may need.',
+    'rejected_time':
+        'We apologize, but the requested time slot is unfortunately unavailable. We\'d be happy to suggest alternative dates/times that work for you.',
+    'rejected_capacity':
+        'Due to space constraints, we\'re unable to accommodate the number of guests for this event type. We can discuss alternative options.',
+    'rejected_venue':
+        'This event type requires special arrangements that we\'re currently unable to provide at our venue.',
     'custom': '',
   };
 
- // features/Admin/presentation/admin_bookings_screen.dart - Update the build method
-@override
-Widget build(BuildContext context) {
-  final bookings = ref.watch(filteredBookingsProvider);
-  final stats = ref.watch(bookingStatsProvider);
-  // final filter = ref.watch(bookingFilterProvider);
+  // features/Admin/presentation/admin_bookings_screen.dart - Update the build method
+  @override
+  Widget build(BuildContext context) {
+    final bookings = ref.watch(filteredBookingsProvider);
+    final stats = ref.watch(bookingStatsProvider);
+    // final filter = ref.watch(bookingFilterProvider);
 
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text('Event Bookings Management'),
-      actions: [
-        _buildFilterDropdown(),
-        const SizedBox(width: 16),
-      ],
-    ),
-    body: Column(
-      children: [
-        // Statistics Card - FIX: Use Consumer to refresh stats
-        Consumer(
-          builder: (context, ref, child) {
-            return stats.when(
-              data: (statsData) => _buildStatsCard(statsData, context),
-              loading: () => const LinearProgressIndicator(),
-              error: (error, stack) => Container(
-                padding: const EdgeInsets.all(16),
-                child: Text('Error loading stats: $error'),
-              ),
-            );
-          },
-        ),
-        
-        // Bookings List
-        Expanded(
-          child: bookings.isEmpty
-              ? const Center(child: Text('No bookings found'))
-              : RefreshIndicator(
-                  onRefresh: () async {
-                    // Refresh both bookings and stats
-                    ref.invalidate(adminBookingsProvider);
-                    ref.invalidate(bookingStatsProvider);
-                  },
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: bookings.length,
-                    itemBuilder: (context, index) {
-                      return _buildBookingCard(bookings[index], context);
-                    },
-                  ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Event Bookings Management'),
+        actions: [_buildFilterDropdown(), const SizedBox(width: 16)],
+      ),
+      body: Column(
+        children: [
+          // Statistics Card - FIX: Use Consumer to refresh stats
+          Consumer(
+            builder: (context, ref, child) {
+              return stats.when(
+                data: (statsData) => _buildStatsCard(statsData, context),
+                loading: () => const LinearProgressIndicator(),
+                error: (error, stack) => Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Text('Error loading stats: $error'),
                 ),
-        ),
-      ],
-    ),
-  );
-}
+              );
+            },
+          ),
+
+          // Bookings List
+          Expanded(
+            child: bookings.isEmpty
+                ? const Center(child: Text('No bookings found'))
+                : RefreshIndicator(
+                    onRefresh: () async {
+                      // Refresh both bookings and stats
+                      ref.invalidate(adminBookingsProvider);
+                      ref.invalidate(bookingStatsProvider);
+                    },
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: bookings.length,
+                      itemBuilder: (context, index) {
+                        return _buildBookingCard(bookings[index], context);
+                      },
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildStatsCard(Map<String, int> stats, BuildContext context) {
     return Card(
       margin: const EdgeInsets.all(16),
@@ -98,7 +101,7 @@ Widget build(BuildContext context) {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Text(
@@ -111,10 +114,7 @@ Widget build(BuildContext context) {
           ),
         ),
         const SizedBox(height: 4),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12),
-        ),
+        Text(label, style: const TextStyle(fontSize: 12)),
       ],
     );
   }
@@ -136,7 +136,7 @@ Widget build(BuildContext context) {
 
   Widget _buildBookingCard(Map<String, dynamic> booking, BuildContext context) {
     final bookingDetails = booking['bookingDetails'] ?? {};
-    
+
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 2,
@@ -149,7 +149,9 @@ Widget build(BuildContext context) {
             Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: _getStatusColor(booking['status']).withOpacity(0.2),
+                  backgroundColor: _getStatusColor(
+                    booking['status'],
+                  ).withValues(alpha: 0.2),
                   child: Icon(
                     _getStatusIcon(booking['status']),
                     color: _getStatusColor(booking['status']),
@@ -178,27 +180,37 @@ Widget build(BuildContext context) {
                 _buildStatusBadge(booking['status']),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Booking Details
             _buildDetailRow('Event Type', bookingDetails['eventType'] ?? 'N/A'),
-            _buildDetailRow('Date', _formatDate(bookingDetails['selectedDate'])),
-            _buildDetailRow('Time', 
-              '${_formatTime(bookingDetails['selectedTime'])} - ${_formatTime(bookingDetails['endingTime'])}'
+            _buildDetailRow(
+              'Date',
+              _formatDate(bookingDetails['selectedDate']),
             ),
-            _buildDetailRow('Guests', '${bookingDetails['numberOfGuests']} people'),
-            
+            _buildDetailRow(
+              'Time',
+              '${_formatTime(bookingDetails['selectedTime'])} - ${_formatTime(bookingDetails['endingTime'])}',
+            ),
+            _buildDetailRow(
+              'Guests',
+              '${bookingDetails['numberOfGuests']} people',
+            ),
+
             if (bookingDetails['specialRequests']?.isNotEmpty == true) ...[
-              _buildDetailRow('Special Requests', bookingDetails['specialRequests']),
+              _buildDetailRow(
+                'Special Requests',
+                bookingDetails['specialRequests'],
+              ),
             ],
-            
+
             if (booking['adminResponse']?.isNotEmpty == true) ...[
               const SizedBox(height: 8),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
+                  color: Colors.blue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
@@ -214,16 +226,17 @@ Widget build(BuildContext context) {
                 ),
               ),
             ],
-            
+
             const SizedBox(height: 16),
-            
+
             // Admin Actions (only for pending bookings)
             if (booking['status'] == 'pending') ...[
               Row(
                 children: [
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: () => _handleBookingAction(booking, 'approved', context),
+                      onPressed: () =>
+                          _handleBookingAction(booking, 'approved', context),
                       icon: const Icon(Icons.check, size: 18),
                       label: const Text('Approve'),
                       style: ElevatedButton.styleFrom(
@@ -258,7 +271,7 @@ Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: color),
       ),
@@ -338,8 +351,8 @@ Widget build(BuildContext context) {
   }
 
   void _handleBookingAction(
-    Map<String, dynamic> booking, 
-    String action, 
+    Map<String, dynamic> booking,
+    String action,
     BuildContext context,
   ) async {
     final adminService = ref.read(adminFirestoreServiceProvider);
@@ -356,22 +369,26 @@ Widget build(BuildContext context) {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Booking ${action == 'approved' ? 'approved' : 'rejected'} successfully'),
-            backgroundColor: action == 'approved' ? Colors.green : Colors.orange,
+            content: Text(
+              'Booking ${action == 'approved' ? 'approved' : 'rejected'} successfully',
+            ),
+            backgroundColor: action == 'approved'
+                ? Colors.green
+                : Colors.orange,
           ),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
         );
       }
     }
   }
 
-  void _showRejectionOptions(Map<String, dynamic> booking, BuildContext context) {
+  void _showRejectionOptions(
+    Map<String, dynamic> booking,
+    BuildContext context,
+  ) {
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
@@ -423,7 +440,9 @@ Widget build(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.info_outline),
       title: Text(title),
-      subtitle: response != 'Write your own response...' ? Text(response) : null,
+      subtitle: response != 'Write your own response...'
+          ? Text(response)
+          : null,
       onTap: () {
         Navigator.pop(context);
         if (title == 'Custom Response') {
@@ -436,16 +455,16 @@ Widget build(BuildContext context) {
   }
 
   Future<String?> _showResponseDialog(
-    BuildContext context, 
-    String action, 
+    BuildContext context,
+    String action,
     Map<String, dynamic> booking,
   ) async {
     TextEditingController controller = TextEditingController();
-    
+
     // Pre-fill with appropriate response
     final bookingDetails = booking['bookingDetails'] ?? {};
     // final eventType = bookingDetails['eventType'] ?? 'event';
-    
+
     if (action == 'approved') {
       controller.text = _predefinedResponses['approved']!;
     }

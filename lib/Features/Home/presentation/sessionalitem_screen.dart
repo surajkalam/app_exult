@@ -61,7 +61,11 @@ class SessionalItemsScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Iconsax.coffee, size: 60, color: colorScheme.secondaryFixed),
+                  Icon(
+                    Iconsax.coffee,
+                    size: 60,
+                    color: colorScheme.secondaryFixed,
+                  ),
                   SizedBox(height: 16),
                   Text(
                     'No new Sessional available',
@@ -82,7 +86,10 @@ class SessionalItemsScreen extends ConsumerWidget {
           }
 
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 8.0,
+            ),
             child: GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
@@ -175,11 +182,14 @@ class SessionalItemsScreen extends ConsumerWidget {
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20),
                       ),
-                      color: Colors.black.withOpacity(0.6),
+                      color: Colors.black.withValues(alpha: 0.6),
                     ),
                     child: Center(
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.red,
                           borderRadius: BorderRadius.circular(8),
@@ -213,11 +223,7 @@ class SessionalItemsScreen extends ConsumerWidget {
               Positioned(
                 bottom: 8,
                 left: 8,
-                child: _buildRatingBadge(
-                  item.rating,
-                  colorscheme,
-                  texttheme,
-                ),
+                child: _buildRatingBadge(item.rating, colorscheme, texttheme),
               ),
             ],
           ),
@@ -297,7 +303,7 @@ class SessionalItemsScreen extends ConsumerWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: colorscheme.onSecondaryFixed.withOpacity(0.9),
+        color: colorscheme.onSecondaryFixed.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -339,7 +345,7 @@ class SessionalItemsScreen extends ConsumerWidget {
       child: Icon(
         Iconsax.coffee,
         size: 40,
-        color: colorscheme.onPrimaryFixedVariant.withOpacity(0.5),
+        color: colorscheme.onPrimaryFixedVariant.withValues(alpha: 0.5),
       ),
     );
   }
@@ -354,14 +360,20 @@ class SessionalItemsScreen extends ConsumerWidget {
     try {
       final user = ref.read(currentUserProvider);
       if (user == null) {
-        _showAddToCartError(context, 'Please log in to add items to cart', colorscheme);
+        _showAddToCartError(
+          context,
+          'Please log in to add items to cart',
+          colorscheme,
+        );
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Please log in to add items to cart'),
               backgroundColor: colorscheme.error,
               behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               margin: EdgeInsets.all(16),
             ),
           );
@@ -372,7 +384,7 @@ class SessionalItemsScreen extends ConsumerWidget {
       final itemName = item.name;
       final currentUser = ref.read(currentUserProvider);
       final userId = UserUtils.getUserIdentifier(user);
-      
+
       await FirebaseFirestore.instance
           .collection('users')
           .doc(currentUser?.phoneNumber)

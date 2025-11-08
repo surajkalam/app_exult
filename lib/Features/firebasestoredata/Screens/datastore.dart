@@ -37,7 +37,7 @@ class _DatadstoreState extends State<Datadstore> {
     'Breadcraft',
     'House specials',
     'Continental',
-    'DessertDuo'
+    'DessertDuo',
   ];
 
   @override
@@ -52,7 +52,7 @@ class _DatadstoreState extends State<Datadstore> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-               Text(
+              Text(
                 'Items store',
                 style: TextStyle(
                   fontSize: 16,
@@ -92,15 +92,15 @@ class _DatadstoreState extends State<Datadstore> {
                   );
                 }).toList(),
               ),
-              
+
               SizedBox(height: 20),
-              
+
               // Selected Category Display
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   // ignore: deprecated_member_use
-                  color: Colors.blue.withOpacity(0.1),
+                  color: Colors.blue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.blue),
                 ),
@@ -112,7 +112,7 @@ class _DatadstoreState extends State<Datadstore> {
                   ),
                 ),
               ),
-              
+
               SizedBox(height: 20),
 
               // Image Upload Section
@@ -404,9 +404,9 @@ class _DatadstoreState extends State<Datadstore> {
         image: _imageUrl!,
         description: descriptioncontroller.text.trim(),
         price: double.parse(pricecontroller.text.trim()),
-        category: _selectedCategory.toLowerCase(), 
+        category: _selectedCategory.toLowerCase(),
         timestamp: Timestamp.now(),
-        itemType: 'normal'
+        itemType: 'normal',
       );
 
       await addItem(newItem, customCategory: _selectedCategory);

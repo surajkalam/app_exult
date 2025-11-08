@@ -23,17 +23,18 @@ class CategoryItemsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-  
     log('welcome menu description screen');
     final currentUser = ref.watch(currentUserProvider);
-    log('Current user: ${currentUser?.phoneNumber?? "No user logged in"}, '
-        'Phone: ${currentUser?.phoneNumber ?? "N/A"}');
+    log(
+      'Current user: ${currentUser?.phoneNumber ?? "No user logged in"}, '
+      'Phone: ${currentUser?.phoneNumber ?? "N/A"}',
+    );
     log('categoryName : $categoryName');
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final isLoggedIn = ref.watch(isLoggedInProvider);
+    // final isLoggedIn = ref.watch(isLoggedInProvider);
     if (items.isEmpty) {
       return Scaffold(
         backgroundColor: colorScheme.onPrimary,
@@ -97,14 +98,15 @@ class CategoryItemsScreen extends ConsumerWidget {
               hasImage,
               colorScheme,
               textTheme,
-              ref
+              ref,
             );
           },
         ),
       ),
     );
   }
- Future<List<Product>> getProductsByCategory(String category) async {
+
+  Future<List<Product>> getProductsByCategory(String category) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     try {
       log('Fetching products for category: $category');
@@ -150,7 +152,7 @@ class CategoryItemsScreen extends ConsumerWidget {
     bool hasImage,
     ColorScheme colorscheme,
     TextTheme texttheme,
-    WidgetRef ref, 
+    WidgetRef ref,
   ) {
     return Container(
       decoration: BoxDecoration(
@@ -203,11 +205,14 @@ class CategoryItemsScreen extends ConsumerWidget {
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20),
                       ),
-                      color: Colors.black.withOpacity(0.6),
+                      color: Colors.black.withValues(alpha: 0.6),
                     ),
                     child: Center(
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.red,
                           borderRadius: BorderRadius.circular(8),
@@ -251,7 +256,7 @@ class CategoryItemsScreen extends ConsumerWidget {
           ),
           // Product Details Section
           Padding(
-            padding:EdgeInsets.only(left: width * 0.01,right: width * 0.01),
+            padding: EdgeInsets.only(left: width * 0.01, right: width * 0.01),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -293,7 +298,7 @@ class CategoryItemsScreen extends ConsumerWidget {
                       ),
                       InkWell(
                         onTap: () async {
-                          await _addToCart(context, item, colorscheme,ref);
+                          await _addToCart(context, item, colorscheme, ref);
                           if (context.mounted) {
                             context.pushNamed(
                               'product',
@@ -325,7 +330,7 @@ class CategoryItemsScreen extends ConsumerWidget {
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         // ignore: deprecated_member_use
-        color: colorscheme.onSecondaryFixed.withOpacity(0.9),
+        color: colorscheme.onSecondaryFixed.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -368,7 +373,7 @@ class CategoryItemsScreen extends ConsumerWidget {
         Iconsax.coffee,
         size: 40,
         // ignore: deprecated_member_use
-        color: colorscheme.onPrimaryFixedVariant.withOpacity(0.5),
+        color: colorscheme.onPrimaryFixedVariant.withValues(alpha: 0.5),
       ),
     );
   }
@@ -381,16 +386,22 @@ class CategoryItemsScreen extends ConsumerWidget {
     WidgetRef ref,
   ) async {
     try {
-      final user = ref.read(currentUserProvider); 
-     if (user == null) {
-        _showAddToCartError(context, 'Please log in to add items to cart', colorscheme);
+      final user = ref.read(currentUserProvider);
+      if (user == null) {
+        _showAddToCartError(
+          context,
+          'Please log in to add items to cart',
+          colorscheme,
+        );
         if (context.mounted) {
-         ScaffoldMessenger.of(context).showSnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Please log in to add items to cart'),
               backgroundColor: colorscheme.error,
               behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               margin: EdgeInsets.all(16),
             ),
           );

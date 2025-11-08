@@ -176,7 +176,7 @@ class CartScreen extends ConsumerWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               offset: const Offset(0, 4),
               blurRadius: 10,
             ),
@@ -384,7 +384,9 @@ class CartScreen extends ConsumerWidget {
                     decoration: InputDecoration(
                       labelText: 'Order Type',
                       labelStyle: texttheme.bodySmall?.copyWith(
-                        color: colorscheme.primaryContainer.withOpacity(0.5),
+                        color: colorscheme.primaryContainer.withValues(
+                          alpha: 0.5,
+                        ),
                         fontSize: 11,
                       ),
                       filled: true,
@@ -412,8 +414,8 @@ class CartScreen extends ConsumerWidget {
                         child: Text(
                           'At Coffee Hub',
                           style: texttheme.bodySmall?.copyWith(
-                            color: colorscheme.primaryContainer.withOpacity(
-                              0.7,
+                            color: colorscheme.primaryContainer.withValues(
+                              alpha: 0.7,
                             ),
                             fontSize: 10,
                           ),
@@ -425,8 +427,8 @@ class CartScreen extends ConsumerWidget {
                         child: Text(
                           'Parcel (Takeaway)',
                           style: texttheme.bodySmall?.copyWith(
-                            color: colorscheme.primaryContainer.withOpacity(
-                              0.7,
+                            color: colorscheme.primaryContainer.withValues(
+                              alpha: 0.7,
                             ),
                             fontSize: 10,
                           ),
@@ -455,7 +457,9 @@ class CartScreen extends ConsumerWidget {
                       decoration: InputDecoration(
                         labelText: 'Table Number',
                         labelStyle: texttheme.bodySmall?.copyWith(
-                          color: colorscheme.primaryContainer.withOpacity(0.5),
+                          color: colorscheme.primaryContainer.withValues(
+                            alpha: 0.5,
+                          ),
                           fontSize: 11,
                         ),
                         filled: true,
@@ -484,8 +488,8 @@ class CartScreen extends ConsumerWidget {
                           child: Text(
                             'Table $number',
                             style: texttheme.bodySmall?.copyWith(
-                              color: colorscheme.primaryContainer.withOpacity(
-                                0.7,
+                              color: colorscheme.primaryContainer.withValues(
+                                alpha: 0.7,
                               ),
                               fontSize: 12,
                             ),
@@ -536,7 +540,7 @@ class CartScreen extends ConsumerWidget {
                 decoration: InputDecoration(
                   labelText: 'Your Name (for parcel)',
                   labelStyle: texttheme.bodySmall?.copyWith(
-                    color: colorscheme.primaryContainer.withOpacity(0.5),
+                    color: colorscheme.primaryContainer.withValues(alpha: 0.5),
                     fontSize: 11,
                   ),
                   filled: true,
@@ -801,7 +805,7 @@ class CartScreen extends ConsumerWidget {
               'Browse our menu and add items to your cart',
               style: GoogleFonts.dmSans(
                 fontSize: 14,
-                color: colorscheme.primaryContainer.withOpacity(0.5),
+                color: colorscheme.primaryContainer.withValues(alpha: 0.5),
               ),
               textAlign: TextAlign.center,
             ),
@@ -832,7 +836,7 @@ class CartScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             offset: const Offset(0, 4),
             blurRadius: 10,
           ),

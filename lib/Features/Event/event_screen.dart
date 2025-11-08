@@ -376,7 +376,7 @@ class EventScreen extends ConsumerWidget {
           ),
           elevation: 4,
           // ignore: deprecated_member_use
-          shadowColor: colorscheme.secondaryFixed.withOpacity(0.3),
+          shadowColor: colorscheme.secondaryFixed.withValues(alpha: 0.3),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -385,9 +385,9 @@ class EventScreen extends ConsumerWidget {
             SizedBox(width: 12),
             Text(
               "Book Your Event",
-               style: texttheme.bodyMedium?.copyWith(
-              color: colorscheme.onSecondaryFixed,
-            ),
+              style: texttheme.bodyMedium?.copyWith(
+                color: colorscheme.onSecondaryFixed,
+              ),
             ),
           ],
         ),

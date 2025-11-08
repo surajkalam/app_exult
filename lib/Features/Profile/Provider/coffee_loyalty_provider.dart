@@ -41,6 +41,7 @@ class CoffeeLoyaltyNotifier extends StateNotifier<CoffeeLoyaltyState> {
     if (phoneNumber == null) return;
 
     try {
+      log('🔍 Loading loyalty data for user: $phoneNumber');
       final doc = await FirebaseFirestore.instance
           .collection('users')
           .doc(phoneNumber)
@@ -54,14 +55,18 @@ class CoffeeLoyaltyNotifier extends StateNotifier<CoffeeLoyaltyState> {
         final filledLayers = (totalOrders % 3);
         final hasFreeCoffee = filledLayers == 0 && totalOrders > 0;
 
+        log('📊 Loyalty data loaded: totalOrders=$totalOrders, filledLayers=$filledLayers, hasFreeCoffee=$hasFreeCoffee');
+
         state = CoffeeLoyaltyState(
           filledLayers: filledLayers == 0 && totalOrders > 0 ? 3 : filledLayers,
           totalOrders: totalOrders,
           hasFreeCoffee: hasFreeCoffee,
         );
+      } else {
+        log('📭 No loyalty data found for user: $phoneNumber');
       }
     } catch (e) {
-      // Handle error
+      log('❌ Error loading loyalty data: $e');
     }
   }
 
@@ -122,11 +127,18 @@ class CoffeeLoyaltyNotifier extends StateNotifier<CoffeeLoyaltyState> {
     if (phoneNumber == null || !state.hasFreeCoffee) return;
 
     try {
-      // Reset the cycle
-      state = state.copyWith(
-        filledLayers: 0,
-        hasFreeCoffee: false,
-      );
+      log('🎉 Claiming free coffee for user: $phoneNumber');
+
+      // Reset the cycle in Firebase - set totalOrders back to 0
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(phoneNumber)
+          .collection('loyalty')
+          .doc('coffee')
+          .set({
+        'totalOrders': 0,
+        'lastUpdated': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
 
       // Log the free coffee claim
       await FirebaseFirestore.instance
@@ -137,8 +149,17 @@ class CoffeeLoyaltyNotifier extends StateNotifier<CoffeeLoyaltyState> {
         'claimedAt': FieldValue.serverTimestamp(),
         'totalOrdersWhenClaimed': state.totalOrders,
       });
+
+      // Reset the local state
+      state = CoffeeLoyaltyState(
+        filledLayers: 0,
+        totalOrders: 0,
+        hasFreeCoffee: false,
+      );
+
+      log('✅ Free coffee claimed and loyalty reset to 0');
     } catch (e) {
-      // Handle error
+      log('❌ Error claiming free coffee: $e');
     }
   }
 }

@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/core.dart';
 import '../Provider/Provider.dart';
 import '../profile.dart';
-
 
 class LevelScreen extends ConsumerWidget {
   const LevelScreen({super.key});
@@ -18,25 +15,32 @@ class LevelScreen extends ConsumerWidget {
     final height = MediaQuery.of(context).size.height;
     final totalPoints = ref.watch(totalPointsProvider);
     final levels = ref.watch(levelProvider);
-    
+
     // Update levels based on current points
     // ref.read(levelProvider.notifier).updateLevels(totalPoints);
-     WidgetsBinding.instance.addPostFrameCallback((_) {
-       WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(levelProvider.notifier).updateLevels(totalPoints);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(levelProvider.notifier).updateLevels(totalPoints);
+      });
     });
-    
-    });
-    
-    final currentLevel = ref.read(levelProvider.notifier).getCurrentLevel(totalPoints);
-    final nextLevel = ref.read(levelProvider.notifier).getNextLevel(totalPoints);
-    final progress = ref.read(levelProvider.notifier).getProgressPercentage(totalPoints, nextLevel);
-    
+
+    final currentLevel = ref
+        .read(levelProvider.notifier)
+        .getCurrentLevel(totalPoints);
+    final nextLevel = ref
+        .read(levelProvider.notifier)
+        .getNextLevel(totalPoints);
+    final progress = ref
+        .read(levelProvider.notifier)
+        .getProgressPercentage(totalPoints, nextLevel);
+
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     // Calculate unlocked levels count
-    final unlockedLevelsCount = levels.where((level) => level.isUnlocked).length;
+    final unlockedLevelsCount = levels
+        .where((level) => level.isUnlocked)
+        .length;
 
     return Scaffold(
       backgroundColor: colorScheme.onPrimary,
@@ -71,7 +75,7 @@ class LevelScreen extends ConsumerWidget {
                 itemBuilder: (context, index) {
                   final level = levels[index];
                   final isCurrentLevel = level.name == currentLevel.name;
-                  
+
                   // Calculate progress for this specific level
                   double levelProgress = 0.0;
                   if (level.isUnlocked) {
@@ -79,12 +83,17 @@ class LevelScreen extends ConsumerWidget {
                   } else if (index > 0) {
                     final previousLevel = levels[index - 1];
                     if (totalPoints > previousLevel.pointsRequired) {
-                      final pointsRange = level.pointsRequired - previousLevel.pointsRequired;
-                      final pointsEarned = totalPoints - previousLevel.pointsRequired;
-                      levelProgress = (pointsEarned / pointsRange).clamp(0.0, 1.0);
+                      final pointsRange =
+                          level.pointsRequired - previousLevel.pointsRequired;
+                      final pointsEarned =
+                          totalPoints - previousLevel.pointsRequired;
+                      levelProgress = (pointsEarned / pointsRange).clamp(
+                        0.0,
+                        1.0,
+                      );
                     }
                   }
-                  
+
                   return _buildLevelCard(
                     context: context,
                     level: level,
@@ -122,7 +131,7 @@ class LevelScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: colorscheme.shadow.withOpacity(0.08),
+            color: colorscheme.shadow.withValues(alpha: 0.08),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -185,10 +194,12 @@ class LevelScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: colorscheme.onPrimary,
         borderRadius: BorderRadius.circular(16),
-        border: isCurrentLevel ? Border.all(color: colorscheme.primary, width: 2) : null,
+        border: isCurrentLevel
+            ? Border.all(color: colorscheme.primary, width: 2)
+            : null,
         boxShadow: [
           BoxShadow(
-            color: colorscheme.shadow.withOpacity(0.08),
+            color: colorscheme.shadow.withValues(alpha: 0.08),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -207,7 +218,9 @@ class LevelScreen extends ConsumerWidget {
                   height: width * 0.18,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    color: level.isUnlocked ? colorscheme.surface : Colors.grey[200],
+                    color: level.isUnlocked
+                        ? colorscheme.surface
+                        : Colors.grey[200],
                   ),
                   child: Padding(
                     padding: EdgeInsets.all(2.0),
@@ -334,29 +347,36 @@ class LevelScreen extends ConsumerWidget {
             if (level.isUnlocked)
               Column(
                 children: [
-                   if (isCurrentLevel)
-                        Container(
-                         
-                          padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: colorscheme.primary,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            "Current",
-                            style: texttheme.labelSmall?.copyWith(
-                              color: colorscheme.onPrimary,
-                              fontSize: 8,
-                            ),
-                          ),
-                   ),
-                  SizedBox(height: height*0.029,),
+                  if (isCurrentLevel)
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: colorscheme.primary,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        "Current",
+                        style: texttheme.labelSmall?.copyWith(
+                          color: colorscheme.onPrimary,
+                          fontSize: 8,
+                        ),
+                      ),
+                    ),
+                  SizedBox(height: height * 0.029),
                   CupertinoButton(
                     padding: EdgeInsets.zero,
                     minSize: 0,
-                    onPressed: () => _viewLevelBenefits(context, level, colorscheme, texttheme),
+                    onPressed: () => _viewLevelBenefits(
+                      context,
+                      level,
+                      colorscheme,
+                      texttheme,
+                    ),
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: colorscheme.onPrimaryFixedVariant,
                         borderRadius: BorderRadius.circular(12),
@@ -395,9 +415,7 @@ class LevelScreen extends ConsumerWidget {
       builder: (BuildContext context) => CupertinoActionSheet(
         title: Text(
           "${level.name} Benefits",
-          style: texttheme.bodyMedium?.copyWith(
-            color: colorscheme.secondary,
-          ),
+          style: texttheme.bodyMedium?.copyWith(color: colorscheme.secondary),
         ),
         message: Text(
           _getLevelBenefits(level.name),

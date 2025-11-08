@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'dart:developer';
 import 'package:flutter/material.dart';
@@ -37,7 +36,7 @@ class _SessionalitemsState extends State<Sessionalitems> {
     'Breadcraft',
     'House specials',
     'Continental',
-    'DessertDuo'
+    'DessertDuo',
   ];
 
   @override
@@ -77,7 +76,9 @@ class _SessionalitemsState extends State<Sessionalitems> {
                     selected: _selectedCategory == category,
                     selectedColor: Colors.blue,
                     labelStyle: TextStyle(
-                      color: _selectedCategory == category ? Colors.white : Colors.black,
+                      color: _selectedCategory == category
+                          ? Colors.white
+                          : Colors.black,
                     ),
                     onSelected: (selected) {
                       setState(() {
@@ -89,9 +90,12 @@ class _SessionalitemsState extends State<Sessionalitems> {
               ),
               const SizedBox(height: 20),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
+                  color: Colors.blue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.blue),
                 ),
@@ -112,7 +116,9 @@ class _SessionalitemsState extends State<Sessionalitems> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(
-                      color: _selectedImage != null ? Colors.green : Colors.blue,
+                      color: _selectedImage != null
+                          ? Colors.green
+                          : Colors.blue,
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(15),
@@ -132,11 +138,18 @@ class _SessionalitemsState extends State<Sessionalitems> {
                       : const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.camera_alt, size: 40, color: Colors.blue),
+                            Icon(
+                              Icons.camera_alt,
+                              size: 40,
+                              color: Colors.blue,
+                            ),
                             SizedBox(height: 8),
                             Text(
                               'Tap to upload image',
-                              style: TextStyle(color: Colors.blue, fontSize: 12),
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 12,
+                              ),
                             ),
                           ],
                         ),
@@ -148,7 +161,10 @@ class _SessionalitemsState extends State<Sessionalitems> {
                   children: [
                     CircularProgressIndicator(color: Colors.blue),
                     SizedBox(height: 8),
-                    Text('Uploading image...', style: TextStyle(color: Colors.blue)),
+                    Text(
+                      'Uploading image...',
+                      style: TextStyle(color: Colors.blue),
+                    ),
                   ],
                 ),
               if (_imageUrl != null)
@@ -173,7 +189,9 @@ class _SessionalitemsState extends State<Sessionalitems> {
                 controller: ratingcontroller,
                 hintText: 'Rating (e.g., 4.5)',
                 icon: Icons.star,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
               ),
               const SizedBox(height: 12),
               _buildTextField(
@@ -187,7 +205,9 @@ class _SessionalitemsState extends State<Sessionalitems> {
                 controller: pricecontroller,
                 hintText: 'Price (e.g., 12.99)',
                 icon: Icons.attach_money,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
               ),
               const SizedBox(height: 25),
               _isSubmitting
@@ -205,7 +225,10 @@ class _SessionalitemsState extends State<Sessionalitems> {
                       ),
                       child: const Text(
                         'Submit Item',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
             ],
@@ -245,7 +268,10 @@ class _SessionalitemsState extends State<Sessionalitems> {
         filled: true,
         fillColor: Colors.white,
         prefixIcon: Icon(icon, color: Colors.blue),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
       ),
     );
   }
@@ -285,7 +311,8 @@ class _SessionalitemsState extends State<Sessionalitems> {
 
     try {
       final storageRef = FirebaseStorage.instance.ref();
-      String fileName = 'items/sessionalitems/image_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      String fileName =
+          'items/sessionalitems/image_${DateTime.now().millisecondsSinceEpoch}.jpg';
       final imageRef = storageRef.child(fileName);
 
       final uploadTask = imageRef.putFile(_selectedImage!);

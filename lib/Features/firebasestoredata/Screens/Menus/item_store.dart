@@ -262,10 +262,10 @@ class _ItemsStoreScreenState extends ConsumerState<ItemsStoreScreen> {
         padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
           // ignore: deprecated_member_use
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
           // ignore: deprecated_member_use
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Row(
           children: [
@@ -445,7 +445,7 @@ class _ItemsStoreScreenState extends ConsumerState<ItemsStoreScreen> {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.1),
+                            color: Colors.red.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(4),
                             border: Border.all(color: Colors.red),
                           ),
@@ -500,7 +500,7 @@ class _ItemsStoreScreenState extends ConsumerState<ItemsStoreScreen> {
                           decoration: BoxDecoration(
                             color: _getCategoryColor(
                               item.category,
-                            ).withOpacity(0.1),
+                            ).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Center(
@@ -658,7 +658,8 @@ class _ItemsStoreScreenState extends ConsumerState<ItemsStoreScreen> {
           );
         });
   }
-  void _navigateToAddItem(BuildContext context){
+
+  void _navigateToAddItem(BuildContext context) {
     log('➕ Navigating to Add Item screen');
     Navigator.push(
       context,
@@ -668,6 +669,7 @@ class _ItemsStoreScreenState extends ConsumerState<ItemsStoreScreen> {
       _fetchItems();
     });
   }
+
   void _navigateToEditItem(BuildContext context, Item item) {
     log('✏️ Navigating to Edit Item screen for ${item.name}');
     Navigator.push(

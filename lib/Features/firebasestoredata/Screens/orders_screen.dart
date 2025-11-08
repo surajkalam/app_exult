@@ -6,7 +6,7 @@ import 'package:coffee_exult_app/Features/Profile/data/order_model.dart';
 import '../provider/orders_provider.dart';
 
 class AdminOrdersScreen extends ConsumerWidget {
-   AdminOrdersScreen({super.key});
+  AdminOrdersScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,7 +29,7 @@ class AdminOrdersScreen extends ConsumerWidget {
         elevation: 0,
         actions: [
           IconButton(
-            icon:  Icon(Icons.refresh, color: Colors.white),
+            icon: Icon(Icons.refresh, color: Colors.white),
             onPressed: () => ordersNotifier.refreshOrders(),
           ),
         ],
@@ -42,7 +42,7 @@ class AdminOrdersScreen extends ConsumerWidget {
           // Orders list
           Expanded(
             child: ordersState.isLoading
-                ?  Center(child: CircularProgressIndicator())
+                ? Center(child: CircularProgressIndicator())
                 : ordersState.error != null
                 ? _buildErrorState(ordersState.error!, ordersNotifier)
                 : ordersState.filteredOrders.isEmpty
@@ -60,8 +60,8 @@ class AdminOrdersScreen extends ConsumerWidget {
 
   Widget _buildFilterTabs(WidgetRef ref, OrderFilter currentFilter) {
     return Container(
-      margin:  EdgeInsets.all(16),
-      padding:  EdgeInsets.all(4),
+      margin: EdgeInsets.all(16),
+      padding: EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(25),
@@ -69,7 +69,7 @@ class AdminOrdersScreen extends ConsumerWidget {
           BoxShadow(
             color: Colors.black12,
             blurRadius: 10,
-            offset:  Offset(0, 4),
+            offset: Offset(0, 4),
           ),
         ],
       ),
@@ -100,8 +100,8 @@ class AdminOrdersScreen extends ConsumerWidget {
       child: GestureDetector(
         onTap: () => ref.read(ordersProvider.notifier).setFilter(filter),
         child: AnimatedContainer(
-          duration:  Duration(milliseconds: 300),
-          padding:  EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+          duration: Duration(milliseconds: 300),
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
           decoration: BoxDecoration(
             color: isSelected ? Colors.brown[700] : Colors.transparent,
             borderRadius: BorderRadius.circular(20),
@@ -126,7 +126,7 @@ class AdminOrdersScreen extends ConsumerWidget {
     ColorScheme colorScheme,
   ) {
     return ListView.builder(
-      padding:  EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       itemCount: orders.length,
       itemBuilder: (context, index) {
         final order = orders[index];
@@ -142,15 +142,15 @@ class AdminOrdersScreen extends ConsumerWidget {
     ColorScheme colorscheme,
   ) {
     return Container(
-      margin:  EdgeInsets.only(bottom: 16),
-      padding:  EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
-            offset:  Offset(0, 4),
+            offset: Offset(0, 4),
             blurRadius: 10,
           ),
         ],
@@ -170,7 +170,7 @@ class AdminOrdersScreen extends ConsumerWidget {
             overflow: TextOverflow.ellipsis,
           ),
           Container(
-            padding:  EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: order.orderType == 'Parcel'
                   ? Colors.orange[100]
@@ -188,13 +188,13 @@ class AdminOrdersScreen extends ConsumerWidget {
               ),
             ),
           ),
-           SizedBox(height: 8),
+          SizedBox(height: 8),
           // Customer info
           if (order.orderType == 'Parcel' && order.customerName != null) ...[
             Row(
               children: [
-                 Icon(Icons.person, size: 16, color: Colors.grey),
-                 SizedBox(width: 4),
+                Icon(Icons.person, size: 16, color: Colors.grey),
+                SizedBox(width: 4),
                 Text(
                   'Customer: ${order.customerName}',
                   style: GoogleFonts.dmSans(
@@ -204,20 +204,15 @@ class AdminOrdersScreen extends ConsumerWidget {
                 ),
               ],
             ),
-             SizedBox(height: 4),
+            SizedBox(height: 4),
           ],
 
           // Table info
-          if (order.orderType == 'Coffee Hub' &&
-              order.tableNumber != null) ...[
+          if (order.orderType == 'Coffee Hub' && order.tableNumber != null) ...[
             Row(
               children: [
-                 Icon(
-                  Icons.table_restaurant,
-                  size: 16,
-                  color: Colors.grey,
-                ),
-                 SizedBox(width: 4),
+                Icon(Icons.table_restaurant, size: 16, color: Colors.grey),
+                SizedBox(width: 4),
                 Text(
                   'Table: ${order.tableNumber}',
                   style: GoogleFonts.dmSans(
@@ -227,14 +222,14 @@ class AdminOrdersScreen extends ConsumerWidget {
                 ),
               ],
             ),
-             SizedBox(height: 4),
+            SizedBox(height: 4),
           ],
 
           // Items
           Row(
             children: [
-               Icon(Icons.shopping_bag, size: 16, color: Colors.grey),
-               SizedBox(width: 4),
+              Icon(Icons.shopping_bag, size: 16, color: Colors.grey),
+              SizedBox(width: 4),
               Expanded(
                 child: Text(
                   'Items: ${order.itemNames}',
@@ -249,12 +244,13 @@ class AdminOrdersScreen extends ConsumerWidget {
             ],
           ),
 
-           SizedBox(height: 8),
+          SizedBox(height: 8),
 
           // Admin response section
-          if (order.adminResponseMessage != null || order.adminResponseTag != null) ...[
+          if (order.adminResponseMessage != null ||
+              order.adminResponseTag != null) ...[
             Container(
-              padding:  EdgeInsets.all(8),
+              padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: Colors.blue[50],
                 borderRadius: BorderRadius.circular(8),
@@ -272,13 +268,17 @@ class AdminOrdersScreen extends ConsumerWidget {
                     ),
                   ),
                   if (order.adminResponseTag != null) ...[
-                     SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Container(
-                      padding:  EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: _getTagColor(order.adminResponseTag!).withOpacity(0.2),
+                        color: _getTagColor(
+                          order.adminResponseTag!,
+                        ).withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: _getTagColor(order.adminResponseTag!)),
+                        border: Border.all(
+                          color: _getTagColor(order.adminResponseTag!),
+                        ),
                       ),
                       child: Text(
                         order.adminResponseTag!.toUpperCase(),
@@ -291,7 +291,7 @@ class AdminOrdersScreen extends ConsumerWidget {
                     ),
                   ],
                   if (order.adminResponseMessage != null) ...[
-                     SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(
                       order.adminResponseMessage!,
                       style: GoogleFonts.dmSans(
@@ -303,7 +303,7 @@ class AdminOrdersScreen extends ConsumerWidget {
                 ],
               ),
             ),
-             SizedBox(height: 8),
+            SizedBox(height: 8),
           ],
 
           // Amount and date with response button
@@ -315,7 +315,7 @@ class AdminOrdersScreen extends ConsumerWidget {
                 style: GoogleFonts.dmSans(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  color:  Color(0xFFC67C4E),
+                  color: Color(0xFFC67C4E),
                 ),
               ),
               Column(
@@ -329,7 +329,7 @@ class AdminOrdersScreen extends ConsumerWidget {
                     ),
                     textAlign: TextAlign.right,
                   ),
-                   SizedBox(height: 4),
+                  SizedBox(height: 4),
                   ElevatedButton.icon(
                     onPressed: () => _showResponseDialog(
                       context,
@@ -337,16 +337,18 @@ class AdminOrdersScreen extends ConsumerWidget {
                       ordersNotifier,
                       colorscheme,
                     ),
-                    icon:  Icon(Icons.message, size: 14),
+                    icon: Icon(Icons.message, size: 14),
                     label: Text(
-                      order.adminResponseMessage != null ? 'Edit Response' : 'Add Response',
+                      order.adminResponseMessage != null
+                          ? 'Edit Response'
+                          : 'Add Response',
                       style: GoogleFonts.dmSans(fontSize: 10),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.brown[600],
                       foregroundColor: Colors.white,
-                      padding:  EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      minimumSize:  Size(0, 28),
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      minimumSize: Size(0, 28),
                     ),
                   ),
                 ],
@@ -364,7 +366,7 @@ class AdminOrdersScreen extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.receipt_long, size: 64, color: Colors.grey[400]),
-           SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             'No orders found',
             style: GoogleFonts.dmSans(
@@ -373,7 +375,7 @@ class AdminOrdersScreen extends ConsumerWidget {
               color: Colors.grey[600],
             ),
           ),
-           SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             'Orders will appear here after customers make purchases',
             style: GoogleFonts.dmSans(fontSize: 14, color: Colors.grey[500]),
@@ -390,7 +392,7 @@ class AdminOrdersScreen extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.error_outline, size: 64, color: Colors.red[400]),
-           SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             'Failed to load orders',
             style: GoogleFonts.dmSans(
@@ -399,13 +401,13 @@ class AdminOrdersScreen extends ConsumerWidget {
               color: Colors.grey[600],
             ),
           ),
-           SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             error,
             style: GoogleFonts.dmSans(fontSize: 14, color: Colors.grey[500]),
             textAlign: TextAlign.center,
           ),
-           SizedBox(height: 16),
+          SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
               notifier.clearError();
@@ -441,7 +443,9 @@ class AdminOrdersScreen extends ConsumerWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-            order.adminResponseMessage != null ? 'Edit Response' : 'Add Response',
+            order.adminResponseMessage != null
+                ? 'Edit Response'
+                : 'Add Response',
             style: GoogleFonts.dmSans(
               fontWeight: FontWeight.w600,
               color: Colors.brown[700],
@@ -460,16 +464,18 @@ class AdminOrdersScreen extends ConsumerWidget {
                   ),
                 ),
                 items: ['approve', 'wait', 'reject']
-                    .map((tag) => DropdownMenuItem(
-                          value: tag,
-                          child: Text(
-                            tag.toUpperCase(),
-                            style: GoogleFonts.dmSans(
-                              color: _getTagColor(tag),
-                              fontWeight: FontWeight.w600,
-                            ),
+                    .map(
+                      (tag) => DropdownMenuItem(
+                        value: tag,
+                        child: Text(
+                          tag.toUpperCase(),
+                          style: GoogleFonts.dmSans(
+                            color: _getTagColor(tag),
+                            fontWeight: FontWeight.w600,
                           ),
-                        ))
+                        ),
+                      ),
+                    )
                     .toList(),
                 onChanged: (value) {
                   selectedTag = value;

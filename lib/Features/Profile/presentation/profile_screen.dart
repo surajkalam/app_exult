@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,7 +29,6 @@ final selectedImageProvider = StateProvider<String>((ref) {
   return "Assets/Icons/avtar2.png"; // Default image
 });
 
-
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
@@ -40,7 +38,7 @@ class ProfileScreen extends ConsumerWidget {
     final selectedImage = ref.watch(selectedImageProvider);
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final currentPoints = ref.watch(currentPointsProvider);
+    // final currentPoints = ref.watch(currentPointsProvider);
 
     return Scaffold(
       backgroundColor: colorScheme.onPrimary,
@@ -349,7 +347,7 @@ class ProfileScreen extends ConsumerWidget {
     ColorScheme colorscheme,
     TextTheme texttheme,
   ) {
-      final pointsAsync = ref.watch(calculatedPointsProvider);
+    // final pointsAsync = ref.watch(calculatedPointsProvider);
     return Container(
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -403,8 +401,8 @@ class ProfileScreen extends ConsumerWidget {
                     children: [
                       Consumer(
                         builder: (context, ref, child) {
-                          final levels = ref.watch(levelProvider);
-                           final currentPoints = ref.watch(totalPointsProvider);
+                          // final levels = ref.watch(levelProvider);
+                          final currentPoints = ref.watch(totalPointsProvider);
                           final currentLevel = ref
                               .read(levelProvider.notifier)
                               // .getCurrentLevel(totalPoints ?? 0);
@@ -605,7 +603,9 @@ class ProfileScreen extends ConsumerWidget {
           width: width,
           onFreeCoffeeEarned: () async {
             final user = ref.read(currentUserProvider);
-            await ref.read(coffeeLoyaltyProvider.notifier).claimFreeCoffee(user?.phoneNumber);
+            await ref
+                .read(coffeeLoyaltyProvider.notifier)
+                .claimFreeCoffee(user?.phoneNumber);
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -684,104 +684,99 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-
- Future<void> _showLogoutConfirmation(BuildContext context, ColorScheme colorscheme, WidgetRef ref) async {
-  await showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Icon
-              Icon(
-                Icons.logout_rounded,
-                size: 48,
-                color: Colors.orange,
-              ),
-              SizedBox(height: 16),
-              // Title
-              Text(
-                'Confirm Logout',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 8),
-              // Message
-              Text(
-                'Are you sure you want to logout from your account?',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
-              ),
-              SizedBox(height: 24),
-              // Buttons
-              Row(
-                children: [
-                  // Cancel Button
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        side: BorderSide(color: Colors.grey),
-                      ),
-                      child: Text(
-                        'Cancel',
-                        style: TextStyle(color: Colors.grey[700]),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  // Logout Button
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        Navigator.of(context).pop();
-                        await ref.read(authNotifierProvider.notifier).signOut();
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Logged out successfully'),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Text(
-                        'Logout',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+  Future<void> _showLogoutConfirmation(
+    BuildContext context,
+    ColorScheme colorscheme,
+    WidgetRef ref,
+  ) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
-        ),
-      );
-    },
-  );
-}
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Icon
+                Icon(Icons.logout_rounded, size: 48, color: Colors.orange),
+                SizedBox(height: 16),
+                // Title
+                Text(
+                  'Confirm Logout',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 8),
+                // Message
+                Text(
+                  'Are you sure you want to logout from your account?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
+                SizedBox(height: 24),
+                // Buttons
+                Row(
+                  children: [
+                    // Cancel Button
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: OutlinedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          side: BorderSide(color: Colors.grey),
+                        ),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(color: Colors.grey[700]),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    // Logout Button
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          Navigator.of(context).pop();
+                          await ref
+                              .read(authNotifierProvider.notifier)
+                              .signOut();
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Logged out successfully'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          'Logout',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   void _showImagePickerBottomSheet(
     BuildContext context,

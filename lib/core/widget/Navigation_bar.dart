@@ -1,4 +1,3 @@
-
 // ignore: file_names
 import 'package:coffee_exult_app/Features/Cart/presentation/cart_screen.dart';
 import 'package:coffee_exult_app/Features/Event/presentation/event_book.dart';
@@ -61,13 +60,13 @@ class MainAppere extends ConsumerWidget {
               boxShadow: [
                 BoxShadow(
                   // ignore: deprecated_member_use
-                  color: colorScheme.shadow.withOpacity(0.1),
+                  color: colorScheme.shadow.withValues(alpha: 0.1),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
                 BoxShadow(
                   // ignore: deprecated_member_use
-                  color: colorScheme.shadow.withOpacity(0.05),
+                  color: colorScheme.shadow.withValues(alpha: 0.05),
                   blurRadius: 40,
                   offset: const Offset(0, 20),
                 ),
@@ -159,19 +158,20 @@ class MainAppere extends ConsumerWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: colorScheme.onPrimaryFixedVariant, // Green color from your theme
+            color: colorScheme
+                .onPrimaryFixedVariant, // Green color from your theme
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
                 // ignore: deprecated_member_use
-                color: colorScheme.shadow.withOpacity(0.3),
+                color: colorScheme.shadow.withValues(alpha: 0.3),
                 blurRadius: 1,
                 spreadRadius: 1,
                 offset: const Offset(0, 3),
               ),
               BoxShadow(
                 // ignore: deprecated_member_use
-                color: colorScheme.shadow.withOpacity(0.1),
+                color: colorScheme.shadow.withValues(alpha: 0.1),
                 blurRadius: 25,
                 offset: const Offset(0, 15),
               ),

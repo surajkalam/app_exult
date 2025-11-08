@@ -125,7 +125,7 @@ class HelpSupportScreen extends ConsumerWidget {
     required ColorScheme colorscheme,
     required TextTheme texttheme,
   }) {
-    final width = MediaQuery.of(context).size.width;
+    // final width = MediaQuery.of(context).size.width;
 
     if (isIOS) {
       return CupertinoListSection.insetGrouped(
@@ -254,7 +254,7 @@ class HelpSupportScreen extends ConsumerWidget {
           boxShadow: [
             BoxShadow(
               // ignore: deprecated_member_use
-              color: colorscheme.shadow.withOpacity(0.5),
+              color: colorscheme.shadow.withValues(alpha: 0.5),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -312,7 +312,7 @@ class HelpSupportScreen extends ConsumerWidget {
               boxShadow: [
                 BoxShadow(
                   // ignore: deprecated_member_use
-                  color: colorscheme.shadow.withOpacity(0.05),
+                  color: colorscheme.shadow.withValues(alpha: 0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -482,7 +482,7 @@ class HelpSupportScreen extends ConsumerWidget {
           Text(
             answer,
             style: texttheme.bodySmall?.copyWith(
-              color: colorscheme.primary.withOpacity(0.5),
+              color: colorscheme.primary.withValues(alpha: 0.5),
               fontSize: 10,
             ),
           ),
@@ -580,7 +580,7 @@ class HelpSupportScreen extends ConsumerWidget {
           boxShadow: [
             BoxShadow(
               // ignore: deprecated_member_use
-              color: colorscheme.shadow.withOpacity(0.1),
+              color: colorscheme.shadow.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -836,7 +836,7 @@ class HelpSupportScreen extends ConsumerWidget {
           boxShadow: [
             BoxShadow(
               // ignore: deprecated_member_use
-              color: colorscheme.shadow.withOpacity(0.08),
+              color: colorscheme.shadow.withValues(alpha: 0.08),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -928,11 +928,11 @@ class HelpSupportScreen extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           // ignore: deprecated_member_use
-          color: colorscheme.surface.withOpacity(0.3),
+          color: colorscheme.surface.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             // ignore: deprecated_member_use
-            color: colorscheme.onPrimaryFixedVariant.withOpacity(0.3),
+            color: colorscheme.onPrimaryFixedVariant.withValues(alpha: 0.3),
             width: 1,
           ),
         ),

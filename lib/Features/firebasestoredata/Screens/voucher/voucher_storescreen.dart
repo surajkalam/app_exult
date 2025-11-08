@@ -15,7 +15,8 @@ class VoucherStoreScreen extends ConsumerStatefulWidget {
 }
 
 class _VoucherStoreScreenState extends ConsumerState<VoucherStoreScreen> {
-  final TextEditingController _offerPercentageController = TextEditingController();
+  final TextEditingController _offerPercentageController =
+      TextEditingController();
   final TextEditingController _validUntilController = TextEditingController();
   DateTime? _selectedDate;
   File? _selectedImage;
@@ -73,8 +74,10 @@ class _VoucherStoreScreenState extends ConsumerState<VoucherStoreScreen> {
 
     try {
       // Upload image first
-      await ref.read(voucherImageUploadProvider.notifier).uploadVoucherImage(_selectedImage!);
-      
+      await ref
+          .read(voucherImageUploadProvider.notifier)
+          .uploadVoucherImage(_selectedImage!);
+
       final imageState = ref.read(voucherImageUploadProvider);
       if (imageState.imageUrl == null) {
         _showErrorSnackBar('Failed to upload image');
@@ -91,10 +94,9 @@ class _VoucherStoreScreenState extends ConsumerState<VoucherStoreScreen> {
       );
 
       await ref.read(voucherProvider.notifier).addVoucher(voucher);
-      
+
       _clearForm();
       _showSuccessSnackBar('Voucher created successfully!');
-      
     } catch (e) {
       _showErrorSnackBar('Error creating voucher: $e');
     }
@@ -113,19 +115,13 @@ class _VoucherStoreScreenState extends ConsumerState<VoucherStoreScreen> {
 
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 
   void _showSuccessSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.green,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.green),
     );
   }
 
@@ -150,7 +146,7 @@ class _VoucherStoreScreenState extends ConsumerState<VoucherStoreScreen> {
     final voucherState = ref.watch(voucherProvider);
     final imageState = ref.watch(voucherImageUploadProvider);
     final categories = ref.watch(voucherCategoriesProvider);
-    
+
     // Debug output
     ref.read(voucherDebugProvider);
 
@@ -159,10 +155,10 @@ class _VoucherStoreScreenState extends ConsumerState<VoucherStoreScreen> {
       child: Scaffold(
         backgroundColor: Colors.grey[100],
         appBar: AppBar(
-          title:Text('Voucher Management'),
+          title: Text('Voucher Management'),
           backgroundColor: const Color(0xFF6D4C41),
           foregroundColor: Colors.white,
-          bottom:TabBar(
+          bottom: TabBar(
             tabs: [
               Tab(icon: Icon(Icons.list), text: 'View Vouchers'),
               Tab(icon: Icon(Icons.add), text: 'Add Voucher'),
@@ -173,7 +169,7 @@ class _VoucherStoreScreenState extends ConsumerState<VoucherStoreScreen> {
           children: [
             // Tab 1: View Vouchers
             _buildVouchersList(voucherState),
-            
+
             // Tab 2: Add Voucher
             _buildAddVoucherForm(categories, imageState),
           ],
@@ -206,7 +202,8 @@ class _VoucherStoreScreenState extends ConsumerState<VoucherStoreScreen> {
             Text('Error: ${voucherState.error}'),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => ref.read(voucherProvider.notifier).fetchAllVouchers(),
+              onPressed: () =>
+                  ref.read(voucherProvider.notifier).fetchAllVouchers(),
               child: const Text('Try Again'),
             ),
           ],
@@ -263,7 +260,7 @@ class _VoucherStoreScreenState extends ConsumerState<VoucherStoreScreen> {
               ),
             ),
             const SizedBox(width: 16),
-            
+
             // Voucher Details
             Expanded(
               child: Column(
@@ -295,9 +292,14 @@ class _VoucherStoreScreenState extends ConsumerState<VoucherStoreScreen> {
                   ),
                   const SizedBox(height: 4),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
-                      color: voucher.isExpired ? Colors.red.withOpacity(0.1) : Colors.green.withOpacity(0.1),
+                      color: voucher.isExpired
+                          ? Colors.red.withValues(alpha: 0.1)
+                          : Colors.green.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
@@ -312,7 +314,7 @@ class _VoucherStoreScreenState extends ConsumerState<VoucherStoreScreen> {
                 ],
               ),
             ),
-            
+
             // Action Buttons
             PopupMenuButton<String>(
               onSelected: (value) => _handleVoucherAction(value, voucher),
@@ -323,9 +325,7 @@ class _VoucherStoreScreenState extends ConsumerState<VoucherStoreScreen> {
                     children: [
                       Icon(Icons.edit, size: 18),
                       SizedBox(width: 8),
-                      Text('Edit',
-                      style: TextStyle(color: Colors.brown),
-                      ),
+                      Text('Edit', style: TextStyle(color: Colors.brown)),
                     ],
                   ),
                 ),
@@ -363,7 +363,9 @@ class _VoucherStoreScreenState extends ConsumerState<VoucherStoreScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Voucher'),
-        content: Text('Are you sure you want to delete ${voucher.category} voucher?'),
+        content: Text(
+          'Are you sure you want to delete ${voucher.category} voucher?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -387,28 +389,32 @@ class _VoucherStoreScreenState extends ConsumerState<VoucherStoreScreen> {
   //     _showEditVoucherDialog(voucher);
   //   _showSuccessSnackBar('Edit functionality for ${voucher.category}');
   // }
- void _showEditVoucherDialog(Voucher voucher) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (context) => _buildEditVoucherBottomSheet(voucher),
-  );
-}
+  void _showEditVoucherDialog(Voucher voucher) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _buildEditVoucherBottomSheet(voucher),
+    );
+  }
 
-Widget _buildEditVoucherBottomSheet(Voucher voucher) {
-  return Consumer(
-    builder: (context, ref, child) {
-      return EditVoucherBottomSheet(
-        voucher: voucher,
-        onVoucherUpdated: () {
-          ref.read(voucherProvider.notifier).fetchAllVouchers();
-        },
-      );
-    },
-  );
-}
-  Widget _buildAddVoucherForm(List<String> categories, VoucherImageUploadState imageState) {
+  Widget _buildEditVoucherBottomSheet(Voucher voucher) {
+    return Consumer(
+      builder: (context, ref, child) {
+        return EditVoucherBottomSheet(
+          voucher: voucher,
+          onVoucherUpdated: () {
+            ref.read(voucherProvider.notifier).fetchAllVouchers();
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildAddVoucherForm(
+    List<String> categories,
+    VoucherImageUploadState imageState,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: SingleChildScrollView(
@@ -438,7 +444,9 @@ Widget _buildEditVoucherBottomSheet(Voucher voucher) {
                   icon: const Icon(Icons.calendar_month),
                   onPressed: () => _selectDate(context),
                 ),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               onTap: () => _selectDate(context),
             ),
@@ -486,7 +494,9 @@ Widget _buildEditVoucherBottomSheet(Voucher voucher) {
               selected: _selectedCategory == category,
               selectedColor: const Color(0xFF6D4C41),
               labelStyle: TextStyle(
-                color: _selectedCategory == category ? Colors.white : Colors.black,
+                color: _selectedCategory == category
+                    ? Colors.white
+                    : Colors.black,
               ),
               onSelected: (selected) {
                 setState(() {
@@ -526,7 +536,10 @@ Widget _buildEditVoucherBottomSheet(Voucher voucher) {
                     children: [
                       Icon(Icons.camera_alt, size: 40, color: Colors.blue),
                       SizedBox(height: 8),
-                      Text('Tap to upload image', style: TextStyle(color: Colors.blue)),
+                      Text(
+                        'Tap to upload image',
+                        style: TextStyle(color: Colors.blue),
+                      ),
                     ],
                   ),
           ),
@@ -539,10 +552,16 @@ Widget _buildEditVoucherBottomSheet(Voucher voucher) {
         ] else if (imageState.imageUrl != null) ...[
           const Icon(Icons.check_circle, color: Colors.green),
           const SizedBox(height: 4),
-          const Text('Image ready for voucher', style: TextStyle(color: Colors.green)),
+          const Text(
+            'Image ready for voucher',
+            style: TextStyle(color: Colors.green),
+          ),
         ],
         if (imageState.error != null)
-          Text('Error: ${imageState.error}', style: const TextStyle(color: Colors.red)),
+          Text(
+            'Error: ${imageState.error}',
+            style: const TextStyle(color: Colors.red),
+          ),
       ],
     );
   }

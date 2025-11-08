@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:lottie/lottie.dart';
 
-
 class MenuScreen extends ConsumerWidget {
   const MenuScreen({super.key});
 
@@ -57,7 +56,7 @@ class MenuScreen extends ConsumerWidget {
               ),
               SizedBox(height: height * 0.03),
               GestureDetector(
-                onTap: (){
+                onTap: () {
                   context.push('/voucher-screen');
                 },
                 child: _buildSectionTitle(
@@ -92,7 +91,7 @@ class MenuScreen extends ConsumerWidget {
                 colorScheme,
                 textTheme,
               ),
-               SizedBox(height: height * 0.07),
+              SizedBox(height: height * 0.07),
             ],
           ),
         ),
@@ -108,9 +107,10 @@ class MenuScreen extends ConsumerWidget {
     return SizedBox(
       height: height * 0.6,
       child: Center(
-        child: Lottie.asset('Assets/Icons/coffee-break.json',
-        height: 200,
-        width: 150
+        child: Lottie.asset(
+          'Assets/Icons/coffee-break.json',
+          height: 200,
+          width: 150,
         ),
       ),
     );
@@ -281,7 +281,11 @@ class MenuScreen extends ConsumerWidget {
                                       height: 50,
                                       width: 50,
                                       child: Image.network(
-                                        firstItem['image'] ?? Icon(Icons.coffee,color: colorscheme.secondaryFixed,),
+                                        firstItem['image'] ??
+                                            Icon(
+                                              Icons.coffee,
+                                              color: colorscheme.secondaryFixed,
+                                            ),
                                         fit: BoxFit.cover,
                                         errorBuilder: (_, _, __) =>
                                             _buildFallbackIcon(
@@ -308,7 +312,9 @@ class MenuScreen extends ConsumerWidget {
                             style: texttheme.bodySmall?.copyWith(
                               color: categoryItems.isNotEmpty
                                   ? colorscheme.primary
-                                  : colorscheme.onSurface.withOpacity(0.5),
+                                  : colorscheme.onSurface.withValues(
+                                      alpha: 0.5,
+                                    ),
                               fontWeight: FontWeight.w400,
                               fontSize: 8,
                             ),
@@ -363,11 +369,10 @@ class MenuScreen extends ConsumerWidget {
             isHomeSection,
             colorscheme,
             texttheme,
-            
           ),
           const SizedBox(width: 16),
           _buildProductCard(
-             context,
+            context,
             height,
             width,
             imagePath,
@@ -376,7 +381,6 @@ class MenuScreen extends ConsumerWidget {
             isHomeSection,
             colorscheme,
             texttheme,
-           
           ),
           const SizedBox(width: 8),
         ],
@@ -524,7 +528,7 @@ class MenuScreen extends ConsumerWidget {
                       ),
                     ),
                     InkWell(
-                      onTap: (){
+                      onTap: () {
                         context.push('/online-order');
                       },
                       child: Container(

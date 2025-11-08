@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
-
 class EditVoucherBottomSheet extends ConsumerStatefulWidget {
   final Voucher voucher;
   final VoidCallback onVoucherUpdated;
@@ -18,10 +17,12 @@ class EditVoucherBottomSheet extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<EditVoucherBottomSheet> createState() => _EditVoucherBottomSheetState();
+  ConsumerState<EditVoucherBottomSheet> createState() =>
+      _EditVoucherBottomSheetState();
 }
 
-class _EditVoucherBottomSheetState extends ConsumerState<EditVoucherBottomSheet> {
+class _EditVoucherBottomSheetState
+    extends ConsumerState<EditVoucherBottomSheet> {
   late TextEditingController _offerPercentageController;
   late TextEditingController _validUntilController;
   DateTime? _selectedDate;
@@ -32,8 +33,12 @@ class _EditVoucherBottomSheetState extends ConsumerState<EditVoucherBottomSheet>
   @override
   void initState() {
     super.initState();
-    _offerPercentageController = TextEditingController(text: widget.voucher.offerPercentage.toStringAsFixed(0));
-    _validUntilController = TextEditingController(text: DateFormat('yyyy-MM-dd').format(widget.voucher.validUntil));
+    _offerPercentageController = TextEditingController(
+      text: widget.voucher.offerPercentage.toStringAsFixed(0),
+    );
+    _validUntilController = TextEditingController(
+      text: DateFormat('yyyy-MM-dd').format(widget.voucher.validUntil),
+    );
     _selectedDate = widget.voucher.validUntil;
     _selectedCategory = widget.voucher.category;
   }
@@ -64,66 +69,73 @@ class _EditVoucherBottomSheetState extends ConsumerState<EditVoucherBottomSheet>
   }
 
   Future<void> _selectDate(BuildContext context) async {
-  log('📅 Opening date picker...');
-  
-  // Get today's date at midnight for accurate comparison
-  final DateTime today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-  final DateTime currentVoucherDate = _selectedDate ?? widget.voucher.validUntil;
-  
-  log('📆 Today: $today');
-  log('📆 Current voucher date: $currentVoucherDate');
-  
-  // Determine the initial date - use the later of today or current voucher date
-  final DateTime initialDate = currentVoucherDate.isAfter(today) ? currentVoucherDate : today;
-  
-  log('📆 Initial date for picker: $initialDate');
+    log('📅 Opening date picker...');
 
-  final DateTime? picked = await showDatePicker(
-    context: context,
-    initialDate: initialDate,
-    firstDate: today, // Always start from today
-    lastDate: DateTime(2101),
-    builder: (BuildContext context, Widget? child) {
-      return Theme(
-        data: ThemeData.light().copyWith(
-          colorScheme: const ColorScheme.light(
-            primary: Color(0xFF6D4C41),
-            onPrimary: Colors.white,
-            onSurface: Colors.black,
+    // Get today's date at midnight for accurate comparison
+    final DateTime today = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+    );
+    final DateTime currentVoucherDate =
+        _selectedDate ?? widget.voucher.validUntil;
+
+    log('📆 Today: $today');
+    log('📆 Current voucher date: $currentVoucherDate');
+
+    // Determine the initial date - use the later of today or current voucher date
+    final DateTime initialDate = currentVoucherDate.isAfter(today)
+        ? currentVoucherDate
+        : today;
+
+    log('📆 Initial date for picker: $initialDate');
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: today, // Always start from today
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFF6D4C41),
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+            dialogTheme: DialogThemeData(backgroundColor: Colors.white),
           ),
-          dialogTheme: DialogThemeData(backgroundColor: Colors.white),
-        ),
-        child: child!,
-      );
-    },
-  );
+          child: child!,
+        );
+      },
+    );
 
-  if (picked != null && mounted) {
-    log('✅ Selected new date: $picked');
-    setState(() {
-      _selectedDate = picked;
-      _validUntilController.text = DateFormat('yyyy-MM-dd').format(picked);
-    });
-    
-    // Show status update
-    final status = picked.isAfter(DateTime.now()) ? 'ACTIVE' : 'EXPIRED';
-    log('🔄 Voucher status: $status');
-  } else {
-    await Future.delayed(const Duration(milliseconds: 200));
-    if (mounted) {
-      showModalBottomSheet(
-        // ignore: use_build_context_synchronously
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (context) => EditVoucherBottomSheet(
-          voucher: widget.voucher,
-          onVoucherUpdated: widget.onVoucherUpdated,
-        ),
-      );
+    if (picked != null && mounted) {
+      log('✅ Selected new date: $picked');
+      setState(() {
+        _selectedDate = picked;
+        _validUntilController.text = DateFormat('yyyy-MM-dd').format(picked);
+      });
+
+      // Show status update
+      final status = picked.isAfter(DateTime.now()) ? 'ACTIVE' : 'EXPIRED';
+      log('🔄 Voucher status: $status');
+    } else {
+      await Future.delayed(const Duration(milliseconds: 200));
+      if (mounted) {
+        showModalBottomSheet(
+          // ignore: use_build_context_synchronously
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (context) => EditVoucherBottomSheet(
+            voucher: widget.voucher,
+            onVoucherUpdated: widget.onVoucherUpdated,
+          ),
+        );
+      }
     }
   }
-}
 
   Future<void> _updateVoucher() async {
     if (_offerPercentageController.text.isEmpty) {
@@ -136,8 +148,12 @@ class _EditVoucherBottomSheetState extends ConsumerState<EditVoucherBottomSheet>
       return;
     }
 
-    final offerPercentage = double.tryParse(_offerPercentageController.text.trim());
-    if (offerPercentage == null || offerPercentage <= 0 || offerPercentage > 100) {
+    final offerPercentage = double.tryParse(
+      _offerPercentageController.text.trim(),
+    );
+    if (offerPercentage == null ||
+        offerPercentage <= 0 ||
+        offerPercentage > 100) {
       _showErrorSnackBar('Please enter a valid offer percentage (1-100)');
       return;
     }
@@ -150,7 +166,9 @@ class _EditVoucherBottomSheetState extends ConsumerState<EditVoucherBottomSheet>
       String imageUrl = widget.voucher.imageUrl;
 
       if (_selectedImage != null) {
-        await ref.read(voucherImageUploadProvider.notifier).uploadVoucherImage(_selectedImage!);
+        await ref
+            .read(voucherImageUploadProvider.notifier)
+            .uploadVoucherImage(_selectedImage!);
         final imageState = ref.read(voucherImageUploadProvider);
         if (imageState.imageUrl != null) {
           imageUrl = imageState.imageUrl!;
@@ -165,13 +183,14 @@ class _EditVoucherBottomSheetState extends ConsumerState<EditVoucherBottomSheet>
       );
 
       await ref.read(voucherProvider.notifier).updateVoucher(updatedVoucher);
-      
+
       widget.onVoucherUpdated();
       Navigator.pop(context);
-      
-      final status = _selectedDate!.isAfter(DateTime.now()) ? 'active' : 'expired';
+
+      final status = _selectedDate!.isAfter(DateTime.now())
+          ? 'active'
+          : 'expired';
       _showSuccessSnackBar('Voucher updated successfully! Status: $status');
-      
     } catch (e) {
       _showErrorSnackBar('Error updating voucher: $e');
     } finally {
@@ -183,19 +202,13 @@ class _EditVoucherBottomSheetState extends ConsumerState<EditVoucherBottomSheet>
 
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 
   void _showSuccessSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.green,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.green),
     );
   }
 
@@ -331,7 +344,10 @@ class _EditVoucherBottomSheetState extends ConsumerState<EditVoucherBottomSheet>
                 children: [
                   CircularProgressIndicator(),
                   SizedBox(width: 8),
-                  Text('Uploading new image...', style: TextStyle(fontSize: 12)),
+                  Text(
+                    'Uploading new image...',
+                    style: TextStyle(fontSize: 12),
+                  ),
                 ],
               ),
             ] else if (imageState.imageUrl != null) ...[
@@ -339,7 +355,10 @@ class _EditVoucherBottomSheetState extends ConsumerState<EditVoucherBottomSheet>
                 children: [
                   Icon(Icons.check_circle, size: 16, color: Colors.green),
                   SizedBox(width: 8),
-                  Text('New image ready', style: TextStyle(fontSize: 12, color: Colors.green)),
+                  Text(
+                    'New image ready',
+                    style: TextStyle(fontSize: 12, color: Colors.green),
+                  ),
                 ],
               ),
             ],
@@ -364,7 +383,9 @@ class _EditVoucherBottomSheetState extends ConsumerState<EditVoucherBottomSheet>
                       selected: _selectedCategory == category,
                       selectedColor: const Color(0xFF6D4C41),
                       labelStyle: TextStyle(
-                        color: _selectedCategory == category ? Colors.white : Colors.black,
+                        color: _selectedCategory == category
+                            ? Colors.white
+                            : Colors.black,
                         fontSize: 12,
                       ),
                       onSelected: (selected) {
@@ -381,7 +402,11 @@ class _EditVoucherBottomSheetState extends ConsumerState<EditVoucherBottomSheet>
 
             const Text(
               'Offer Percentage *',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
             const SizedBox(height: 8),
             TextField(
@@ -390,10 +415,15 @@ class _EditVoucherBottomSheetState extends ConsumerState<EditVoucherBottomSheet>
               decoration: InputDecoration(
                 hintText: 'Enter offer percentage (1-100)',
                 prefixIcon: const Icon(Icons.percent, color: Color(0xFF6D4C41)),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFF6D4C41), width: 2),
+                  borderSide: const BorderSide(
+                    color: Color(0xFF6D4C41),
+                    width: 2,
+                  ),
                 ),
               ),
             ),
@@ -401,7 +431,11 @@ class _EditVoucherBottomSheetState extends ConsumerState<EditVoucherBottomSheet>
 
             const Text(
               'Valid Until Date *',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
             const SizedBox(height: 8),
             GestureDetector(
@@ -412,15 +446,23 @@ class _EditVoucherBottomSheetState extends ConsumerState<EditVoucherBottomSheet>
                   readOnly: true,
                   decoration: InputDecoration(
                     hintText: 'Tap to select date',
-                    prefixIcon: const Icon(Icons.calendar_today, color: Color(0xFF6D4C41)),
+                    prefixIcon: const Icon(
+                      Icons.calendar_today,
+                      color: Color(0xFF6D4C41),
+                    ),
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.edit, color: Color(0xFF6D4C41)),
                       onPressed: () => _selectDate(context),
                     ),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFF6D4C41), width: 2),
+                      borderSide: const BorderSide(
+                        color: Color(0xFF6D4C41),
+                        width: 2,
+                      ),
                     ),
                   ),
                 ),
@@ -430,11 +472,7 @@ class _EditVoucherBottomSheetState extends ConsumerState<EditVoucherBottomSheet>
             if (_selectedDate != null) ...[
               Row(
                 children: [
-                  Icon(
-                    Icons.info_outline,
-                    size: 16,
-                    color: _getStatusColor(),
-                  ),
+                  Icon(Icons.info_outline, size: 16, color: _getStatusColor()),
                   const SizedBox(width: 4),
                   Text(
                     _getStatusMessage(),
@@ -452,14 +490,16 @@ class _EditVoucherBottomSheetState extends ConsumerState<EditVoucherBottomSheet>
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: _getStatusColor().withOpacity(0.1),
+                color: _getStatusColor().withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: _getStatusColor()),
               ),
               child: Row(
                 children: [
                   Icon(
-                    _getVoucherStatus() == 'ACTIVE' ? Icons.check_circle : Icons.warning,
+                    _getVoucherStatus() == 'ACTIVE'
+                        ? Icons.check_circle
+                        : Icons.warning,
                     color: _getStatusColor(),
                   ),
                   const SizedBox(width: 8),
@@ -479,7 +519,9 @@ class _EditVoucherBottomSheetState extends ConsumerState<EditVoucherBottomSheet>
             const SizedBox(height: 20),
 
             _isUpdating
-                ? const Center(child: CircularProgressIndicator(color: Color(0xFF6D4C41)))
+                ? const Center(
+                    child: CircularProgressIndicator(color: Color(0xFF6D4C41)),
+                  )
                 : ElevatedButton(
                     onPressed: _updateVoucher,
                     style: ElevatedButton.styleFrom(
@@ -491,7 +533,11 @@ class _EditVoucherBottomSheetState extends ConsumerState<EditVoucherBottomSheet>
                     ),
                     child: const Text(
                       'Update Voucher',
-                      style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
             const SizedBox(height: 10),

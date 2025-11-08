@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../../core/core.dart';
+
 class ShophourScreen extends ConsumerWidget {
   const ShophourScreen({super.key});
   // Shop hours data
@@ -29,12 +30,15 @@ class ShophourScreen extends ConsumerWidget {
       appBar: CustomAppBar(
         titleText: 'Shop Hours',
         centerTitle: true,
-        backgroundColor:AppColors.primary,
+        backgroundColor: AppColors.primary,
         // foregroundColor: AppColors.textPrimary,
         elevation: 0.5,
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: width * 0.04, vertical: height * 0.02),
+        padding: EdgeInsets.symmetric(
+          horizontal: width * 0.04,
+          vertical: height * 0.02,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -49,7 +53,13 @@ class ShophourScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildTodayHoursCard(BuildContext context, String today, String todayHours, double width, double height) {
+  Widget _buildTodayHoursCard(
+    BuildContext context,
+    String today,
+    String todayHours,
+    double width,
+    double height,
+  ) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(width * 0.05),
@@ -58,7 +68,7 @@ class ShophourScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -103,7 +113,12 @@ class ShophourScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildWeeklyScheduleList(BuildContext context, String today, double width, double height) {
+  Widget _buildWeeklyScheduleList(
+    BuildContext context,
+    String today,
+    double width,
+    double height,
+  ) {
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
@@ -111,7 +126,7 @@ class ShophourScreen extends ConsumerWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
@@ -155,9 +170,14 @@ class ShophourScreen extends ConsumerWidget {
     required double height,
   }) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: width * 0.04, vertical: height * 0.015),
+      padding: EdgeInsets.symmetric(
+        horizontal: width * 0.04,
+        vertical: height * 0.015,
+      ),
       decoration: BoxDecoration(
-        color: isToday ? AppColors.accent.withOpacity(0.08) : Colors.transparent,
+        color: isToday
+            ? AppColors.accent.withValues(alpha: 0.08)
+            : Colors.transparent,
       ),
       child: Row(
         children: [
@@ -165,7 +185,9 @@ class ShophourScreen extends ConsumerWidget {
             height: height * 0.05,
             width: width * 0.1,
             decoration: BoxDecoration(
-              color: isToday ? AppColors.accent.withOpacity(0.2) : AppColors.primaryLight,
+              color: isToday
+                  ? AppColors.accent.withValues(alpha: 0.2)
+                  : AppColors.primaryLight,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
@@ -213,7 +235,7 @@ class ShophourScreen extends ConsumerWidget {
               child: Text(
                 'Today',
                 style: GoogleFonts.dmSans(
-                  fontSize: 12, 
+                  fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: Colors.white,
                 ),

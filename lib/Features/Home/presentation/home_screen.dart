@@ -522,7 +522,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ],
       ),
     );
-  }  Future<String> getCategoriesname() async {
+  }
+
+  Future<String> getCategoriesname() async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     try {
       log('Fetching categories from items/Voucher/categories');
@@ -811,6 +813,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
   }
+
   // Build bestseller section
   Widget _buildBestsellerSection(
     double height,
@@ -819,7 +822,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     texttheme,
   ) {
     return Padding(
-      padding:EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(8.0),
       child: Container(
         width: width - 80,
         height: height * 0.28,
@@ -830,7 +833,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             end: Alignment.bottomCenter,
             colors: [
               // ignore: deprecated_member_use
-              AppColors.primaryLight.withOpacity(0.5),
+              AppColors.primaryLight.withValues(alpha: 0.5),
               AppColors.primaryLight,
             ],
           ),
@@ -1333,7 +1336,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   // ignore: deprecated_member_use
-                  colors: [Colors.transparent, Colors.black.withOpacity(0.5)],
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.5),
+                  ],
                 ),
               ),
             ),

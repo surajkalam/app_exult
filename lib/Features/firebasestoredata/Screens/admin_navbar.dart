@@ -123,7 +123,7 @@ class AdminPanelScreen extends ConsumerWidget {
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: Colors.brown.withOpacity(0.3),
+                      color: Colors.brown.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),

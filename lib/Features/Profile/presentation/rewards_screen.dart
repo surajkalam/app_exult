@@ -39,7 +39,13 @@ class RewarsScreens extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildUserProfileSection(height, width, colorScheme, textTheme,currentPoints),
+            _buildUserProfileSection(
+              height,
+              width,
+              colorScheme,
+              textTheme,
+              currentPoints,
+            ),
             SizedBox(height: height * 0.03),
             _buildSectionTitle("How to Earn", colorScheme, textTheme),
             SizedBox(height: height * 0.02),
@@ -66,9 +72,9 @@ class RewarsScreens extends ConsumerWidget {
               width: width,
               colorscheme: colorScheme,
               texttheme: textTheme,
-              onTap: (){
-                 context.push('/app-reference');
-              }
+              onTap: () {
+                context.push('/app-reference');
+              },
             ),
             SizedBox(height: height * 0.03),
             _buildSectionTitle("Rewards", colorScheme, textTheme),
@@ -118,7 +124,7 @@ class RewarsScreens extends ConsumerWidget {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: colorscheme.shadow.withOpacity(0.05),
+              color: colorscheme.shadow.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -150,7 +156,7 @@ class RewarsScreens extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: colorscheme.onPrimaryFixedVariant.withOpacity(0.1),
+                color: colorscheme.onPrimaryFixedVariant.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: colorscheme.onPrimaryFixedVariant),
               ),
@@ -205,7 +211,7 @@ class RewarsScreens extends ConsumerWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: colorscheme.shadow.withOpacity(0.05),
+              color: colorscheme.shadow.withValues(alpha: 0.05),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
@@ -281,24 +287,40 @@ class RewarsScreens extends ConsumerWidget {
       builder: (context, ref, child) {
         final currentPoints = ref.watch(currentPointsProvider);
         final canClaim = currentPoints >= requiredCoins;
-        
+
         return GestureDetector(
           onTap: () {
             if (canClaim) {
-              _showClaimDialog(context, ref, title, requiredCoins, colorscheme, texttheme);
+              _showClaimDialog(
+                context,
+                ref,
+                title,
+                requiredCoins,
+                colorscheme,
+                texttheme,
+              );
             } else {
-              _showRewardSnackbar(context, requiredCoins - currentPoints, colorscheme, texttheme);
+              _showRewardSnackbar(
+                context,
+                requiredCoins - currentPoints,
+                colorscheme,
+                texttheme,
+              );
             }
           },
           child: Container(
             padding: EdgeInsets.all(width * 0.04),
             decoration: BoxDecoration(
-              color: canClaim ? colorscheme.primaryContainer.withOpacity(0.1) : colorscheme.onPrimary,
+              color: canClaim
+                  ? colorscheme.primaryContainer.withValues(alpha: 0.1)
+                  : colorscheme.onPrimary,
               borderRadius: BorderRadius.circular(16),
-              border: canClaim ? Border.all(color: colorscheme.primary, width: 2) : null,
+              border: canClaim
+                  ? Border.all(color: colorscheme.primary, width: 2)
+                  : null,
               boxShadow: [
                 BoxShadow(
-                  color: colorscheme.shadow.withOpacity(0.05),
+                  color: colorscheme.shadow.withValues(alpha: 0.05),
                   blurRadius: 6,
                   offset: const Offset(0, 2),
                 ),
@@ -311,16 +333,18 @@ class RewarsScreens extends ConsumerWidget {
                   width: width * 0.12,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    color: canClaim 
-                      ? colorscheme.primary.withOpacity(0.2)
-                      : colorscheme.onSecondary.withOpacity(0.2),
+                    color: canClaim
+                        ? colorscheme.primary.withValues(alpha: 0.2)
+                        : colorscheme.onSecondary.withValues(alpha: 0.2),
                   ),
                   child: Center(
                     child: Image(
                       image: AssetImage(iconPath),
                       height: height * 0.03,
                       width: width * 0.06,
-                      color: canClaim ? colorscheme.primary : colorscheme.onSecondary,
+                      color: canClaim
+                          ? colorscheme.primary
+                          : colorscheme.onSecondary,
                     ),
                   ),
                 ),
@@ -334,7 +358,9 @@ class RewarsScreens extends ConsumerWidget {
                         style: texttheme.bodyMedium?.copyWith(
                           color: colorscheme.primaryContainer,
                           fontSize: 13,
-                          fontWeight: canClaim ? FontWeight.bold : FontWeight.normal,
+                          fontWeight: canClaim
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                         ),
                       ),
                       SizedBox(height: height * 0.005),
@@ -349,20 +375,27 @@ class RewarsScreens extends ConsumerWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
-                    color: canClaim 
-                      ? Colors.green.withOpacity(0.1)
-                      : colorscheme.onSecondary.withOpacity(0.1),
+                    color: canClaim
+                        ? Colors.green.withValues(alpha: 0.1)
+                        : colorscheme.onSecondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: canClaim ? Border.all(color: Colors.green) : null,
                   ),
                   child: Text(
                     canClaim ? "Claim" : "$requiredCoins coins",
                     style: texttheme.bodyMedium?.copyWith(
-                      color: canClaim ? Colors.green[700] : colorscheme.onSecondary,
+                      color: canClaim
+                          ? Colors.green[700]
+                          : colorscheme.onSecondary,
                       fontSize: 10,
-                      fontWeight: canClaim ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: canClaim
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                   ),
                 ),
@@ -398,7 +431,7 @@ class RewarsScreens extends ConsumerWidget {
                 Container(
                   padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.1),
+                    color: Colors.green.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -453,7 +486,14 @@ class RewarsScreens extends ConsumerWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
-                          _claimReward(context, ref, rewardTitle, requiredCoins, colorscheme, texttheme);
+                          _claimReward(
+                            context,
+                            ref,
+                            rewardTitle,
+                            requiredCoins,
+                            colorscheme,
+                            texttheme,
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green[600],
@@ -490,29 +530,27 @@ class RewarsScreens extends ConsumerWidget {
       final currentPoints = ref.read(currentPointsProvider);
       final newPoints = currentPoints - requiredCoins;
       ref.read(currentPointsProvider.notifier).state = newPoints;
-      
+
       // Update points in Firebase
       final user = ref.read(currentUserProvider);
       if (user?.phoneNumber != null) {
         await FirebaseFirestore.instance
             .collection('users')
             .doc(user!.phoneNumber)
-            .update({
-          'points': newPoints,
-        });
-        
+            .update({'points': newPoints});
+
         // Log the reward claim
         await FirebaseFirestore.instance
             .collection('users')
             .doc(user.phoneNumber!)
             .collection('claimedRewards')
             .add({
-          'rewardTitle': rewardTitle,
-          'pointsUsed': requiredCoins,
-          'claimedAt': FieldValue.serverTimestamp(),
-        });
+              'rewardTitle': rewardTitle,
+              'pointsUsed': requiredCoins,
+              'claimedAt': FieldValue.serverTimestamp(),
+            });
       }
-      
+
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -530,14 +568,13 @@ class RewarsScreens extends ConsumerWidget {
           ),
         ),
       );
-      
+
       // Navigate to coffee category if it's a coffee reward
       if (rewardTitle.toLowerCase().contains('coffee')) {
         Future.delayed(Duration(seconds: 1), () {
           context.push('/coffee-category');
         });
       }
-      
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

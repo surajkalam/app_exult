@@ -14,7 +14,7 @@ class BillingInfoScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    
+
     return Scaffold(
       backgroundColor: colorScheme.onPrimary,
       appBar: AppBar(
@@ -28,7 +28,11 @@ class BillingInfoScreen extends ConsumerWidget {
         backgroundColor: colorScheme.tertiaryFixed,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: colorScheme.primary, size: 20),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: colorScheme.primary,
+            size: 20,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         centerTitle: true,
@@ -56,7 +60,7 @@ class BillingInfoScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    
+
     // Calculate summary stats
     double totalAmount = payments.fold(
       0,
@@ -129,7 +133,9 @@ class BillingInfoScreen extends ConsumerWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: colorScheme.onPrimaryFixedVariant.withOpacity(0.1),
+                  color: colorScheme.onPrimaryFixedVariant.withValues(
+                    alpha: 0.1,
+                  ),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
@@ -174,7 +180,7 @@ class BillingInfoScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -182,7 +188,7 @@ class BillingInfoScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -194,7 +200,7 @@ class BillingInfoScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: color, size: 18),
@@ -210,9 +216,7 @@ class BillingInfoScreen extends ConsumerWidget {
           const SizedBox(height: 4),
           Text(
             title,
-            style: textTheme.labelSmall?.copyWith(
-              color: colorScheme.secondary,
-            ),
+            style: textTheme.labelSmall?.copyWith(color: colorScheme.secondary),
           ),
         ],
       ),
@@ -239,7 +243,7 @@ class BillingInfoScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -263,13 +267,19 @@ class BillingInfoScreen extends ConsumerWidget {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            colorScheme.onPrimaryFixedVariant.withOpacity(0.7),
+                            colorScheme.onPrimaryFixedVariant.withValues(
+                              alpha: 0.7,
+                            ),
                             colorScheme.onPrimaryFixedVariant,
                           ],
                         ),
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      child: Icon(Icons.coffee, color: colorScheme.onSurface, size: 24),
+                      child: Icon(
+                        Icons.coffee,
+                        color: colorScheme.onSurface,
+                        size: 24,
+                      ),
                     ),
                     const SizedBox(width: 16),
 
@@ -324,7 +334,7 @@ class BillingInfoScreen extends ConsumerWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: statusColor.withOpacity(0.1),
+                            color: statusColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
@@ -357,7 +367,7 @@ class BillingInfoScreen extends ConsumerWidget {
                   margin: const EdgeInsets.only(top: 16),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   decoration: BoxDecoration(
-                    color: colorScheme.surface.withOpacity(0.3),
+                    color: colorScheme.surface.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -393,7 +403,7 @@ class BillingInfoScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    
+
     return Column(
       children: [
         Text(
@@ -419,7 +429,7 @@ class BillingInfoScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -453,17 +463,33 @@ class BillingInfoScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 24),
-            _buildDetailRow(context, 'Product', payment['productName'] ?? 'Unknown'),
+            _buildDetailRow(
+              context,
+              'Product',
+              payment['productName'] ?? 'Unknown',
+            ),
             _buildDetailRow(context, 'Order ID', payment['orderId'] ?? 'N/A'),
-            _buildDetailRow(context, 'Payment ID', payment['paymentId'] ?? 'N/A'),
+            _buildDetailRow(
+              context,
+              'Payment ID',
+              payment['paymentId'] ?? 'N/A',
+            ),
             _buildDetailRow(
               context,
               'Amount',
               '\$${payment['amount']?.toStringAsFixed(2) ?? '0.00'}',
             ),
-            _buildDetailRow(context, 'Quantity', payment['quantity']?.toString() ?? '0'),
+            _buildDetailRow(
+              context,
+              'Quantity',
+              payment['quantity']?.toString() ?? '0',
+            ),
             _buildDetailRow(context, 'Status', payment['status'] ?? 'Unknown'),
-            _buildDetailRow(context, 'Date', _formatDate(payment['completedAt'])),
+            _buildDetailRow(
+              context,
+              'Date',
+              _formatDate(payment['completedAt']),
+            ),
             if (payment['signature'] != null)
               _buildDetailRow(context, 'Signature', payment['signature']),
             const SizedBox(height: 24),
@@ -497,7 +523,7 @@ class BillingInfoScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -533,7 +559,7 @@ class BillingInfoScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    
+
     return Container(
       height: 400,
       child: Center(
@@ -547,7 +573,9 @@ class BillingInfoScreen extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: colorScheme.onPrimaryFixedVariant.withOpacity(0.1),
+                    color: colorScheme.onPrimaryFixedVariant.withValues(
+                      alpha: 0.1,
+                    ),
                     blurRadius: 20,
                     offset: const Offset(0, 4),
                   ),
@@ -558,7 +586,9 @@ class BillingInfoScreen extends ConsumerWidget {
                 height: 40,
                 child: CircularProgressIndicator(
                   strokeWidth: 3,
-                  valueColor: AlwaysStoppedAnimation<Color>(colorScheme.onPrimaryFixedVariant),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    colorScheme.onPrimaryFixedVariant,
+                  ),
                 ),
               ),
             ),
@@ -580,7 +610,7 @@ class BillingInfoScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    
+
     return Container(
       height: 400,
       child: Center(
@@ -592,7 +622,7 @@ class BillingInfoScreen extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
+                  color: Colors.red.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Icon(Icons.error_outline, size: 50, color: Colors.red),
@@ -626,7 +656,7 @@ class BillingInfoScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    
+
     return Consumer(
       builder: (context, ref, child) {
         return Container(
@@ -634,13 +664,13 @@ class BillingInfoScreen extends ConsumerWidget {
             gradient: LinearGradient(
               colors: [
                 colorScheme.onPrimaryFixedVariant,
-                colorScheme.onPrimaryFixedVariant.withOpacity(0.8),
+                colorScheme.onPrimaryFixedVariant.withValues(alpha: 0.8),
               ],
             ),
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: colorScheme.onPrimaryFixedVariant.withOpacity(0.3),
+                color: colorScheme.onPrimaryFixedVariant.withValues(alpha: 0.3),
                 blurRadius: 15,
                 offset: const Offset(0, 5),
               ),
@@ -682,7 +712,7 @@ class BillingInfoScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    
+
     return SizedBox(
       height: 400,
       child: Center(
@@ -696,8 +726,8 @@ class BillingInfoScreen extends ConsumerWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      colorScheme.onPrimaryFixedVariant.withOpacity(0.1),
-                      colorScheme.tertiaryFixed.withOpacity(0.3),
+                      colorScheme.onPrimaryFixedVariant.withValues(alpha: 0.1),
+                      colorScheme.tertiaryFixed.withValues(alpha: 0.3),
                     ],
                   ),
                   shape: BoxShape.circle,

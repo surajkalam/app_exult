@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import '../../../Authentication/provider/current_user.dart';
 import '../../../core/core.dart';
 import '../provider/event_provider.dart';
+
 class EventBookingScreen extends ConsumerStatefulWidget {
   const EventBookingScreen({super.key});
 
@@ -126,7 +127,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                     // ignore: deprecated_member_use
                     color: Theme.of(
                       context,
-                    ).colorScheme.shadow.withOpacity(0.2),
+                    ).colorScheme.shadow.withValues(alpha: 0.2),
                     blurRadius: 20,
                     offset: Offset(0, 10),
                   ),
@@ -162,7 +163,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
           booking: booking,
           userName: userDetails.name,
           userEmail: userDetails.email,
-          userPhone:phone,
+          userPhone: phone,
         );
         // ignore: use_build_context_synchronously
         if (!mounted) return;
@@ -196,7 +197,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                   color: Theme.of(
                     context,
                     // ignore: deprecated_member_use
-                  ).colorScheme.outlineVariant.withOpacity(0.3),
+                  ).colorScheme.outlineVariant.withValues(alpha: 0.3),
                   width: 1,
                 ),
                 boxShadow: [
@@ -204,7 +205,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                     color: Theme.of(
                       context,
                       // ignore: deprecated_member_use
-                    ).colorScheme.shadow.withOpacity(0.15),
+                    ).colorScheme.shadow.withValues(alpha: 0.15),
                     blurRadius: 25,
                     offset: const Offset(0, 10),
                   ),
@@ -221,9 +222,9 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                         gradient: LinearGradient(
                           colors: [
                             // ignore: deprecated_member_use
-                            Colors.green.withOpacity(0.15),
+                            Colors.green.withValues(alpha: 0.15),
                             // ignore: deprecated_member_use
-                            Colors.green.withOpacity(0.05),
+                            Colors.green.withValues(alpha: 0.05),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -231,7 +232,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                         shape: BoxShape.circle,
                         border: Border.all(
                           // ignore: deprecated_member_use
-                          color: Colors.green.withOpacity(0.3),
+                          color: Colors.green.withValues(alpha: 0.3),
                           width: 2,
                         ),
                       ),
@@ -262,13 +263,13 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                         color: Theme.of(
                           context,
                           // ignore: deprecated_member_use
-                        ).colorScheme.secondaryFixed.withOpacity(0.1),
+                        ).colorScheme.secondaryFixed.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: Theme.of(
                             context,
                             // ignore: deprecated_member_use
-                          ).colorScheme.secondaryFixed.withOpacity(0.2),
+                          ).colorScheme.secondaryFixed.withValues(alpha: 0.2),
                         ),
                       ),
                       child: Text(
@@ -286,16 +287,19 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                       width: double.infinity,
                       padding: EdgeInsets.all(height * 0.018),
                       decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                          // ignore: deprecated_member_use
-                        ).colorScheme.surfaceContainerHigh.withOpacity(0.6),
+                        color:
+                            Theme.of(
+                              context,
+                              // ignore: deprecated_member_use
+                            ).colorScheme.surfaceContainerHigh.withValues(
+                              alpha: 0.6,
+                            ),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: Theme.of(
                             context,
                             // ignore: deprecated_member_use
-                          ).colorScheme.outlineVariant.withOpacity(0.2),
+                          ).colorScheme.outlineVariant.withValues(alpha: 0.2),
                         ),
                       ),
                       child: Column(
@@ -496,7 +500,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                     // ignore: deprecated_member_use
                     color: Theme.of(
                       context,
-                    ).colorScheme.shadow.withOpacity(0.2),
+                    ).colorScheme.shadow.withValues(alpha: 0.2),
                     blurRadius: 20,
                     offset: Offset(0, 10),
                   ),
@@ -636,7 +640,11 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
     return categories.firstWhere((cat) => cat.id == categoryId).name;
   }
 
-  Widget _buildStepIndicator(double height, double width,ColorScheme colorscheme) {
+  Widget _buildStepIndicator(
+    double height,
+    double width,
+    ColorScheme colorscheme,
+  ) {
     final booking = ref.watch(eventBookingProvider);
     int activeStep = booking.categoryId.isEmpty
         ? 0
@@ -650,11 +658,32 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
         padding: EdgeInsets.symmetric(horizontal: width * 0.04),
         child: Row(
           children: [
-            _buildStepDot(0, activeStep >= 0, 'Category', width, height,colorscheme),
+            _buildStepDot(
+              0,
+              activeStep >= 0,
+              'Category',
+              width,
+              height,
+              colorscheme,
+            ),
             Expanded(child: _buildStepLine(activeStep >= 1)),
-            _buildStepDot(1, activeStep >= 1, 'Details', width, height,colorscheme),
+            _buildStepDot(
+              1,
+              activeStep >= 1,
+              'Details',
+              width,
+              height,
+              colorscheme,
+            ),
             Expanded(child: _buildStepLine(activeStep >= 2)),
-            _buildStepDot(2, activeStep >= 2, 'Confirm', width, height,colorscheme),
+            _buildStepDot(
+              2,
+              activeStep >= 2,
+              'Confirm',
+              width,
+              height,
+              colorscheme,
+            ),
           ],
         ),
       ),
@@ -667,7 +696,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
     String label,
     double width,
     double height,
-    ColorScheme colorscheme
+    ColorScheme colorscheme,
   ) {
     return Column(
       children: [
@@ -686,7 +715,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                       color: Theme.of(
                         context,
                         // ignore: deprecated_member_use
-                      ).colorScheme.primary.withOpacity(0.3),
+                      ).colorScheme.primary.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -774,7 +803,9 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 // ignore: deprecated_member_use
-                color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                color: Theme.of(
+                  context,
+                ).colorScheme.secondary.withValues(alpha: 0.3),
                 width: 1.5,
               ),
             ),
@@ -876,7 +907,9 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.onSurface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant)
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant,
+            ),
           ),
           child: Column(
             children: options.keys.map((key) {
@@ -888,7 +921,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                       ? Theme.of(
                           context,
                           // ignore: deprecated_member_use
-                        ).colorScheme.secondaryFixed.withOpacity(0.3)
+                        ).colorScheme.secondaryFixed.withValues(alpha: 0.3)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -941,7 +974,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
     log('Current User Phone: ${currentuser?.phoneNumber}');
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-    
+
     return Scaffold(
       appBar: CustomAppBar(
         titleText: 'Book Your Event',
@@ -991,18 +1024,18 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
         ),
         child: Column(
           children: [
-            _buildStepIndicator(height, width,colorScheme),
+            _buildStepIndicator(height, width, colorScheme),
             Expanded(
               child: FadeTransition(
                 opacity: _fadeAnimation,
                 child: Form(
                   key: _formKey,
                   child: Padding(
-                    padding:  EdgeInsets.symmetric(horizontal: width*0.02),
+                    padding: EdgeInsets.symmetric(horizontal: width * 0.02),
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: colorScheme.outlineVariant)
+                        border: Border.all(color: colorScheme.outlineVariant),
                       ),
                       child: ListView(
                         physics: AlwaysScrollableScrollPhysics(),
@@ -1014,13 +1047,15 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                             decoration: BoxDecoration(
                               color: colorScheme.onSurface,
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color:colorScheme.outlineVariant),
+                              border: Border.all(
+                                color: colorScheme.outlineVariant,
+                              ),
                               boxShadow: [
                                 BoxShadow(
                                   // ignore: deprecated_member_use
                                   color: colorScheme.shadow,
                                   blurRadius: 4,
-                                  offset:Offset(2, 2),
+                                  offset: Offset(2, 2),
                                 ),
                               ],
                             ),
@@ -1037,7 +1072,9 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                                     SizedBox(width: width * 0.02),
                                     Text(
                                       'Select Event Category',
-                                      style: Theme.of(context).textTheme.labelLarge
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge
                                           ?.copyWith(
                                             fontWeight: FontWeight.w400,
                                             color: colorScheme.primaryContainer,
@@ -1069,7 +1106,9 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                                             booking.categoryId == category.id,
                                         onTap: () {
                                           ref
-                                              .read(eventBookingProvider.notifier)
+                                              .read(
+                                                eventBookingProvider.notifier,
+                                              )
                                               .setCategory(category.id);
                                         },
                                       ),
@@ -1087,11 +1126,15 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                               decoration: BoxDecoration(
                                 color: colorScheme.onSurface,
                                 borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: colorScheme.outlineVariant),
+                                border: Border.all(
+                                  color: colorScheme.outlineVariant,
+                                ),
                                 boxShadow: [
                                   BoxShadow(
                                     // ignore: deprecated_member_use
-                                    color: colorScheme.shadow.withOpacity(0.1),
+                                    color: colorScheme.shadow.withValues(
+                                      alpha: 0.1,
+                                    ),
                                     blurRadius: 8,
                                     offset: Offset(0, 2),
                                   ),
@@ -1117,7 +1160,9 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                                       SizedBox(width: width * 0.01),
                                       Text(
                                         'Select Date & Time',
-                                        style: Theme.of(context).textTheme.bodyLarge
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
                                             ?.copyWith(
                                               fontSize: 14,
                                               color: Theme.of(
@@ -1169,7 +1214,9 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                                       SizedBox(width: width * 0.01),
                                       Text(
                                         'Number of Guests',
-                                        style: Theme.of(context).textTheme.bodyLarge
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
                                             ?.copyWith(
                                               fontSize: 14,
                                               color: Theme.of(
@@ -1184,10 +1231,13 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                        color: Theme.of(
-                                          context,
-                                        // ignore: deprecated_member_use
-                                        ).colorScheme.secondary.withOpacity(0.3),
+                                        color:
+                                            Theme.of(
+                                              context,
+                                              // ignore: deprecated_member_use
+                                            ).colorScheme.secondary.withValues(
+                                              alpha: 0.3,
+                                            ),
                                         width: 1.5,
                                       ),
                                     ),
@@ -1199,8 +1249,11 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                                           width * 0.03,
                                         ),
                                       ),
-                                      items: List.generate(100, (index) => index + 1)
-                                          .map((int value) {
+                                      items:
+                                          List.generate(
+                                            100,
+                                            (index) => index + 1,
+                                          ).map((int value) {
                                             return DropdownMenuItem<int>(
                                               value: value,
                                               child: Text(
@@ -1215,8 +1268,7 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                                                     ),
                                               ),
                                             );
-                                          })
-                                          .toList(),
+                                          }).toList(),
                                       onChanged: (value) {
                                         ref
                                             .read(eventBookingProvider.notifier)
@@ -1241,16 +1293,21 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
                                   // ignore: deprecated_member_use
-                                  color: Theme.of(
-                                    context,
-                                    // ignore: deprecated_member_use
-                                  ).colorScheme.secondary.withOpacity(0.3),
+                                  color:
+                                      Theme.of(
+                                        context,
+                                        // ignore: deprecated_member_use
+                                      ).colorScheme.secondary.withValues(
+                                        alpha: 0.3,
+                                      ),
                                   width: 1.5,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
                                     // ignore: deprecated_member_use
-                                    color: colorScheme.shadow.withOpacity(0.1),
+                                    color: colorScheme.shadow.withValues(
+                                      alpha: 0.1,
+                                    ),
                                     blurRadius: 8,
                                     offset: const Offset(0, 2),
                                   ),
@@ -1277,7 +1334,9 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                                       SizedBox(width: width * 0.01),
                                       Text(
                                         'Special Requests',
-                                        style: Theme.of(context).textTheme.bodyLarge
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
                                             ?.copyWith(
                                               fontSize: 14,
                                               color: Theme.of(
@@ -1290,7 +1349,9 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                                   SizedBox(height: height * 0.014),
                                   Container(
                                     decoration: BoxDecoration(
-                                      color:Theme.of(context).colorScheme.onSurface,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
                                         // ignore: deprecated_member_use
@@ -1304,11 +1365,13 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                                     child: TextFormField(
                                       controller: _specialRequestsController,
                                       style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall
-                                            ?.copyWith(
-                                              color: Theme.of(context).colorScheme.primaryContainer
-                                            ),
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.primaryContainer,
+                                          ),
                                       maxLines: 3,
                                       decoration: InputDecoration(
                                         hintText:
@@ -1341,12 +1404,16 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 // ignore: deprecated_member_use
-                                color: colorScheme.secondaryFixed.withOpacity(0.5),
+                                color: colorScheme.secondaryFixed.withValues(
+                                  alpha: 0.5,
+                                ),
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: [
                                   BoxShadow(
                                     // ignore: deprecated_member_use
-                                    color: colorScheme.primary.withOpacity(0.3),
+                                    color: colorScheme.primary.withValues(
+                                      alpha: 0.3,
+                                    ),
                                     blurRadius: 8,
                                     offset: const Offset(0, 4),
                                   ),
@@ -1367,11 +1434,16 @@ class _EventBookingScreenState extends ConsumerState<EventBookingScreen>
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.send, color: colorScheme.onPrimary),
+                                    Icon(
+                                      Icons.send,
+                                      color: colorScheme.onPrimary,
+                                    ),
                                     SizedBox(width: width * 0.01),
                                     Text(
                                       'Submit Booking Request',
-                                      style: Theme.of(context).textTheme.bodyLarge
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
                                           ?.copyWith(
                                             fontSize: 14,
                                             color: Theme.of(

@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,7 +9,8 @@ final authNotifierProvider = NotifierProvider<AuthNotifier, AsyncValue<User?>>(
 );
 
 class AuthNotifier extends Notifier<AsyncValue<User?>> {
-  String? _verificationId;
+  // ignore: non_constant_identifier_names
+  String? VerificationId;
   StreamSubscription<User?>? _authSubscription;
 
   @override
@@ -27,17 +27,20 @@ class AuthNotifier extends Notifier<AsyncValue<User?>> {
     // Cancel existing subscription to avoid duplicates
     _authSubscription?.cancel();
 
-    _authSubscription = FirebaseAuth.instance.authStateChanges().listen((user) {
-      log("🔄 Auth state changed → ${user?.phoneNumber ?? "No user"}");
+    _authSubscription = FirebaseAuth.instance.authStateChanges().listen(
+      (user) {
+        log("🔄 Auth state changed → ${user?.phoneNumber ?? "No user"}");
 
-      // Only update state if it's different from current state
-      if (state.value != user) {
-        state = AsyncValue.data(user);
-      }
-    }, onError: (error, stackTrace) {
-      log("❌ Auth state error: $error");
-      state = AsyncValue.error(error, stackTrace);
-    });
+        // Only update state if it's different from current state
+        if (state.value != user) {
+          state = AsyncValue.data(user);
+        }
+      },
+      onError: (error, stackTrace) {
+        log("❌ Auth state error: $error");
+        state = AsyncValue.error(error, stackTrace);
+      },
+    );
 
     ref.onDispose(() {
       _authSubscription?.cancel();
@@ -45,7 +48,10 @@ class AuthNotifier extends Notifier<AsyncValue<User?>> {
   }
 
   // Phone authentication
-  Future<void> verifyPhoneNumber(String phoneNumber, {Function(String)? onCodeSent}) async {
+  Future<void> verifyPhoneNumber(
+    String phoneNumber, {
+    Function(String)? onCodeSent,
+  }) async {
     state = const AsyncValue.loading();
     try {
       log("📲 Sending OTP to $phoneNumber");
@@ -57,7 +63,9 @@ class AuthNotifier extends Notifier<AsyncValue<User?>> {
         verificationCompleted: (PhoneAuthCredential credential) async {
           log("✅ Auto verification completed");
           try {
-            final userCred = await FirebaseAuth.instance.signInWithCredential(credential);
+            final userCred = await FirebaseAuth.instance.signInWithCredential(
+              credential,
+            );
             log("🔑 Auto login success → ${userCred.user?.phoneNumber}");
           } catch (e) {
             log("❌ Auto verification failed: $e");
@@ -71,7 +79,7 @@ class AuthNotifier extends Notifier<AsyncValue<User?>> {
         },
 
         codeSent: (String verificationId, int? resendToken) {
-          _verificationId = verificationId;
+          VerificationId = verificationId;
           log("📨 Code sent! verificationId saved.");
 
           // Update state to not loading so OTP screen can be shown
@@ -83,7 +91,7 @@ class AuthNotifier extends Notifier<AsyncValue<User?>> {
         },
 
         codeAutoRetrievalTimeout: (String verificationId) {
-          _verificationId = verificationId;
+          VerificationId = verificationId;
           log("⏳ Auto retrieval timeout");
         },
       );
@@ -95,7 +103,10 @@ class AuthNotifier extends Notifier<AsyncValue<User?>> {
   }
 
   // Verify OTP
-  Future<void> signInWithPhoneNumber(String verificationId, String smsCode) async {
+  Future<void> signInWithPhoneNumber(
+    String verificationId,
+    String smsCode,
+  ) async {
     state = const AsyncValue.loading();
     try {
       log("🔑 Verifying OTP...");
@@ -105,7 +116,9 @@ class AuthNotifier extends Notifier<AsyncValue<User?>> {
         smsCode: smsCode,
       );
 
-      final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(
+        credential,
+      );
       log("✅ Phone login success → ${userCredential.user?.phoneNumber}");
     } on FirebaseAuthException catch (e, st) {
       log("❌ OTP verification failed: ${e.code} - ${e.message}");
@@ -116,7 +129,9 @@ class AuthNotifier extends Notifier<AsyncValue<User?>> {
 
   // Sign out
   Future<void> signOut() async {
-    log("🚪 Signing out user: ${FirebaseAuth.instance.currentUser?.phoneNumber}");
+    log(
+      "🚪 Signing out user: ${FirebaseAuth.instance.currentUser?.phoneNumber}",
+    );
     await FirebaseAuth.instance.signOut();
   }
 }

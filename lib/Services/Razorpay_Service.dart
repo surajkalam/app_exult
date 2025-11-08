@@ -1,6 +1,8 @@
-// ignore: file_names
+// ignore_for_file: file_names
+
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:flutter/foundation.dart';
+
 class RazorpayService {
   late Razorpay _razorpay;
   Function(PaymentSuccessResponse)? _onSuccess;
@@ -27,13 +29,11 @@ class RazorpayService {
 
     var options = {
       // 'key': 'rzp_test_R7HT7by76iqrT3',
-      'key':'rzp_live_RBwl23R7CRkmJJ',
+      'key': 'rzp_live_RBwl23R7CRkmJJ',
       'amount': amount,
       'name': name,
       'description': description,
-      'prefill': {
-        'contact': contact ?? 'Guest',
-      },
+      'prefill': {'contact': contact ?? 'Guest'},
     };
 
     try {

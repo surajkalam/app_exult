@@ -311,7 +311,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         Iconsax.coffee,
         size: 60,
         // ignore: deprecated_member_use
-        color: colorscheme.secondaryFixed.withOpacity(0.3),
+        color: colorscheme.secondaryFixed.withValues(alpha: 0.3),
       ),
     );
   }
@@ -925,7 +925,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   //         ),
   //         elevation: (isLoggedIn && isAvailable) ? 4 : 0,
   //         // ignore: deprecated_member_use
-  //         shadowColor: colorscheme.shadow.withOpacity(0.3),
+  //         shadowColor: colorscheme.shadow.withValues(alpha:0.3),
   //       ),
   //       child: Row(
   //         mainAxisAlignment: MainAxisAlignment.center,

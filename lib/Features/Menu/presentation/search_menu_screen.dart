@@ -87,11 +87,20 @@ class _SearchMenuScreenState extends ConsumerState<SearchMenuScreen> {
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Search for coffee, tea, or menu items...',
-                hintStyle: textTheme.bodyMedium?.copyWith(color: colorScheme.primaryContainer,fontSize: 12),
-                prefixIcon: Icon(Iconsax.search_normal, color: colorScheme.primaryContainer),
+                hintStyle: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.primaryContainer,
+                  fontSize: 12,
+                ),
+                prefixIcon: Icon(
+                  Iconsax.search_normal,
+                  color: colorScheme.primaryContainer,
+                ),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
-                        icon: Icon(Icons.clear, color: colorScheme.secondaryFixed),
+                        icon: Icon(
+                          Icons.clear,
+                          color: colorScheme.secondaryFixed,
+                        ),
                         onPressed: () {
                           _searchController.clear();
                           _search();
@@ -113,22 +122,30 @@ class _SearchMenuScreenState extends ConsumerState<SearchMenuScreen> {
                 ? Center(
                     child: Text(
                       'Sorry, it\'s not available. Try others.',
-                      style: textTheme.titleMedium?.copyWith(color: colorScheme.secondary),
+                      style: textTheme.titleMedium?.copyWith(
+                        color: colorScheme.secondary,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   )
                 : GridView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: 0.75, // Adjust as needed
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: 0.75, // Adjust as needed
+                        ),
                     itemCount: _searchResults.length,
                     itemBuilder: (context, index) {
                       final item = _searchResults[index];
-                      return _buildMenuItemCard(context, item, colorScheme, textTheme);
+                      return _buildMenuItemCard(
+                        context,
+                        item,
+                        colorScheme,
+                        textTheme,
+                      );
                     },
                   ),
           ),
@@ -180,7 +197,10 @@ class _SearchMenuScreenState extends ConsumerState<SearchMenuScreen> {
                           height: 120,
                           color: colorScheme.surfaceVariant,
                           child: Center(
-                            child: Icon(Icons.broken_image, color: colorScheme.onSurfaceVariant),
+                            child: Icon(
+                              Icons.broken_image,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
                           ),
                         ),
                       )
@@ -188,7 +208,10 @@ class _SearchMenuScreenState extends ConsumerState<SearchMenuScreen> {
                         height: 120,
                         color: colorScheme.surfaceVariant,
                         child: Center(
-                          child: Icon(Icons.coffee, color: colorScheme.onSurfaceVariant),
+                          child: Icon(
+                            Icons.coffee,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
                         ),
                       ),
               ),
@@ -201,11 +224,14 @@ class _SearchMenuScreenState extends ConsumerState<SearchMenuScreen> {
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20),
                       ),
-                      color: Colors.black.withOpacity(0.6),
+                      color: Colors.black.withValues(alpha: 0.6),
                     ),
                     child: Center(
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.red,
                           borderRadius: BorderRadius.circular(8),
