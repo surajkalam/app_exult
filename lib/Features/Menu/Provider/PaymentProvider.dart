@@ -78,6 +78,8 @@ class PaymentNotifier extends StateNotifier<PaymentState> {
     String? customerName,
     int? tableNumber,
     List<Map<String, dynamic>>? cartItems,
+    double voucherDiscount = 0.0,
+    String? voucherCode,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
 
@@ -93,6 +95,8 @@ class PaymentNotifier extends StateNotifier<PaymentState> {
       'customerName': customerName,
       'tableNumber': tableNumber,
       'cartItems': cartItems,
+      'voucherDiscount': voucherDiscount,
+      'voucherCode': voucherCode,
     };
 
     try {
@@ -139,7 +143,8 @@ class PaymentNotifier extends StateNotifier<PaymentState> {
       // Calculate totals
       final subtotal = orderItems.fold(0.0, (sum, item) => sum + item.totalPrice);
       final tax = subtotal * 0.10; // 10% tax
-      final totalAmount = subtotal + tax;
+      final voucherDiscount = (_paymentData['voucherDiscount'] as num?)?.toDouble() ?? 0.0;
+      final totalAmount = subtotal + tax - voucherDiscount;
 
       // Create complete order data
       final orderData = OrderData(
@@ -150,6 +155,8 @@ class PaymentNotifier extends StateNotifier<PaymentState> {
         items: orderItems,
         subtotal: subtotal,
         tax: tax,
+        voucherDiscount: voucherDiscount,
+        voucherCode: _paymentData['voucherCode'],
         totalAmount: totalAmount,
         status: 'completed',
         orderDate: now,

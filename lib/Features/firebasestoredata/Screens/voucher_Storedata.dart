@@ -22,6 +22,7 @@ class _VoucherdataStoreScreeState extends State<VoucherdataStoreScreen> {
   String _selectedCategory = 'Coffee';
   TextEditingController _offerPercentageController = TextEditingController();
   TextEditingController _validUntilController = TextEditingController();
+  TextEditingController _voucherIdController = TextEditingController();
   DateTime? _selectedDate;
 
   final List<String> _categories = [
@@ -42,12 +43,14 @@ class _VoucherdataStoreScreeState extends State<VoucherdataStoreScreen> {
     super.initState();
     _offerPercentageController = TextEditingController();
     _validUntilController = TextEditingController();
+    _voucherIdController = TextEditingController(text: _generateVoucherId());
   }
 
   @override
   void dispose() {
     _offerPercentageController.dispose();
     _validUntilController.dispose();
+    _voucherIdController.dispose();
     super.dispose();
   }
 
@@ -119,6 +122,15 @@ class _VoucherdataStoreScreeState extends State<VoucherdataStoreScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+              ),
+              const SizedBox(height: 20),
+
+              // Voucher ID Field
+              _buildTextField(
+                controller: _voucherIdController,
+                hintText: 'Voucher ID (auto-generated)',
+                icon: Icons.tag,
+                keyboardType: TextInputType.text,
               ),
               const SizedBox(height: 20),
 
@@ -255,7 +267,7 @@ class _VoucherdataStoreScreeState extends State<VoucherdataStoreScreen> {
                         elevation: 4,
                       ),
                       child: const Text(
-                        'Store Category & Image',
+                        'Create Voucher',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -349,6 +361,11 @@ class _VoucherdataStoreScreeState extends State<VoucherdataStoreScreen> {
     }
   }
 
+  String _generateVoucherId() {
+    final random = DateTime.now().millisecondsSinceEpoch;
+    return 'VOUCH${random.toString().substring(8)}';
+  }
+
   Future<void> _uploadImageToFirebase() async {
     if (_selectedImage == null) return;
 
@@ -361,40 +378,89 @@ class _VoucherdataStoreScreeState extends State<VoucherdataStoreScreen> {
       String fileName =
           'items/Voucher/image_${DateTime.now().millisecondsSinceEpoch}.jpg';
       final imageRef = storageRef.child(fileName);
+
+      log('Starting image upload...');
       final uploadTask = imageRef.putFile(_selectedImage!);
+
+      // Monitor upload progress
+      uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+        log('Upload progress: ${snapshot.bytesTransferred}/${snapshot.totalBytes}');
+      });
+
       final snapshot = await uploadTask.whenComplete(() {});
+      log('Upload task completed');
 
       _imageUrl = await snapshot.ref.getDownloadURL();
+      log('Image URL obtained: $_imageUrl');
 
-      log('Image URL: $_imageUrl');
-      log('Upload completed at: ${DateTime.now()}');
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Image uploaded successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Image uploaded successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
     } catch (e) {
       log('Error uploading image: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error uploading image: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    } finally {
       setState(() {
-        _isUploading = false;
+        _imageUrl = null; // Reset URL on error
       });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error uploading image: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isUploading = false;
+        });
+      }
     }
   }
 
   void _submitForm() async {
+    // Check if image is still uploading
+    if (_isUploading) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please wait for image upload to complete'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    if (_selectedImage != null && _imageUrl == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Image upload failed. Please try uploading again'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     if (_imageUrl == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please upload an image first'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (_voucherIdController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a voucher ID'),
           backgroundColor: Colors.red,
         ),
       );
@@ -432,10 +498,10 @@ class _VoucherdataStoreScreeState extends State<VoucherdataStoreScreen> {
       _clearForm();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Category, image and offer stored successfully!'),
+        SnackBar(
+          content: Text('Voucher "${_voucherIdController.text.trim()}" created successfully!'),
           backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         ),
       );
     } catch (e) {
@@ -461,11 +527,12 @@ class _VoucherdataStoreScreeState extends State<VoucherdataStoreScreen> {
         _offerPercentageController.text.trim(),
       );
 
-      // Store category, image, offer data and valid until date
+      // Store category, image, offer data, voucher ID and valid until date
       final data = {
         'category': _selectedCategory,
         'imageUrl': _imageUrl,
         'offerPercentage': offerPercentage,
+        'voucherId': _voucherIdController.text.trim(),
         'validUntil': Timestamp.fromDate(_selectedDate!),
         'timestamp': Timestamp.now(),
       };
@@ -478,6 +545,7 @@ class _VoucherdataStoreScreeState extends State<VoucherdataStoreScreen> {
 
       log('Category data stored successfully: $_selectedCategory');
       log('Image URL: $_imageUrl');
+      log('Voucher ID: ${_voucherIdController.text.trim()}');
       log('Offer Percentage: $offerPercentage%');
       log('Valid Until: ${_selectedDate!.toString()}');
     } catch (e) {
@@ -491,6 +559,7 @@ class _VoucherdataStoreScreeState extends State<VoucherdataStoreScreen> {
       _selectedImage = null;
       _imageUrl = null;
       _selectedCategory = 'Coffee';
+      _voucherIdController.text = _generateVoucherId(); // Generate new voucher ID
       _offerPercentageController.clear();
       _validUntilController.clear();
       _selectedDate = null;

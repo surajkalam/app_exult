@@ -14,6 +14,9 @@ import 'package:lottie/lottie.dart';
 final selectedtableNumberProvider = StateProvider<int?>((ref) => null);
 final orderTypeProvider = StateProvider<String>((ref) => 'Coffee Hub');
 final customerNameProvider = StateProvider<String?>((ref) => null);
+final voucherCodeProvider = StateProvider<String>((ref) => '');
+final voucherDiscountProvider = StateProvider<double>((ref) => 0.0);
+final voucherAppliedProvider = StateProvider<bool>((ref) => false);
 
 class CartScreen extends ConsumerWidget {
   const CartScreen({super.key});
@@ -127,7 +130,9 @@ class CartScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    _buildOrderSummary(items),
+                    _buildOrderSummary(items, ref),
+                    SizedBox(height: 20),
+                    _buildVoucherSection(colorScheme, textTheme, ref),
                     SizedBox(height: 20),
                     _buildchooseoption(colorScheme, textTheme),
                     SizedBox(height: 20),
@@ -773,6 +778,7 @@ class CartScreen extends ConsumerWidget {
     return Center(child: CircularProgressIndicator());
   }
 
+  // ignore: strict_top_level_inference
   Widget _buildErrorState(error, ColorScheme colorscheme, TextTheme texttheme) {
     return Center(child: Text('Error: $error'));
   }
@@ -786,12 +792,13 @@ class CartScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Lottie.asset(
+              // 'assets/Icons/Shopping Cart.json',
               'assets/Icons/Empty Cart.json',
-              height: 250,
+              height: 200,
               width: 250,
               fit: BoxFit.cover,
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 60),
             Text(
               'Cart is empty',
               style: GoogleFonts.dmSans(
@@ -814,9 +821,8 @@ class CartScreen extends ConsumerWidget {
       ),
     );
   }
-
   // Build order summary
-  Widget _buildOrderSummary(List<Map<String, dynamic>> items) {
+  Widget _buildOrderSummary(List<Map<String, dynamic>> items, WidgetRef ref) {
     // Calculate pricing
     double subtotal = 0;
     for (var item in items) {
@@ -827,7 +833,11 @@ class CartScreen extends ConsumerWidget {
 
     const double taxRate = 0.10; // 10% tax
     final double tax = subtotal * taxRate;
-    final double total = subtotal + tax;
+
+    // Get voucher discount
+    final voucherDiscount = ref.watch(voucherDiscountProvider);
+
+    final double total = subtotal + tax - voucherDiscount;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -867,6 +877,12 @@ class CartScreen extends ConsumerWidget {
           _buildSummaryRow('Taxes (10%)', '₹${tax.toStringAsFixed(2)}'),
           const SizedBox(height: 12),
 
+          // Voucher discount (only show if applied)
+          if (voucherDiscount > 0) ...[
+            _buildSummaryRow('Voucher Discount', '-₹${voucherDiscount.toStringAsFixed(2)}'),
+            const SizedBox(height: 12),
+          ],
+
           // Divider
           const Divider(height: 1, color: Color(0xFFEAEAEA)),
           const SizedBox(height: 12),
@@ -894,6 +910,188 @@ class CartScreen extends ConsumerWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  // Build voucher section
+  Widget _buildVoucherSection(ColorScheme colorScheme, TextTheme textTheme, WidgetRef ref) {
+    final voucherCode = ref.watch(voucherCodeProvider);
+    final voucherApplied = ref.watch(voucherAppliedProvider);
+    final voucherDiscount = ref.watch(voucherDiscountProvider);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            offset: const Offset(0, 4),
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Have a Voucher?',
+            style: GoogleFonts.dmSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(height: 12),
+          if (!voucherApplied) ...[
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    initialValue: voucherCode,
+                    decoration: InputDecoration(
+                      hintText: 'Enter voucher code',
+                      hintStyle: GoogleFonts.dmSans(
+                        fontSize: 14,
+                        color: const Color(0xFF9B9B9B),
+                      ),
+                      filled: true,
+                      fillColor: const Color(0xFFF8F8F8),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                    onChanged: (value) {
+                      ref.read(voucherCodeProvider.notifier).state = value;
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+                ElevatedButton(
+                  onPressed: voucherCode.isNotEmpty ? () => _applyVoucher(ref, voucherCode) : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFC67C4E),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  ),
+                  child: Text(
+                    'Apply',
+                    style: GoogleFonts.dmSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ] else ...[
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.green[50],
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.green),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Voucher "$voucherCode" applied! Save ₹${voucherDiscount.toStringAsFixed(2)}',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.green[700],
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => _removeVoucher(ref),
+                    child: Text(
+                      'Remove',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 12,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  // Apply voucher
+  void _applyVoucher(WidgetRef ref, String voucherCode) {
+    // Simple voucher validation - in a real app, this would check against a database
+    const validVouchers = {
+      'SAVE10': 10.0, // ₹10 off
+      'SAVE20': 20.0, // ₹20 off
+      'DISCOUNT50': 50.0, // ₹50 off
+      'COFFEE15': 15.0, // ₹15 off
+    };
+
+    final discount = validVouchers[voucherCode.toUpperCase()];
+
+    if (discount != null) {
+      ref.read(voucherDiscountProvider.notifier).state = discount;
+      ref.read(voucherAppliedProvider.notifier).state = true;
+
+      ScaffoldMessenger.of(ref.context).showSnackBar(
+        SnackBar(
+          content: Text('Voucher applied! You save ₹${discount.toStringAsFixed(2)}'),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(ref.context).showSnackBar(
+        SnackBar(
+          content: const Text('Invalid voucher code'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
+        ),
+      );
+    }
+  }
+
+  // Remove voucher
+  void _removeVoucher(WidgetRef ref) {
+    ref.read(voucherCodeProvider.notifier).state = '';
+    ref.read(voucherDiscountProvider.notifier).state = 0.0;
+    ref.read(voucherAppliedProvider.notifier).state = false;
+
+    ScaffoldMessenger.of(ref.context).showSnackBar(
+      SnackBar(
+        content: const Text('Voucher removed'),
+        backgroundColor: Colors.orange,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        margin: const EdgeInsets.all(16),
       ),
     );
   }
@@ -935,7 +1133,11 @@ class CartScreen extends ConsumerWidget {
       final quantity = _safeParseInt(item['quantity'] ?? 1);
       subtotal += price * quantity;
     }
-    final double total = subtotal * 1.10; // Including 10% tax
+
+    const double taxRate = 0.10; // 10% tax
+    final double tax = subtotal * taxRate;
+    final voucherDiscount = ref.watch(voucherDiscountProvider);
+    final double total = subtotal + tax - voucherDiscount;
 
     return Container(
       padding: const EdgeInsets.only(bottom: 60, left: 20, right: 20, top: 10),
@@ -1066,9 +1268,24 @@ class CartScreen extends ConsumerWidget {
     final tableNumber = ref.read(selectedtableNumberProvider);
     final customerName = ref.read(customerNameProvider);
 
+    // Calculate total with voucher discount
+    double subtotal = 0;
+    for (var item in items) {
+      final price = _safeParseDouble(item['price']);
+      final quantity = _safeParseInt(item['quantity'] ?? 1);
+      subtotal += price * quantity;
+    }
+    const double taxRate = 0.10;
+    final double tax = subtotal * taxRate;
+    final voucherDiscount = ref.read(voucherDiscountProvider);
+    final double finalTotal = subtotal + tax - voucherDiscount;
+
     log('=== Cart Checkout Details ===');
     log('Total Items: ${items.length}');
-    log('Total Amount: ₹${total.toStringAsFixed(2)}');
+    log('Subtotal: ₹${subtotal.toStringAsFixed(2)}');
+    log('Tax: ₹${tax.toStringAsFixed(2)}');
+    log('Voucher Discount: ₹${voucherDiscount.toStringAsFixed(2)}');
+    log('Final Total: ₹${finalTotal.toStringAsFixed(2)}');
     log('Order Type: $orderType');
 
     if (orderType == 'Coffee Hub') {
@@ -1135,10 +1352,13 @@ class CartScreen extends ConsumerWidget {
           ? 'Table $tableNumber - $productName & ${items.length - 1} more'
           : 'Parcel for $customerName - $productName & ${items.length - 1} more';
 
+      // Get voucher information
+      final voucherCode = ref.read(voucherCodeProvider);
+
       await ref
           .read(paymentProvider.notifier)
           .initiatePayment(
-            amount: total,
+            amount: finalTotal,
             productName: orderDescription,
             quantity: totalQuantity,
             orderId: orderId,
@@ -1146,15 +1366,28 @@ class CartScreen extends ConsumerWidget {
             customerName: customerName,
             tableNumber: tableNumber,
             cartItems: items,
+            voucherDiscount: voucherDiscount,
+            voucherCode: voucherCode.isNotEmpty ? voucherCode : null,
           );
 
+      // Clear voucher state after successful payment
+      ref.read(voucherCodeProvider.notifier).state = '';
+      ref.read(voucherDiscountProvider.notifier).state = 0.0;
+      ref.read(voucherAppliedProvider.notifier).state = false;
+
       // Optional: Show success message
+      final successMessage = voucherDiscount > 0
+          ? (orderType == 'Coffee Hub'
+              ? 'Order placed for Table $tableNumber! Saved ₹${voucherDiscount.toStringAsFixed(2)} with voucher.'
+              : 'Parcel order placed for $customerName! Saved ₹${voucherDiscount.toStringAsFixed(2)} with voucher.')
+          : (orderType == 'Coffee Hub'
+              ? 'Order placed for Table $tableNumber'
+              : 'Parcel order placed for $customerName');
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            orderType == 'Coffee Hub'
-                ? 'Order placed for Table $tableNumber'
-                : 'Parcel order placed for $customerName',
+            successMessage,
             style: GoogleFonts.dmSans(
               fontSize: 12,
               fontWeight: FontWeight.w400,

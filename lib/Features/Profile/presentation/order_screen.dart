@@ -456,7 +456,7 @@ class RecentOrdersScreen extends ConsumerWidget {
                         children: [
                           _buildDetailItem(
                             'Quantity',
-                            '${quantity}x',
+                            '$quantity',
                             Icons.shopping_cart,
                             textTheme,
                             colorScheme,
@@ -737,8 +737,8 @@ class RecentOrdersScreen extends ConsumerWidget {
                     ),
                     if (payment['orderId'] != null)
                       _buildDetailRow('Order ID', payment['orderId']),
-                    if (payment['paymentId'] != null)
-                      _buildDetailRow('Payment ID', payment['paymentId']),
+                    // if (payment['paymentId'] != null)
+                    //   _buildDetailRow('Payment ID', payment['paymentId']),
                   ],
                 ),
               ),

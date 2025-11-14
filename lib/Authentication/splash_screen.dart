@@ -28,7 +28,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     return  Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child:Lottie.asset('Assets/Icons/Robot_says_hello.json',
+        child:Lottie.asset('assets/Icons/Robot_says_hello.json',
         height: 300,
         width: 300
         ),

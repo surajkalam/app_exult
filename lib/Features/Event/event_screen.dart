@@ -30,7 +30,7 @@ class EventScreen extends ConsumerWidget {
             _buildEventCard(
               height,
               width,
-              "Assets/Images/bdaycelebrate.png",
+              "assets/Images/bdaycelebrate.png",
               "Private Celebration",
               "Birthdays, anniversaries, bridal showers, baby showers — we make your moments unforgettable with delicious food, aromatic brews, and warm hospitality.",
               "🎉",
@@ -41,7 +41,7 @@ class EventScreen extends ConsumerWidget {
             _buildEventCard(
               height,
               width,
-              "Assets/Images/musicday.png",
+              "assets/Images/musicday.png",
               "Live Music and Open Mic Night",
               "Barista classes, coffee brewing workshops, art jam sessions, book clubs, or photography meetups — our café is where creativity meets community.",
               "🎶",
@@ -52,7 +52,7 @@ class EventScreen extends ConsumerWidget {
             _buildEventCard(
               height,
               width,
-              "Assets/Images/workshop&comm.png",
+              "assets/Images/workshop&comm.png",
               "Workshop & Community Meetup",
               "Hold team meetings, networking events, or product launches in a relaxed yet professional setting with custom catering options.",
               "👔",
@@ -63,7 +63,7 @@ class EventScreen extends ConsumerWidget {
             _buildEventCard(
               height,
               width,
-              "Assets/Images/workshop&comm.png",
+              "assets/Images/workshop&comm.png",
               "Corporate & Team Events",
               "Perfect setting for corporate gatherings, team building activities, and business meetings with premium coffee and catering services.",
               "💼",

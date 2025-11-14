@@ -520,7 +520,7 @@ class HelpSupportScreen extends ConsumerWidget {
             children: [
               _buildSocialButton(
                 context,
-                imagePath: "Assets/Icons/exault.jpg",
+                imagePath: "assets/Icons/exault.jpg",
                 onTap: () => _launchWebsite(
                   context,
                   'https://exultcoffeehouse.com/menu/',
@@ -530,14 +530,14 @@ class HelpSupportScreen extends ConsumerWidget {
               ),
               _buildSocialButton(
                 context,
-                imagePath: "Assets/Icons/insta.jpg",
+                imagePath: "assets/Icons/insta.jpg",
                 onTap: () => _launchInstagram('', context),
                 colorscheme: colorscheme,
                 texttheme: texttheme,
               ),
               _buildSocialButton(
                 context,
-                imagePath: "Assets/Icons/whattapp.jpg",
+                imagePath: "assets/Icons/whattapp.jpg",
                 onTap: () => _launchWhatsApp(
                   context,
                   phoneNumber: number,
@@ -549,7 +549,7 @@ class HelpSupportScreen extends ConsumerWidget {
               ),
               _buildSocialButton(
                 context,
-                imagePath: "Assets/Icons/call.jpg",
+                imagePath: "assets/Icons/call.jpg",
                 onTap: () => _makePhoneCall(number),
                 colorscheme: colorscheme,
                 texttheme: texttheme,

@@ -76,10 +76,6 @@ final GoRouter approuter = GoRouter(
         );
       },
     ),
-    GoRoute(
-      path: '/online-order',
-      builder: (context, state) => const OnlineorderScreen(),
-    ),
     GoRoute(path: '/cart', builder: (context, state) => const CartScreen()),
     GoRoute(path: '/reward', builder: (context, state) => RewarsScreens()),
 

@@ -59,7 +59,7 @@ class EventbookingScreen2 extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Lottie.asset(
-              'Assets/Icons/404 error. oops page not found.json',
+              'assets/Icons/404 error. oops page not found.json',
               height: 200,
               width: 280,
               fit: BoxFit.fill,

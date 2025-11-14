@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coffee_exult_app/Authentication/provider/current_user.dart';
+import 'package:coffee_exult_app/Features/Cart/provider/cart_provider.dart';
 import 'package:coffee_exult_app/Features/Menu/Provider/menu_provider.dart';
 import 'package:coffee_exult_app/core/core.dart';
 import 'package:flutter/material.dart';
@@ -286,9 +289,9 @@ class _SearchMenuScreenState extends ConsumerState<SearchMenuScreen> {
                       ),
                     ),
                     InkWell(
-                      onTap: () {
-                        // Handle order now tap
-                        context.push('/online-order'); // Example navigation
+                      onTap: () async {
+                        // Handle order now tap - add to cart
+                        await _addToCart(context, item, colorScheme, ref);
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -314,6 +317,87 @@ class _SearchMenuScreenState extends ConsumerState<SearchMenuScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // Add to cart function
+  Future<void> _addToCart(
+    BuildContext context,
+    Map<String, dynamic> itemData,
+    ColorScheme colorscheme,
+    WidgetRef ref,
+  ) async {
+    try {
+      final user = ref.read(currentUserProvider);
+      if (user == null) {
+        _showAddToCartError(
+          context,
+          'Please log in to add items to cart',
+          colorscheme,
+        );
+        if (context.mounted) {
+          context.push('/login-screen');
+        }
+        return;
+      }
+
+      final itemName = itemData['name'];
+      final currentUser = ref.read(currentUserProvider);
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser?.phoneNumber)
+          .collection('cart')
+          .doc(itemName)
+          .set({
+            ...itemData,
+            'quantity': FieldValue.increment(1),
+            'addedAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+
+      // ignore: use_build_context_synchronously
+      _showAddToCartSuccess(context, itemData['name'], colorscheme);
+
+      if (context.mounted) {
+        final ref = ProviderScope.containerOf(context);
+        ref.refresh(cartProvider);
+      }
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      _showAddToCartError(context, e.toString(), colorscheme);
+    }
+  }
+
+  // Show success feedback with iOS-style animation
+  void _showAddToCartSuccess(
+    BuildContext context,
+    String itemName,
+    ColorScheme colorscheme,
+  ) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$itemName added to cart'),
+        backgroundColor: colorscheme.onSecondary,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: EdgeInsets.all(16),
+      ),
+    );
+  }
+
+  // Show error feedback
+  void _showAddToCartError(
+    BuildContext context,
+    String error,
+    ColorScheme colorscheme,
+  ) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Failed to add to cart: $error'),
+        backgroundColor: colorscheme.error,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: EdgeInsets.all(16),
       ),
     );
   }

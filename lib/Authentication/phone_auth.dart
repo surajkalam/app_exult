@@ -72,7 +72,7 @@ class _PhoneAuthState extends ConsumerState<PhoneAuth> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Lottie.asset(
-                  'Assets/Icons/Robot_says_hello.json',
+                  'assets/Icons/Robot_says_hello.json',
                   height: 300,
                   width: 300,
                 ),

@@ -38,6 +38,8 @@ class OrderData {
   final List<OrderItem> items;
   final double subtotal;
   final double tax;
+  final double voucherDiscount;
+  final String? voucherCode;
   final double totalAmount;
   final String status;
   final DateTime orderDate;
@@ -55,6 +57,8 @@ class OrderData {
     required this.items,
     required this.subtotal,
     required this.tax,
+    this.voucherDiscount = 0.0,
+    this.voucherCode,
     required this.totalAmount,
     required this.status,
     required this.orderDate,
@@ -74,6 +78,8 @@ class OrderData {
       'items': items.map((item) => item.toMap()).toList(),
       'subtotal': subtotal,
       'tax': tax,
+      'voucherDiscount': voucherDiscount,
+      'voucherCode': voucherCode,
       'totalAmount': totalAmount,
       'status': status,
       'orderDate': orderDate.toIso8601String(),
@@ -98,6 +104,8 @@ class OrderData {
           [],
       subtotal: (map['subtotal'] ?? 0.0).toDouble(),
       tax: (map['tax'] ?? 0.0).toDouble(),
+      voucherDiscount: (map['voucherDiscount'] ?? 0.0).toDouble(),
+      voucherCode: map['voucherCode'],
       totalAmount: (map['totalAmount'] ?? 0.0).toDouble(),
       status: map['status'] ?? 'completed',
       orderDate: DateTime.parse(

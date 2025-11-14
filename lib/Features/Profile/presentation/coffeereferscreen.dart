@@ -54,7 +54,7 @@ class CoffeeReferFriendScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(50),
                     clipBehavior: Clip.antiAlias,
                       child: Image.asset(
-                        'Assets/Images/coffee-powder.png',
+                        'assets/Images/coffee-powder.png',
                         // height: 80,
                         // width: 80,
                         fit: BoxFit.cover,

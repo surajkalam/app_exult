@@ -76,7 +76,7 @@ class _PaymentSuccessScreenState extends ConsumerState<PaymentSuccessScreen> {
         children: [
           Center(
             child: Lottie.asset(
-              'Assets/Icons/Success.json',
+              'assets/Icons/Success.json',
               height: height * 0.5,
               width: width * 0.9,
               fit: BoxFit.fill,

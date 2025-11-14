@@ -185,7 +185,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image(
-                        image: AssetImage("Assets/Icons/google.png"),
+                        image: AssetImage("assets/Icons/google.png"),
                         height: height * 0.05,
                         width: width * 0.1,
                         fit: BoxFit.fill,

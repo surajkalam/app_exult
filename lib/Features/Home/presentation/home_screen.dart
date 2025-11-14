@@ -23,15 +23,15 @@ final homeStateProvider = StateProvider<String>((ref) => 'Initial state');
 final carouselIndexProvider = StateProvider<int>((ref) => 0);
 final carouselImagesProvider = Provider<List<String>>((ref) {
   return [
-    'Assets/Images/banner.jpeg',
-    'Assets/Images/banner.jpeg',
-    'Assets/Images/banner.jpeg',
+    'assets/Images/banner.jpeg',
+    'assets/Images/banner.jpeg',
+    'assets/Images/banner.jpeg',
   ];
 });
 List voucherlist = [
-  'Assets/Images/voucher2.png',
-  'Assets/Images/voucher2.png',
-  'Assets/Images/voucher2.png',
+  'assets/Images/voucher2.png',
+  'assets/Images/voucher2.png',
+  'assets/Images/voucher2.png',
 ];
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -608,7 +608,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         barrierDismissible: false,
         builder: (context) => Center(
           child: Lottie.asset(
-            'Assets/Icons/coffee-break.json',
+            'assets/Icons/coffee-break.json',
             height: 300,
             width: double.infinity,
           ),
@@ -852,7 +852,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               top: height * 0.008,
               left: width * 0.07,
               child: Image.asset(
-                "Assets/Images/crown.png",
+                "assets/Images/crown.png",
                 width: 55,
                 height: 55,
               ),
@@ -903,7 +903,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   bottomLeft: Radius.circular(20),
                 ),
                 child: Image.asset(
-                  "Assets/Images/cappucino.jpg",
+                  "assets/Images/cappucino.jpg",
                   height: height * 0.2,
                   width: width - 20,
                   fit: BoxFit.cover,

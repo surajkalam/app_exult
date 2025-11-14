@@ -13,20 +13,20 @@ import '../Provider/coffee_loyalty_provider.dart';
 
 // List of available asset images
 final List<String> assetImages = [
-  "Assets/Icons/avtar2.png",
-  "Assets/Icons/avtrars (3).png",
-  "Assets/Icons/avtrars (4).png",
-  "Assets/Icons/avtrars (6).png",
-  "Assets/Icons/avtrars (7).png",
-  "Assets/Icons/avtrars (8).png",
-  "Assets/Icons/avtrars (9).png",
-  "Assets/Icons/avtrars (11).png",
-  "Assets/Icons/avtrars (14).png",
-  "Assets/Icons/avtrars (12).png",
+  "assets/Icons/avtar2.png",
+  "assets/Icons/avtrars (3).png",
+  "assets/Icons/avtrars (4).png",
+  "assets/Icons/avtrars (6).png",
+  "assets/Icons/avtrars (7).png",
+  "assets/Icons/avtrars (8).png",
+  "assets/Icons/avtrars (9).png",
+  "assets/Icons/avtrars (11).png",
+  "assets/Icons/avtrars (14).png",
+  "assets/Icons/avtrars (12).png",
 ];
 
 final selectedImageProvider = StateProvider<String>((ref) {
-  return "Assets/Icons/avtar2.png"; // Default image
+  return "assets/Icons/avtar2.png"; // Default image
 });
 
 class ProfileScreen extends ConsumerWidget {
@@ -93,7 +93,7 @@ class ProfileScreen extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Lottie.asset(
-              'Assets/Icons/404 error. oops page not found.json',
+              'assets/Icons/404 error. oops page not found.json',
               height: 200,
               width: 280,
               fit: BoxFit.fill,

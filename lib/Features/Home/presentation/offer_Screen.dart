@@ -75,7 +75,7 @@ class OfferScreen extends ConsumerWidget {
                                   ),
                                   child: Image.asset(
                                     offer['image'] ??
-                                        'Assets/Images/default.png',
+                                        'assets/Images/default.png',
                                     height: height * 0.15,
                                     width: width * 0.6,
                                     fit: BoxFit.cover,

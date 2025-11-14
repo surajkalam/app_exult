@@ -108,7 +108,7 @@ class MenuScreen extends ConsumerWidget {
       height: height * 0.6,
       child: Center(
         child: Lottie.asset(
-          'Assets/Icons/coffee-break.json',
+          'assets/Icons/coffee-break.json',
           height: 200,
           width: 150,
         ),
@@ -345,8 +345,8 @@ class MenuScreen extends ConsumerWidget {
   ) {
     final isHomeSection = type == "home";
     final imagePath = isHomeSection
-        ? "Assets/Images/coffee-powder.png"
-        : "Assets/Images/cappucino.jpg";
+        ? "assets/Images/coffee-powder.png"
+        : "assets/Images/cappucino.jpg";
     final title = isHomeSection ? 'Blich Berry' : 'Strawberry cream coffee';
     final description = isHomeSection
         ? 'You try this for your health'
