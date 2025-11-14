@@ -268,7 +268,7 @@ class CoffeeReferFriendScreen extends StatelessWidget {
     return Column(
       children: [
         // WhatsApp Button
-        Container(
+        SizedBox(
           width: double.infinity, // Ensure full width
           child: ElevatedButton.icon(
             onPressed: () => _shareViaWhatsApp(),
@@ -291,7 +291,7 @@ class CoffeeReferFriendScreen extends StatelessWidget {
         SizedBox(height: 10),
         
         // Other Apps Button
-        Container(
+        SizedBox(
           width: double.infinity, // Ensure full width
           child: OutlinedButton.icon(
             onPressed: () => _shareViaOtherApps(),
@@ -313,7 +313,7 @@ class CoffeeReferFriendScreen extends StatelessWidget {
         SizedBox(height: 10),
         
         // Copy Link Button
-        Container(
+        SizedBox(
           width: double.infinity, // Ensure full width
           child: OutlinedButton.icon(
             onPressed: () => _copyLinkToClipboard(context),

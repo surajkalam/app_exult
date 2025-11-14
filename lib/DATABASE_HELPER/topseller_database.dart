@@ -117,7 +117,7 @@ class FirebaseSalesService {
             totalAmount += amount;
             paymentCount += 1;
             
-            log('✅ Payment found for user $userId: \$${amount} on ${paymentDate.toString()}');
+            log('✅ Payment found for user $userId: \$$amount on ${paymentDate.toString()}');
           }
         }
       }

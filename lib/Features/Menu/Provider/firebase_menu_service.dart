@@ -48,7 +48,7 @@ class FirebaseMenuService {
       return menuData;
     } catch (e) {
       log('Error fetching menu data: $e');
-      throw e;
+      rethrow;
     }
   }
 

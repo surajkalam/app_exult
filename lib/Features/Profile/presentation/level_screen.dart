@@ -365,7 +365,6 @@ class LevelScreen extends ConsumerWidget {
                   SizedBox(height: height * 0.029),
                   CupertinoButton(
                     padding: EdgeInsets.zero,
-                    minSize: 0,
                     onPressed: () => _viewLevelBenefits(
                       context,
                       level,
@@ -388,7 +387,7 @@ class LevelScreen extends ConsumerWidget {
                           fontSize: 10,
                         ),
                       ),
-                    ),
+                    ), minimumSize: Size(0, 0),
                   ),
                 ],
               )

@@ -198,7 +198,7 @@ class _SearchMenuScreenState extends ConsumerState<SearchMenuScreen> {
                         fit: BoxFit.cover,
                         errorBuilder: (_, __, ___) => Container(
                           height: 120,
-                          color: colorScheme.surfaceVariant,
+                          color: colorScheme.surfaceContainerHighest,
                           child: Center(
                             child: Icon(
                               Icons.broken_image,
@@ -209,7 +209,7 @@ class _SearchMenuScreenState extends ConsumerState<SearchMenuScreen> {
                       )
                     : Container(
                         height: 120,
-                        color: colorScheme.surfaceVariant,
+                        color: colorScheme.surfaceContainerHighest,
                         child: Center(
                           child: Icon(
                             Icons.coffee,

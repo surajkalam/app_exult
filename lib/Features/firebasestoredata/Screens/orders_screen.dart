@@ -6,7 +6,7 @@ import 'package:coffee_exult_app/Features/Profile/data/order_model.dart';
 import '../provider/orders_provider.dart';
 
 class AdminOrdersScreen extends ConsumerWidget {
-  AdminOrdersScreen({super.key});
+  const AdminOrdersScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -455,7 +455,7 @@ class AdminOrdersScreen extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               DropdownButtonFormField<String>(
-                value: selectedTag,
+                initialValue: selectedTag,
                 decoration: InputDecoration(
                   labelText: 'Response Tag',
                   labelStyle: GoogleFonts.dmSans(),

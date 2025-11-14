@@ -560,7 +560,7 @@ class BillingInfoScreen extends ConsumerWidget {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
-    return Container(
+    return SizedBox(
       height: 400,
       child: Center(
         child: Column(
@@ -611,7 +611,7 @@ class BillingInfoScreen extends ConsumerWidget {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
-    return Container(
+    return SizedBox(
       height: 400,
       child: Center(
         child: Padding(

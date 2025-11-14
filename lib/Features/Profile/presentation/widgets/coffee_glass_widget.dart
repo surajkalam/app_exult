@@ -103,7 +103,7 @@ class CoffeeGlassWidget extends ConsumerWidget {
   }
 
   Widget _buildCoffeeGlass(ColorScheme colorScheme) {
-    return Container(
+    return SizedBox(
       width: 60,
       height: 100,
       child: Stack(

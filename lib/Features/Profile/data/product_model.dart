@@ -22,7 +22,7 @@ class ProductData {
     );
   }
 
-  toMap() {
+  Map<String, Object> toMap() {
         return {
       'name': name,
       'price': price,

@@ -112,7 +112,7 @@ class CartNotifier
       state = const AsyncValue.loading();
       await _cartService.clearCart();
       state = const AsyncValue.data([]);
-    } catch (e, stack) {
+    } catch (e) {
       try {
         await _loadCartItems();
       } catch (_) {

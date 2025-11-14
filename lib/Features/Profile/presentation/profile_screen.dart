@@ -1,9 +1,13 @@
+import 'dart:io';
+
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:lottie/lottie.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../Authentication/Authentication.dart';
 import '../../../Authentication/provider/current_user.dart';
@@ -588,6 +592,11 @@ class ProfileScreen extends ConsumerWidget {
         'onTap': () => context.push('/help-support'),
       },
       {
+        'title': 'term & privacy policy',
+        'icon': Iconsax.document,
+        'onTap': () => openPrivacyPolicy(),
+      },
+      {
         'title': 'Logout',
         'icon': Icons.logout,
         'onTap': () => _showLogoutConfirmation(context, colorscheme, ref),
@@ -682,6 +691,28 @@ class ProfileScreen extends ConsumerWidget {
         ),
       ],
     );
+  }
+Future<void> openPrivacyPolicy() async {
+    const urlString = 'https://exultcoffeehouse.com/privacy-policy/';
+    final Uri url = Uri.parse(urlString);
+
+    try {
+      if (Platform.isAndroid) {
+        final AndroidIntent intent = AndroidIntent(
+          action: 'action_view',
+          data: urlString,
+          package: 'com.android.chrome',
+        );
+        await intent.launch();
+      } else {
+        // For iOS or other platforms, use url_launcher
+        if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+          throw Exception('Could not launch $url');
+        }
+      }
+    } catch (e) {
+      throw Exception('Error opening Privacy Policy: $e');
+    }
   }
 
   Future<void> _showLogoutConfirmation(
