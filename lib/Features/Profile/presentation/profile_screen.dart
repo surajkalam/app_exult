@@ -692,7 +692,8 @@ class ProfileScreen extends ConsumerWidget {
       ],
     );
   }
-Future<void> openPrivacyPolicy() async {
+
+  Future<void> openPrivacyPolicy() async {
     const urlString = 'https://exultcoffeehouse.com/privacy-policy/';
     final Uri url = Uri.parse(urlString);
 
