@@ -155,7 +155,7 @@ class _VoucherdataStoreScreeState extends State<VoucherdataStoreScreen> {
                     fontSize: 12,
                   ),
                   hintText: 'Select date',
-                  hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -287,6 +287,20 @@ class _VoucherdataStoreScreeState extends State<VoucherdataStoreScreen> {
       initialDate: _selectedDate ?? DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Colors.blue,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+            dialogBackgroundColor: Colors.white,
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null && picked != _selectedDate) {
@@ -298,42 +312,42 @@ class _VoucherdataStoreScreeState extends State<VoucherdataStoreScreen> {
   }
 
   Widget _buildTextField({
-    required TextEditingController controller,
-    required String hintText,
-    required IconData icon,
-    TextInputType? keyboardType,
-    int maxLines = 1,
-  }) {
-    return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      maxLines: maxLines,
-      style: const TextStyle(color: Colors.black, fontSize: 16),
-      decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.blue, width: 1.5),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.blue, width: 1.5),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.blue, width: 2.0),
-        ),
-        filled: true,
-        fillColor: Colors.white,
-        prefixIcon: Icon(icon, color: Colors.blue),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
-        ),
+  required TextEditingController controller,
+  required String hintText,
+  required IconData icon,
+  TextInputType? keyboardType,
+  int maxLines = 1,
+}) {
+  return TextField(
+    controller: controller,
+    keyboardType: keyboardType,
+    maxLines: maxLines,
+    style: const TextStyle(color: Colors.black, fontSize: 16),
+    decoration: InputDecoration(
+      hintText: hintText,
+      hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.black, width: 1.5), // ✅ Changed to black
       ),
-    );
-  }
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.black, width: 1.5), // ✅ Changed to black
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.black, width: 2.0), // ✅ Changed to black
+      ),
+      filled: true,
+      fillColor: Colors.white,
+      prefixIcon: Icon(icon, color: Colors.black), // ✅ Changed to black
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 14,
+      ),
+    ),
+  );
+}
 
   Future<void> _pickImageFromGallery() async {
     try {

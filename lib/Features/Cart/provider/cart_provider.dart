@@ -15,6 +15,16 @@ final cartProvider =
       },
     );
 
+final cartItemCountProvider = Provider<int>((ref) {
+  final cartAsync = ref.watch(cartProvider);
+  return cartAsync.maybeWhen(
+    data: (items) {
+      return items.fold(0, (sum, item) => sum + (item['quantity'] as int? ?? 0));
+    },
+    orElse: () => 0,
+  );
+});
+
 class CartNotifier
     extends StateNotifier<AsyncValue<List<Map<String, dynamic>>>> {
   final FirebaseCartService _cartService;

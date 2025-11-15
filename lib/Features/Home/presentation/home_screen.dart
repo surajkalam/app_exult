@@ -757,20 +757,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               ),
                               SizedBox(height: 4),
                               SizedBox(
-                                width: width * 0.11,
-                                child: Text(
-                                  categories[index],
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w500,
-                                    color: isHovered
-                                        ? colorscheme.onSecondary
-                                        : colorscheme.primary,
+                                width: width * 0.13,
+                                child: Center(
+                                  child: Text(
+                                    categories[index],
+                                    style: GoogleFonts.dmSans(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w500,
+                                      color: isHovered
+                                          ? colorscheme.onSecondary
+                                          : colorscheme.primary,
+                                    ),
+                                    maxLines: 1,
+                                    // softWrap: true,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  maxLines: 2,
-                                  softWrap: true,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.center,
                                 ),
                               ),
                             ],

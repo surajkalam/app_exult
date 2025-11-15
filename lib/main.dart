@@ -7,6 +7,7 @@
 // import 'package:coffee_exult_app/firebase_options.dart';
 // import 'package:firebase_app_check/firebase_app_check.dart';
 // // ignore: depend_on_referenced_packages
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 // import 'package:flutter/material.dart';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -87,14 +88,14 @@ void main() async {
   }
 
   _setupLogging();
-
-  // ✅ Activate APP CHECK before any Firebase API is used
-  await FirebaseAppCheck.instance.activate(
-    androidProvider: AndroidProvider.playIntegrity,
+   await FirebaseAuth.instance.setSettings(
+    appVerificationDisabledForTesting: true,
   );
 
-  // final token = await FirebaseAppCheck.instance.getToken();
-  // log('🔥 FIREBASE DEBUG TOKEN → $token');
+  // ✅ Activate APP CHECK before any Firebase API is used
+  // await FirebaseAppCheck.instance.activate(
+  //   androidProvider: AndroidProvider.playIntegrity,
+  // );
   // Initialize notifications AFTER App Check
   await NotificationService.initialize();
   log("NotificationService.initialize finished");

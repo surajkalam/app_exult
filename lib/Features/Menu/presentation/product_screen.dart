@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:coffee_exult_app/Authentication/provider/current_user.dart';
+import 'package:coffee_exult_app/Features/Cart/provider/cart_provider.dart';
 import 'package:coffee_exult_app/Features/Menu/Provider/favorite_provider.dart';
 import 'package:coffee_exult_app/Features/Menu/Provider/menu_provider.dart';
 import 'package:coffee_exult_app/Features/Menu/Provider/paymentProvider.dart';
@@ -67,6 +68,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         });
       }
     });
+    var height=MediaQuery.of(context).size.height;
     final quantity = ref.watch(quantityProvider);
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
@@ -105,7 +107,6 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               textTheme,
             ),
             const SizedBox(height: 24),
-
             // Product Name and Rating
             _buildProductHeader(
               context,
@@ -155,16 +156,13 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
 
             // Add to Cart Button
             SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-            // _buildCheckoutButton(
-            //   context,
-            //   ref,
-            //   product,
-            //   quantity,
-            //   price,
-            //   finalPrice,
-            //   colorScheme,
-            //   textTheme,
-            // ),
+            _buildCartButton(
+              context,
+              ref,
+              colorScheme,
+              textTheme,
+            ),
+            SizedBox(height:height*0.05),
           ],
         ),
       ),
@@ -858,6 +856,72 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // Build cart button
+  Widget _buildCartButton(
+    BuildContext context,
+    WidgetRef ref,
+    ColorScheme colorscheme,
+    TextTheme texttheme,
+  ) {
+    final cartItemCount = ref.watch(cartItemCountProvider);
+
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          context.push('/cart');
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: colorscheme.onPrimaryFixedVariant,
+          foregroundColor: colorscheme.onSecondaryFixed,
+          padding: EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 4,
+          shadowColor: colorscheme.shadow.withValues(alpha: 0.3),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Iconsax.shopping_cart,
+              size: 20,
+              color: colorscheme.onSecondaryFixed,
+            ),
+            SizedBox(width: 8),
+            Text(
+              'Cart',
+              style: texttheme.bodySmall?.copyWith(
+                color: colorscheme.onSecondaryFixed,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            if (cartItemCount > 0) ...[
+              SizedBox(width: 8),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: colorscheme.error,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  cartItemCount.toString(),
+                  style: texttheme.bodySmall?.copyWith(
+                    color: colorscheme.onPrimary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }

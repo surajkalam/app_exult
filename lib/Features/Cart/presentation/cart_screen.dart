@@ -4,6 +4,7 @@ import 'package:coffee_exult_app/Authentication/provider/current_user.dart';
 import 'package:coffee_exult_app/Features/Cart/provider/cart_provider.dart';
 import 'package:coffee_exult_app/Features/Menu/Provider/menu_provider.dart';
 import 'package:coffee_exult_app/Features/Menu/Provider/paymentProvider.dart';
+import 'package:coffee_exult_app/Features/Profile/Provider/voucher_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -975,7 +976,7 @@ class CartScreen extends ConsumerWidget {
                 ),
                 const SizedBox(width: 12),
                 ElevatedButton(
-                  onPressed: voucherCode.isNotEmpty ? () => _applyVoucher(ref, voucherCode) : null,
+                  onPressed: voucherCode.isNotEmpty ? () async => await _applyVoucher(ref, voucherCode) : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFC67C4E),
                     foregroundColor: Colors.white,
@@ -1036,36 +1037,69 @@ class CartScreen extends ConsumerWidget {
   }
 
   // Apply voucher
-  void _applyVoucher(WidgetRef ref, String voucherCode) {
-    // Simple voucher validation - in a real app, this would check against a database
-    const validVouchers = {
-      'SAVE10': 10.0, // ₹10 off
-      'SAVE20': 20.0, // ₹20 off
-      'DISCOUNT50': 50.0, // ₹50 off
-      'COFFEE15': 15.0, // ₹15 off
-    };
+  Future<void> _applyVoucher(WidgetRef ref, String voucherCode) async {
+    try {
+      // Use the voucher provider to validate against Firestore
+      final success = await applyVoucher(ref, voucherCode.toUpperCase());
 
-    final discount = validVouchers[voucherCode.toUpperCase()];
+      if (success) {
+        // Get the selected voucher to access the percentage
+        final selectedVoucher = ref.read(selectedVoucherProvider);
+        if (selectedVoucher != null) {
+          final discountPercentage = selectedVoucher.offerPercentage;
 
-    if (discount != null) {
-      ref.read(voucherDiscountProvider.notifier).state = discount;
-      ref.read(voucherAppliedProvider.notifier).state = true;
+          // Calculate the actual discount amount based on cart subtotal
+          final cartItems = ref.read(cartProvider).maybeWhen(
+            data: (items) => items,
+            orElse: () => <Map<String, dynamic>>[],
+          );
 
-      ScaffoldMessenger.of(ref.context).showSnackBar(
-        SnackBar(
-          content: Text('Voucher applied! You save ₹${discount.toStringAsFixed(2)}'),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+          double subtotal = 0;
+          for (var item in cartItems) {
+            final price = _safeParseDouble(item['price']);
+            final quantity = _safeParseInt(item['quantity'] ?? 1);
+            subtotal += price * quantity;
+          }
+
+          // Calculate percentage-based discount
+          final discountAmount = subtotal * (discountPercentage / 100);
+
+          // Update the voucher discount provider with the calculated amount
+          ref.read(voucherDiscountProvider.notifier).state = discountAmount;
+          ref.read(voucherAppliedProvider.notifier).state = true;
+
+          ScaffoldMessenger.of(ref.context).showSnackBar(
+            SnackBar(
+              content: Text('Voucher applied! You save ₹${discountAmount.toStringAsFixed(2)} (${discountPercentage.toStringAsFixed(0)}% off)'),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              margin: const EdgeInsets.all(16),
+            ),
+          );
+        }
+      } else {
+        // Check for error message from voucher provider
+        final errorMessage = ref.read(voucherErrorProvider) ?? 'Invalid voucher code';
+        ScaffoldMessenger.of(ref.context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            margin: const EdgeInsets.all(16),
           ),
-          margin: const EdgeInsets.all(16),
-        ),
-      );
-    } else {
+        );
+      }
+    } catch (e) {
+      log('Error applying voucher: $e');
       ScaffoldMessenger.of(ref.context).showSnackBar(
         SnackBar(
-          content: const Text('Invalid voucher code'),
+          content: Text('Error applying voucher: $e'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
