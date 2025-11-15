@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "234073029931",
-    "project_id": "excoffee-8a23b",
-    "storage_bucket": "excoffee-8a23b.firebasestorage.app"
+    "project_number": "162675831993",
+    "project_id": "exult-coffee-shop",
+    "storage_bucket": "exult-coffee-shop.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:234073029931:android:9ebb1dc9ed63f4426b196e",
+        "mobilesdk_app_id": "1:162675831993:android:6396c2c867883bf7dd9768",
         "android_client_info": {
           "package_name": "com.example.coffee_exult_app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDAr7P0Z6cYCosGfSBc-Dd-s_99aWcgxfk"
+          "current_key": "AIzaSyDkFRx_FApckCq3a57nC3i_SaoS5g0MZx4"
         }
       ],
       "services": {

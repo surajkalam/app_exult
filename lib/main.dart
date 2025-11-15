@@ -1,3 +1,66 @@
+// import 'dart:developer';
+
+// import 'package:coffee_exult_app/Services/notification_screen.dart';
+// import 'package:coffee_exult_app/core/utils/material_theme.dart';
+// import 'package:coffee_exult_app/core/utils/typography.dart';
+// import 'package:coffee_exult_app/core/widget/go_route.dart';
+// import 'package:coffee_exult_app/firebase_options.dart';
+// import 'package:firebase_app_check/firebase_app_check.dart';
+// // ignore: depend_on_referenced_packages
+import 'package:firebase_core/firebase_core.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   try {
+//     log('Initializing Firebase...');
+//     await Firebase.initializeApp(
+//       options: DefaultFirebaseOptions.currentPlatform,
+//     );
+//     log('Firebase initialized successfully');
+//   } catch (e, stack) {
+//     log('Firebase initialization failed', error: e, stackTrace: stack);
+//     rethrow;
+//   }
+//   _setupLogging();
+//   await NotificationService.initialize();
+//   log("NotificationService.initialize finished");
+//   await FirebaseAppCheck.instance.activate(
+//     androidProvider: AndroidProvider.debug,
+//   );
+
+//   // Get and print debug token for Firebase Console
+//   try {
+//     final token = await FirebaseAppCheck.instance.getToken();
+//     log('Firebase App Check Debug Token: $token');
+//   } catch (e) {
+//     log('Failed to get App Check token: $e');
+//     log('Add this debug token to Firebase Console under App Check → Apps → Your app → Debug providers');
+//   }
+//   runApp(const MainApp());
+// }
+// void _setupLogging() {
+//   log('Setting up logging filters...');
+// }
+
+// class MainApp extends StatelessWidget {
+//   const MainApp({super.key});
+//   @override
+//   Widget build(BuildContext context) {
+//     final materialTheme = MaterialTheme(textTheme);
+//     return ProviderScope(
+//       child: MaterialApp.router(
+//         debugShowCheckedModeBanner: false,
+//         theme: materialTheme.light(),
+//         darkTheme: materialTheme.dark(),
+//         themeMode: ThemeMode.system,
+//         routerConfig: approuter,
+//       ),
+//     );
+//   }
+// }
 import 'dart:developer';
 
 import 'package:coffee_exult_app/Services/notification_screen.dart';
@@ -5,36 +68,38 @@ import 'package:coffee_exult_app/core/utils/material_theme.dart';
 import 'package:coffee_exult_app/core/utils/typography.dart';
 import 'package:coffee_exult_app/core/widget/go_route.dart';
 import 'package:coffee_exult_app/firebase_options.dart';
-// ignore: depend_on_referenced_packages
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   try {
     log('Initializing Firebase...');
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
     log('Firebase initialized successfully');
-    // firebaseAppCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance());
   } catch (e, stack) {
     log('Firebase initialization failed', error: e, stackTrace: stack);
     rethrow;
   }
+
   _setupLogging();
+
+  // ✅ Activate APP CHECK before any Firebase API is used
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.playIntegrity,
+  );
+
+  // final token = await FirebaseAppCheck.instance.getToken();
+  // log('🔥 FIREBASE DEBUG TOKEN → $token');
+  // Initialize notifications AFTER App Check
   await NotificationService.initialize();
   log("NotificationService.initialize finished");
-  // await FirebaseAppCheck.instance.activate(
-  //   androidProvider: AndroidProvider.debug,
-    // ignore: deprecated_member_use
-    // webProvider: ReCaptchaV3Provider('6LdxOMErAAAAAH6WkDCHztkWBmB0DocRPoZX3E1G'),
-    // appleProvider: AppleProvider.appAttest,
-  // );
-  debugPrint = (String? message, {int? wrapWidth}) {};
-  runApp(ProviderScope(child: MainApp()));
+
+  runApp(const MainApp());
 }
 
 void _setupLogging() {
@@ -43,15 +108,19 @@ void _setupLogging() {
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     final materialTheme = MaterialTheme(textTheme);
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      theme: materialTheme.light(),
-      darkTheme: materialTheme.dark(),
-      themeMode: ThemeMode.system,
-      routerConfig: approuter,
+
+    return ProviderScope(
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        theme: materialTheme.light(),
+        darkTheme: materialTheme.dark(),
+        themeMode: ThemeMode.system,
+        routerConfig: approuter,
+      ),
     );
   }
 }

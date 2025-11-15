@@ -17,29 +17,20 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -52,11 +43,40 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyATW0qtlTJYn-R0QXGH3xB0xa9R92aJzP0',
+    appId: '1:162675831993:web:dfdbb8edc134860cdd9768',
+    messagingSenderId: '162675831993',
+    projectId: 'exult-coffee-shop',
+    authDomain: 'exult-coffee-shop.firebaseapp.com',
+    storageBucket: 'exult-coffee-shop.firebasestorage.app',
+    measurementId: 'G-0LR3RVRBDR',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDAr7P0Z6cYCosGfSBc-Dd-s_99aWcgxfk',
-    appId: '1:234073029931:android:9ebb1dc9ed63f4426b196e',
-    messagingSenderId: '234073029931',
-    projectId: 'excoffee-8a23b',
-    storageBucket: 'excoffee-8a23b.firebasestorage.app',
+    apiKey: 'AIzaSyDkFRx_FApckCq3a57nC3i_SaoS5g0MZx4',
+    appId: '1:162675831993:android:6396c2c867883bf7dd9768',
+    messagingSenderId: '162675831993',
+    projectId: 'exult-coffee-shop',
+    storageBucket: 'exult-coffee-shop.firebasestorage.app',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyCrY0VflQjdEy5ZOAp2F35v741eBso4YX4',
+    appId: '1:162675831993:ios:da7d11431057cb28dd9768',
+    messagingSenderId: '162675831993',
+    projectId: 'exult-coffee-shop',
+    storageBucket: 'exult-coffee-shop.firebasestorage.app',
+    iosBundleId: 'com.example.coffeeExultApp',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyATW0qtlTJYn-R0QXGH3xB0xa9R92aJzP0',
+    appId: '1:162675831993:web:08ecb3ff54a27e1add9768',
+    messagingSenderId: '162675831993',
+    projectId: 'exult-coffee-shop',
+    authDomain: 'exult-coffee-shop.firebaseapp.com',
+    storageBucket: 'exult-coffee-shop.firebasestorage.app',
+    measurementId: 'G-4Z8YKD72HX',
   );
 }
